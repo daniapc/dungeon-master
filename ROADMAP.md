@@ -31,16 +31,25 @@ _Ex : Application jouable + vidéo de démo scénarisée + tests unitaires de ba
 
 | ID | User story / tâche | Sprint cible | Priorité | Etat |
 |----|------------------------------|-------|-----|---|
-| US1 | En tant que joueur, je peux afficher une grille de donjon | DAY_1 | Haute | TODO |
-| US2 | En tant que joueur, je peux placer des murs/pièges | DAY_1 | Haute | TODO |
-| US3 | Simuler le déplacement d’un héros dans le donjon | DAY_2 | Haute | TODO |
-| US4 | Implémenter la stratégie IA “plus court chemin” | DAY_2 | Haute | TODO |
-| US5 | Calculer et afficher le score de la vague | DAY_3 | Moyenne | TODO |
-| US6 | Sauvegarder/charger un donjon | DAY_3 | Moyenne | TODO |
-| US7 | Implémenter la deuxième stratégie IA | DAY_4 | Moyenne | TODO |
-| US8 | Ajouter un log des événements | DAY_4 | Basse | TODO |
-| US9 | Préparer la vidéo de démonstration | DAY_5 | Haute | TODO |
-| US10| Finaliser la documentation et nettoyage du code | DAY_5 | Haute | TODO |
+| US1 | En tant que joueur, je paux afficher une grille de donjon |  |  | TODO |
+| US2 | En tant que joueur, je peux ajouter des objets (murs, ennemis) sur la grille |  |  | TODO |
+| US3 | Ajouter un héro (qui se déplace aléatoirement) |  |  | TODO |
+| US4 | Ajouter un menu pour pouvoir ajouter des objets / lancer une partie / avancer la partie |  |  | TODO |
+| US5 | Pouvoir visualiser le jeu tel quel dans le terminal / sur HTML |  |  | TODO |
+| US6 | Implémenter la stratégie d'IA "plus court chemin" |  |  | TODO |
+| US7 | Implémenter le score à la fin de la partie et l'argent récolté |  |  | TODO |
+| US8 | Pouvoir jouer sur plusieurs vagues |  |  | TODO |
+| US9 | Implémenter la stratégie d'IA "chemin le plus sûr" |  |  | TODO |
+| US10 | Pouvoir visualiser le jeu en HTML et terminal |  |  | TODO |
+| US11 | En tant que joueur, je dois pouvoir sauvegarder une partie à n'importe quel instant |  |  | TODO |
+| US12 | Retravailler les visuels HTML (si nécessaire) |  |  | TODO |
+
+
+| US13 | Préparer la vidéo de démonstration |  |  | TODO |
+| US14 | Tourner la vidéo de démonstration |  |  | TODO |
+| US15 | Monter la vidéo de démonstration |  |  | TODO |
+| US16 | fin |  |  | TODO |
+
 
 ## 4. Vue par sprint (résumé)
 
