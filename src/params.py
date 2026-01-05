@@ -1,0 +1,1 @@
+SIZE_GRILLE = 16
