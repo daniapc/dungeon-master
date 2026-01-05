@@ -1,5 +1,7 @@
 from random import *
 
+SIZE_GRILLE = 16
+
 
 class Heros():
     def __init__(self, pos):
@@ -21,7 +23,7 @@ class Heros():
     def peut_deplacer(self, i, j, grille):
         k = self.pos[0]
         l = self.pos[1]
-        if((0 <= k+i <= 15) and (0 <= l+j <= 15)):
+        if((0 <= k+i <= SIZE_GRILLE-1) and (0 <= l+j <= SIZE_GRILLE-1)):
             # case = grille[k+i][l+j].get_objets
             # for elt in case:
                 # if isinstance(elt, Mur):
