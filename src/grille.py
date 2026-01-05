@@ -46,7 +46,7 @@ class Grille :
                     str += '1' 
             print(str)
 
-    def affichage_grille(self) :
+    def affichage(self) :
         for row in self.terrain :
             str_row = ""
             for case in row :
