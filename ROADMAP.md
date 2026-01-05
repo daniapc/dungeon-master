@@ -43,8 +43,6 @@ _Ex : Application jouable + vidéo de démo scénarisée + tests unitaires de ba
 | US10 | Pouvoir visualiser le jeu en HTML et terminal |  |  | TODO |
 | US11 | En tant que joueur, je dois pouvoir sauvegarder une partie à n'importe quel instant |  |  | TODO |
 | US12 | Retravailler les visuels HTML (si nécessaire) |  |  | TODO |
-
-
 | US13 | Préparer la vidéo de démonstration |  |  | TODO |
 | US14 | Tourner la vidéo de démonstration |  |  | TODO |
 | US15 | Monter la vidéo de démonstration |  |  | TODO |
