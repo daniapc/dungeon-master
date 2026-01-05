@@ -22,7 +22,13 @@ class Case :
         self.entree = True
 
     def set_tresor(self) :
-        self.tresor = True  
+        self.tresor = True 
+
+    def rm_entree(self) :
+        self.entree = False
+
+    def rm_tresor(self) :
+        self.tresor = False 
 
     def is_entree(self) :
         return self.entree
