@@ -45,4 +45,12 @@ class Grille :
                 else :
                     str += '1' 
             print(str)
+
+    def affichage_grille(self) :
+        for row in self.terrain :
+            str_row = ""
+            for case in row :
+                str_row += case.affichage()
+            print(str_row)
+
     

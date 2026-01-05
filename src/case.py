@@ -34,4 +34,16 @@ class Case :
         return self.entree
 
     def is_tresor(self) :
-        return self.tresor           
+        return self.tresor     
+
+    def has_hero(self) :
+        for objet in self.objets :
+            if type(objet) == Hero :
+                return True 
+        return False      
+
+    def affichage_case(self) :
+        if self.has_hero() :
+            Hero.affichage()
+        else :
+            self.objets[0].affichage()
