@@ -19,17 +19,7 @@ class Heros():
             return True
         else:
             return False
-    
-    def peut_deplacer(self, i, j, grille):
-        k = self.pos[0]
-        l = self.pos[1]
-        if((0 <= k+i <= SIZE_GRILLE-1) and (0 <= l+j <= SIZE_GRILLE-1)):
-            # case = grille[k+i][l+j].get_objets
-            # for elt in case:
-                # if isinstance(elt, Mur):
-                #     return False
-            return True
-        return False
+ 
         
     def deplace(self, i, j):
         self.pos[0] += i
@@ -40,18 +30,11 @@ class Heros():
             self.pv = 0
         else:
             self.pv -= n
+    
+    def affichage(self):
+        return("H")
 
 
-
-def convertit_depl(n):
-    if(n == 0): #UP
-        return(-1,0)
-    elif(n == 1): #DOWN
-        return(1,0)
-    elif(n == 2): #LEFT
-        return(0,-1)
-    else: #RIGHT
-        return(0,1)
             
 
 
