@@ -1,5 +1,5 @@
 Langage: Python car connaissance de Flask
-
+Technologies: Web -  HTML/CSS, venv
 
 Rôles:
     - Git Manager : Daniel
@@ -38,4 +38,4 @@ Rôles:
 
 ## UI
 
-- Plants vs Zombies pour éléments à placer, cout et budget
+- Plants vs Zombies pour éléments à placer, coût et budget
