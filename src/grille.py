@@ -14,7 +14,6 @@ class Grille :
             self.pos_entree.append(rd.randint(0, SIZE_GRILLE -1))
         else :
             self.pos_entree.append(rd.choice([0, SIZE_GRILLE -1]))
-        print(self.pos_entree[0], self.pos_entree[1])
         self.terrain[self.pos_entree[0]][self.pos_entree[1]].set_entree() 
 
     def put_tresor(self) :
