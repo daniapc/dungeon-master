@@ -1,6 +1,6 @@
 import random as rd
-from params import *
-from case import Case
+from src.params import *
+from src.case import Case
 
 class Grille :
 
@@ -35,7 +35,7 @@ class Grille :
         return self.terrain
     
     def print_terrain(self) :
-        for i in grille.terrain :
+        for i in self.terrain :
             str = ""
             for j in i :
                 if j.is_entree() :
@@ -45,13 +45,4 @@ class Grille :
                 else :
                     str += '1' 
             print(str)
-
-if __name__ == "__main__" :
-    grille = Grille()
-    grille.put_entree()
-    grille.put_tresor()
-    i_entree, j_entree = grille.get_entree()
-    i_tresor, j_tresor = grille.get_tresor()
-
-    grille.print_terrain()
     
