@@ -1,5 +1,6 @@
 from pytest import *
 from src.heros import *
+from src.dmg_visitor import *
 
 def test_init():
     heros = Heros((0,0))
@@ -10,8 +11,9 @@ def test_init():
 
 def test_degats():
     heros = Heros((0,0))
-    heros.degats(10)
-    assert(heros.get_pv() == 90)
+    visitor = Dmg_Visitor()
+    visitor.visit(heros)
+    assert(heros.get_pv() == 80)
     assert(heros.isdead() == False)
     heros.degats(100)
     assert(heros.get_pv() == 0)
