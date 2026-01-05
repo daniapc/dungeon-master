@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, url_for
 # https://flask.palletsprojects.com/en/stable/views/
 from flask.views import MethodView
 
@@ -33,7 +33,10 @@ class Jeu(MethodView, object):
         return cls._instance
 
     def get(self):
-        return "<p>Hello, World!</p>"
+    # Retornando um HTML simples com a imagem
+        return """
+        <img src="{}" alt="temp">
+        """.format(url_for('static', filename='temp.png'))
     
     def set_mode(self, mode):
         self.mode = mode
@@ -68,14 +71,15 @@ app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
 
 if __name__ == "__main__":
     
+    is_prod = os.environ.get('APP_ENV') == 'prod'
+    
     jeu = Jeu()
     
-    mode = input("Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
+    mode = Mode.WEB.value if is_prod else input(
+        "Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
     
     jeu.set_mode(Mode(int(mode)))
-    
-    print(jeu.get_mode().name)
-    
+        
     # GEMINI {
     thread_terminal = threading.Thread(
             target=jeu.terminal_loop, 
@@ -87,4 +91,9 @@ if __name__ == "__main__":
         thread_terminal.start()
     
     # app.run(debug=True, use_reloader=False)
-    app.run(host='0.0.0.0', port=5000) # prod
+    app.run(
+        host='0.0.0.0', 
+        port=5000,
+        debug=not is_prod, 
+        use_reloader=not is_prod) # prod
+
