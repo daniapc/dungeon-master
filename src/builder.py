@@ -35,7 +35,7 @@ class ConstructeurDonjon :
         mur = self.fabrique_mur.fabrique_Objet(i, j)
         cout = mur.get_cout()
         if self.budget >= cout :
-            self.grille.get_grille().get_case(i, j).add_objet(mur)
+            self.grille.get_case(i, j).add_objet(mur)
             self.budget -= cout 
             return True
         else :
@@ -54,7 +54,7 @@ class ConstructeurDonjon :
             piege = self.fabrique_piege_3.fabrique_Objet(i, j)
         cout = piege.get_cout()
         if self.budget >= cout :
-            self.grille.get_grille().get_case(i, j).add_objet(piege)
+            self.grille.get_case(i, j).add_objet(piege)
             self.budget -= cout 
             return True
         else :
@@ -65,7 +65,7 @@ class ConstructeurDonjon :
             return False, "Case hors limites"
         if self.is_empty(i, j) :
             return False, "Case déjà vide"
-        cout = self.grille.get_grille().get_case(i ,j).get_objets()[0].get_cout()
+        cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
-        self.grille.get_grille().get_case(i ,j).get_objets().remove_objet(self.grille.get_grille().get_case(i ,j).get_objets()[0])
+        self.grille.get_case(i ,j).get_objets().remove_objet(self.grille.get_grille().get_case(i ,j).get_objets()[0])
         return True
