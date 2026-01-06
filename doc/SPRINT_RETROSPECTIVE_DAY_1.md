@@ -4,8 +4,9 @@ Ce qui a été fait :
     - Définition des Cases
     - Implémentation des éléments interragissant avec le plateau (début déplacements héro)
     - Configuration de Flask avec la classe Jeu, interface pour choix web/terminal
-    - Configuration du serveur
+    - Configuration du serveur: http://35.188.222.36:5000
     - Visuel en cours de recherche
+
 
 Prochains objectifs : 
     - Vérifier la compatibilité des classes
