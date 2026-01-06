@@ -1,5 +1,6 @@
 from src.params import *
 from src.heros import *
+from src.Objet.objet import *
 
 class Case :
 
@@ -44,13 +45,14 @@ class Case :
         return False      
 
     def affichage(self) :
-        if self.has_hero() :
-            Heros.affichage()
-        elif len(self.objets) > 0 :
-            self.objets[0].affichage()
+        for objet in self.objets :
+            if isinstance(objet, Heros) :
+                return Heros.affichage()
+        if len(self.objets) > 0 :
+            return self.objets[0].affichage()
         elif self.is_entree() :
             return "E"
         elif self.is_tresor() :
             return "T"
         else :
-            return "-"
+            return "."
