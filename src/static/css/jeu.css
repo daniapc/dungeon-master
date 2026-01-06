@@ -1,4 +1,43 @@
 .caseDiv{
     border: 1px solid grey;
-    background-color: rgb(20, 0, 39);
+    background-color: rgb(16, 0, 73);
+
+    max-width: 35px; 
+    height: 35px;
+
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+
+    &.coordinate{
+            background-color: rgb(147, 122, 238);
+            color: black;
+
+    }
+}
+
+#grid-board{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+}
+
+.rowCase {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.title {
+    margin-bottom: 40px;
+}
+
+.selectionSidebar {
+
+    max-width: 120px;
+}
+
+.selectionSidebar .btn.palid{
+    opacity: 0.4;
 }

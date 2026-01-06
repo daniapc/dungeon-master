@@ -15,7 +15,8 @@ import threading
 import time
 import os
 
-# GEMINI {
+# (day_1)
+# GEMINI { 
 log_stream = io.StringIO()
 logging.basicConfig(
     level=logging.INFO,
@@ -65,8 +66,6 @@ class Jeu(MethodView, object):
             if action.upper() == 'N':
                 os._exit(0)
     
-
-
 if __name__ == "__main__":
     
     is_prod = os.environ.get('APP_ENV') == 'prod'
@@ -81,8 +80,9 @@ if __name__ == "__main__":
     grille.put_entree()
     grille.put_tresor()
     jeu.set_grille(grille)
-        
-    # GEMINI {
+    
+    # (day_1)
+    # GEMINI { 
     thread_terminal = threading.Thread(
             target=jeu.terminal_loop, 
             daemon=True
