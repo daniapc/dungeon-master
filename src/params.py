@@ -3,6 +3,8 @@ COUT_MUR = 5
 COUT_PIEGE = 10
 SIZE_GRILLE = 16
 
+BUDGET_INITIAL = 500
+
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"
 BOLD = "\033[1m"

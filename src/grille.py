@@ -34,6 +34,9 @@ class Grille :
     def get_grille(self) :
         return self.terrain
     
+    def get_case(self, i, j) :
+        return self.terrain[i][j]
+    
     def print_terrain(self) :
         for i in self.terrain :
             str = ""
@@ -79,3 +82,4 @@ if __name__ == "__main__" :
     grille.put_entree()
     grille.put_tresor()
     grille.affichage()
+    
