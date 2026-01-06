@@ -1,4 +1,4 @@
-from src.Objet.objet import *
+from src.objet import *
 from src.fabrique_objet import *
 from src.params import *
 from src.grille import *
