@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, render_template
 # https://flask.palletsprojects.com/en/stable/views/
 from flask.views import MethodView
 
@@ -33,9 +33,7 @@ class Jeu(MethodView, object):
         return cls._instance
 
     def get(self):
-        return """
-        <img src="{}" alt="temp">
-        """.format(url_for('static', filename='temp.png'))
+        return render_template('jeu.html')
     
     def set_mode(self, mode):
         self.mode = mode
@@ -77,6 +75,7 @@ if __name__ == "__main__":
         "Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
     
     jeu.set_mode(Mode(int(mode)))
+    
         
     # GEMINI {
     thread_terminal = threading.Thread(
