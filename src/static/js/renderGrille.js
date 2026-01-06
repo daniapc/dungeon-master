@@ -27,7 +27,7 @@ async function renderGrille() {
 
         let i = 0;
 
-        matrix.forEach((rowData) => {
+        matrix.forEach((rowData, rowIndex) => {
             const rowDiv = document.createElement("div");
             rowDiv.className = "rowCase";
 
@@ -36,7 +36,7 @@ async function renderGrille() {
             caseDiv.innerText = i;
             rowDiv.append(caseDiv);
 
-            rowData.forEach((cellData) => {
+            rowData.forEach((cellData, colIndex) => {
                 const caseDiv = document.createElement("button");
                 caseDiv.className = "col caseDiv";
 
@@ -44,8 +44,37 @@ async function renderGrille() {
                 caseDiv.style.fontWeight = cellData.weight;
                 caseDiv.innerText = cellData.symbol; 
                 
-                caseDiv.addEventListener("click",  ()=>{
+                const currentX = colIndex;
+                const currentY = rowIndex;
+                
+                caseDiv.addEventListener("click",  async ()=>{
+                    const button = document.querySelector(".selectionSidebar .btn.active");
 
+                    if (button == null)
+                        return;
+
+                    payload = {}
+
+                    payload['action'] = 'put';
+                    payload['objet'] = button.getAttribute("data-type");
+                    payload['x'] = `${currentX}`;
+                    payload['y'] = `${currentY}`;
+
+                    const response = await fetch(`/constrdonjon`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        await renderGrille();
+                        
+                    } else {
+                        console.error("Server error:", response.status);
+                    }
                 })
 
 

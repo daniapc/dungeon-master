@@ -3,15 +3,22 @@ from src.fabrique_objet import *
 from src.params import *
 from src.grille import *
 
-class ConstructeurDonjon :
+from flask.views import MethodView
+from flask import request
+
+import json
+
+class ConstructeurDonjon(MethodView):
     
-    def __init__(self, grille, budget=BUDGET_INITIAL) :
+    def __init__(self, grille, budget=BUDGET_INITIAL, instance=None) :
         self.grille = grille 
         self.budget = budget
         self.fabrique_mur = Fabrique_Mur()
         self.fabrique_piege_1 = Fabrique_Piege_1()
         self.fabrique_piege_2 = Fabrique_Piege_2()
         self.fabrique_piege_3 = Fabrique_Piege_3()
+        
+        self.instance = instance
     
     def get_budget(self) :
         return self.budget
@@ -67,5 +74,25 @@ class ConstructeurDonjon :
             return False, "Case déjà vide"
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
-        self.grille.get_case(i ,j).get_objets().remove_objet(self.grille.get_case(i ,j).get_objets()[0])
+        self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
         return True
+    
+    def post(self):
+        data = request.json
+        
+        action = data['action']
+        objet = data['objet']
+        coord_x = int(data['x'])
+        coord_y = int(data['y'])
+        
+        if (action == 'put'):
+            if objet == 'mur':
+                self.put_mur(coord_y, coord_x)
+                
+            elif 'piege' in objet:
+                piege = int(str(objet).split(' ')[1])
+                self.put_piege(coord_y, coord_x, piege)
+                
+            return {"status": "success", "message": "Case mise a jour"}, 200 
+    
+        return {"status": "ignored", "message": "Nothing rappened"}, 200
