@@ -31,12 +31,12 @@ _Ex : Application jouable + vidéo de démo scénarisée + tests unitaires de ba
 
 | ID | User story / tâche | Sprint cible | Priorité | Etat |
 |----|------------------------------|-------|-----|---|
-| US1 | En tant que joueur, je paux afficher une grille de donjon |  |  | TODO |
-| US2 | En tant que joueur, je peux ajouter des objets (murs, ennemis) sur la grille |  |  | TODO |
-| US3 | Ajouter un héro (qui se déplace aléatoirement) |  |  | TODO |
-| US4 | Ajouter un menu pour pouvoir ajouter des objets / lancer une partie / avancer la partie |  |  | TODO |
-| US5 | Pouvoir visualiser le jeu tel quel dans le terminal / sur HTML |  |  | TODO |
-| US6 | Flask setup |  | | TODO |
+| US1 | En tant que joueur, je paux afficher une grille de donjon |  |  | DOING |
+| US2 | En tant que joueur, je peux ajouter des objets (murs, ennemis) sur la grille |  |  | DOING |
+| US3 | Ajouter un héro (qui se déplace aléatoirement) |  |  | DOING |
+| US4 | Ajouter un menu pour pouvoir ajouter des objets / lancer une partie / avancer la partie |  |  | DOING |
+| US5 | Pouvoir visualiser le jeu tel quel dans le terminal / sur HTML |  |  | DOING |
+| US6 | Flask setup |  | | DOING |
 | US7 | Implémenter la stratégie d'IA "plus court chemin" |  |  | TODO |
 | US8 | Implémenter le score à la fin de la partie et l'argent récolté |  |  | TODO |
 | US9 | Pouvoir jouer sur plusieurs vagues |  |  | TODO |
