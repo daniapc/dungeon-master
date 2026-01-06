@@ -1,6 +1,6 @@
 from src.params import *
 from src.heros import *
-from src.Objet.objet import *
+from src.objet import *
 
 class Case :
 
@@ -42,7 +42,13 @@ class Case :
         for objet in self.objets :
             if type(objet) == Heros :
                 return True 
-        return False      
+        return False   
+
+    def has_mur(self) :
+        for objet in self.objets :
+            if type(objet) == Mur :
+                return True 
+        return False    
 
     def affichage(self) :
         for objet in self.objets :
