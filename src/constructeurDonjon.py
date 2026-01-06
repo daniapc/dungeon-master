@@ -37,9 +37,9 @@ class ConstructeurDonjon :
         if self.budget >= cout :
             self.grille.get_case(i, j).add_objet(mur)
             self.budget -= cout 
-            return True
+            return True, "Mur placé"
         else :
-            return False
+            return False, "Budget insuffisant"
     
     def put_piege(self, i, j, type_piege) :
         if not self.is_in_grid(i, j) :
@@ -56,9 +56,9 @@ class ConstructeurDonjon :
         if self.budget >= cout :
             self.grille.get_case(i, j).add_objet(piege)
             self.budget -= cout 
-            return True
+            return True, f"Piège {type_piege} placé"
         else :
-            return False
+            return False, "Budget insuffisant"
         
     def rm_objet(self, i, j) :
         if not self.is_in_grid(i, j) :
@@ -68,4 +68,4 @@ class ConstructeurDonjon :
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
         self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
-        return True
+        return True, "Objet retiré"
