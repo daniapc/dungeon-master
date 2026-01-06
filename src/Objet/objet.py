@@ -14,7 +14,7 @@ class Mur(Objet):
     def get_cout(self):
         return 5
 
-    def affichage_mur(self):
+    def affichage(self):
         return "#"
 
 class Piege(Objet):
