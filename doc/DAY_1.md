@@ -14,7 +14,7 @@ Rôles:
     - Trésor: aléatoire condition 4 cases de l'entrée
             test si accessible fin de placement des murs avec plus court chemin
 
-    - Pièges: Grand (ex: - 30), Moyen (ex: -10 utilisable 2 fois), Petit (ex: dégat 10)
+    - Pièges: Gand (ex: - 30), Moyen (ex: -10 utilisable 2 fois), Petit (ex: dégat 10)
 
     - Monstres : à discuter 
         se déplace
