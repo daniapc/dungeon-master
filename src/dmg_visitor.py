@@ -1,4 +1,4 @@
-from objet import *
+from src.objet import *
 from src.heros import *
 
 class Dmg_Visitor:
