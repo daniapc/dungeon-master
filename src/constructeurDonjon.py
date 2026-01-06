@@ -23,7 +23,7 @@ class ConstructeurDonjon :
     
     def is_empty(self, i, j) :
         case = self.grille.get_case(i, j)
-        if case.is_entree() | case.is_tresor() | len(case.objets) > 0 :
+        if case.is_entree() or case.is_tresor() or len(case.objets) > 0 :
             return False 
         return True
 
@@ -67,5 +67,5 @@ class ConstructeurDonjon :
             return False, "Case déjà vide"
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
-        self.grille.get_case(i ,j).get_objets().remove_objet(self.grille.get_case(i ,j).get_objets()[0])
+        self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
         return True
