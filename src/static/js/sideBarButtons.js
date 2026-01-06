@@ -6,9 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     buttons.forEach(btn => {
         btn.addEventListener("click", () => 
     {
-        buttons.forEach(b => b.classList.add("palid"));
+        buttons.forEach(b => {
+            b.classList.add("palid")
+            b.classList.remove("active")
+
+        });
     
-        btn.classList.remove("palid");
+        btn.classList.remove("palid")
+        btn.classList.add("active");
+
     }
         )
     })
@@ -17,7 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (!document.querySelector(".btn-group-vertical").contains(event.target)) {
-            buttons.forEach(b => b.classList.remove("palid"));
+            buttons.forEach(b => { 
+                b.classList.remove("palid")
+                b.classList.remove("active")});
         }
     });
     

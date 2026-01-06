@@ -3,8 +3,6 @@ from src.params import *
 from src.case import Case
 
 from flask.views import MethodView
-import io
-from contextlib import redirect_stdout
 
 class Grille(MethodView):
 
