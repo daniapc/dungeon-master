@@ -8,6 +8,7 @@ from src.enums.mode import Mode
 
 from src.log import Log
 from src.grille import Grille
+from src.constructeurDonjon import ConstructeurDonjon
 
 import io
 import logging
@@ -34,9 +35,6 @@ class Jeu(MethodView, object):
             cls._instance = super(Jeu, cls).__new__(cls)            
             
         return cls._instance
-
-    def get(self):
-        return render_template('jeu.html')
     
     def set_mode(self, mode):
         self.mode = mode
@@ -45,6 +43,9 @@ class Jeu(MethodView, object):
     
     def set_grille(self, gr):
         self.grille = gr
+        
+    def set_constrDonjon(self, cd):
+        self.constructeurDonjon = cd
     
     def log(self, message):
         logging.info(message)
@@ -65,6 +66,10 @@ class Jeu(MethodView, object):
             
             if action.upper() == 'N':
                 os._exit(0)
+             
+    # flask method   
+    def get(self):
+        return render_template('jeu.html')
     
 if __name__ == "__main__":
     
@@ -81,6 +86,9 @@ if __name__ == "__main__":
     grille.put_tresor()
     jeu.set_grille(grille)
     
+    constrDonjon = ConstructeurDonjon(grille=grille)
+    jeu.set_constrDonjon(constrDonjon)
+        
     # (day_1)
     # GEMINI { 
     thread_terminal = threading.Thread(
@@ -94,7 +102,10 @@ if __name__ == "__main__":
     
     app.add_url_rule("/", view_func=Jeu.as_view("jeu"))
     app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
-    app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille)) 
+    app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
+    app.add_url_rule(
+        "/constrdonjon", 
+        view_func=ConstructeurDonjon.as_view("constrdonjon", grille=grille, instance=constrDonjon))
        
     app.run(
         host='0.0.0.0', 
