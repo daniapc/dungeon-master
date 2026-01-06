@@ -1,4 +1,5 @@
 from src.params import *
+from src.heros import Heros
 
 class Case :
 
@@ -38,12 +39,12 @@ class Case :
 
     def has_hero(self) :
         for objet in self.objets :
-            if type(objet) == Hero :
+            if type(objet) == Heros :
                 return True 
         return False      
 
     def affichage_case(self) :
         if self.has_hero() :
-            Hero.affichage()
+            Heros.affichage()
         else :
             self.objets[0].affichage()

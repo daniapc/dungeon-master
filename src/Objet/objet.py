@@ -24,13 +24,16 @@ class Piege(Objet):
         self.difficulte = 1
         self.active = True
     
+    def is_active(self):
+        return self.active
+    
     @abstractmethod
     def degat(self)->int: pass
 
 
 class Piege_1(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
+    def __init__(self, x, y):
+        super().__init__(x,y)
         self.cout = self.difficulte * 10
     
     def get_cout(self):
@@ -44,8 +47,8 @@ class Piege_1(Piege):
         return "_"
 
 class Piege_2(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
+    def __init__(self, x, y):
+        super().__init__(x,y)
         self.cout = self.difficulte * 10
         self.num_max_attaque = 2
     
@@ -61,8 +64,8 @@ class Piege_2(Piege):
         return "^"
     
 class Piege_3(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
+    def __init__(self, x, y):
+        super().__init__(x,y)
         self.cout = self.difficulte * 10
     
     def get_cout(self):

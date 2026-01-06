@@ -1,5 +1,8 @@
 from random import *
-from heros import *
+from src.heros import *
+from src.grille import *
+from src.Objet.objet import Mur 
+
 SIZE_GRILLE = 16
 
 class Controleur:
@@ -17,10 +20,10 @@ class Controleur:
         k = self.l_heros[indice].pos[0]
         l = self.l_heros[indice].pos[1]
         if((0 <= k+i <= SIZE_GRILLE-1) and (0 <= l+j <= SIZE_GRILLE-1)):
-            # case = self.grille[k+i][l+j].get_objets
-            # for elt in case:
-                # if isinstance(elt, Mur):
-                #     return False
+            case = self.grille.get_grille()[k+i][l+j].get_objets()
+            for elt in case:
+                if isinstance(elt, Mur):
+                    return False
             return True
         return False
     
