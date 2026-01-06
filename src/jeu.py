@@ -119,6 +119,11 @@ class Jeu(MethodView, object):
             
             # if action.upper() == 'N':
             #     os._exit(0)
+            
+    # N'EST PAS RETIRER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
+    # flask method   
+    def get(self):
+        return render_template('jeu.html')
     
 if __name__ == "__main__":
     
