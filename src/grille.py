@@ -82,3 +82,4 @@ if __name__ == "__main__" :
     grille.put_entree()
     grille.put_tresor()
     grille.affichage()
+    
