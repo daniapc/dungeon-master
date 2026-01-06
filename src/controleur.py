@@ -1,7 +1,7 @@
 from random import *
 from src.heros import *
 from src.grille import *
-from src.Objet.objet import Mur 
+from objet import Mur 
 
 SIZE_GRILLE = 16
 
