@@ -3,13 +3,57 @@
 https://getbootstrap.com/docs/5.3/layout/grid/ 
 -->
 
-<div class="container text-center">
-  <div class="row row-cols-2">
-    <div class="col">Column</div>
-    <div class="col">Column</div>
-    <div class="col">Column</div>
-    <div class="col">Column</div>
-  </div>
+<div class="container text-center mt-4">
+  <h2>Grid Display</h2>
+
+  <div id="grid-board"></div>
 </div>
+
+<script>
+  /**
+   * GEMINI used for getting the structure of script
+
+   * Fetches the 16x16 matrix from Flask and renders it using Bootstrap Grid
+   */
+  async function renderGrid() {
+    try {
+      const response = await fetch("/grille");
+      const matrix = await response.json();
+
+      const board = document.getElementById("grid-board");
+      board.innerHTML = ""; // Clear "Loading..." text
+
+      matrix.forEach((rowData) => {
+        const rowDiv = document.createElement("div");
+        // 'row' for Bootstrap logic, 'g-0' to remove gaps between cells
+        rowDiv.className = "row";
+
+        // 3. Iterate through each cell in the row (Inner Array)
+        rowData.forEach((case) => {
+          const caseDiv = document.createElement("div");
+          // 'col' automatically distributes 1/16th of the width
+          caseDiv.className = "col";
+
+          // 4. Apply styles directly from the JSON object
+          caseDiv.style.color = case.color;
+          caseDiv.style.fontWeight = case.weight;
+          caseDiv.innerText = case.symbol;
+          caseDiv.style.borderColor = 'red';
+
+          caseDiv.style.minHeight = "30px";
+
+          rowDiv.appendChild(caseDiv);
+        });
+
+        board.appendChild(rowDiv);
+      });
+    } catch (error) {
+      console.error("Error rendering grid:", error);
+    }
+  }
+
+  // Start the process once the HTML document is fully loaded
+  document.addEventListener("DOMContentLoaded", renderGrid);
+</script>
 
 {% endblock %}
