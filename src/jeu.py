@@ -9,10 +9,7 @@ from src.enums.mode import Mode
 from src.log import Log
 from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
-<<<<<<< HEAD
-=======
 from src.params import *
->>>>>>> first_part_game
 
 import io
 import logging
@@ -82,12 +79,6 @@ class Jeu(MethodView, object):
             if user_input == 'Q' :
                 print("Fermeture du donjon")
                 os._exit(0)
-<<<<<<< HEAD
-             
-    # flask method   
-    def get(self):
-        return render_template('jeu.html')
-=======
             elif user_input == 'L' :
                 message = "Première vague"
             else :
@@ -128,7 +119,6 @@ class Jeu(MethodView, object):
             
             # if action.upper() == 'N':
             #     os._exit(0)
->>>>>>> first_part_game
     
 if __name__ == "__main__":
     
