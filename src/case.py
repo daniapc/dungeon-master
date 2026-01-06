@@ -55,4 +55,4 @@ class Case :
         elif self.is_tresor() :
             return "T"
         else :
-            return "."
+            return "·"
