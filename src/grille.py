@@ -53,4 +53,9 @@ class Grille :
                 str_row += case.affichage()
             print(str_row)
 
-    
+
+if __name__ == "__main__" :
+    grille = Grille()
+    grille.put_entree()
+    grille.put_tresor()
+    grille.affichage()
