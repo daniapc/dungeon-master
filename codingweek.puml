@@ -1,0 +1,134 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+abstract class Objet{
+- pos
++ get_pos()
+}
+
+class Mur{
+- pos
++ get_cout()
++affichage_mur()
+}
+
+interface Piege{
+- pos
+- difficulte
+- active
++ set_difficulte()
++ get_difficulte()
++ is_active()
++ {abstract} degat()
+}
+
+class Piege_1{
+- pos
+- difficulte
+- active
++ get_cout()
++affichage()
+}
+
+class Piege_2{
+- pos
+- difficulte
+- active
++ get_cout()
++affichage()
+}
+
+class Piege_3{
+- pos
+- difficulte
+- active
++ get_cout()
++affichage()
+}
+
+class Case{
+- List objets
+- Bool entree
+- Bool tresor
++ get_objets()
++ add_objet()
++ remove_objet()
++ set_entree()
++ set_tresor()
++ rm_entree()
++ rm_tresor()
++ is_entree()
++ is_tresor()
++ has_hero()
++ affichage_case()
+}
+
+Class Controleur{
+- List<Heros> l_heros
+- Grille grille
++get_liste()
++get_grille()
++peut_deplacer()
++depl_alea()
++depl_alea_heros()
+}
+
+Class DmgVisitor{
++ visit(obj, i)
+}
+
+Class Grille{
+- List<List<Case>>
++ put_entree()
++ put_tresor()
++ get_entree()
++ get_tresor()
++ get_grille()
++ print_terrain()
++ affichage()
+}
+
+Class Heros{
+- pos
+- pv
++ get_pv()
++ get_pos()
++ isdead()
++ deplace()
++ degat()
++ affichage()
+}
+
+Class Jeu{
+- Jeu instance
++ get()
++set_mode()
++ get_mode()
++ log()
++ terminal_loop()
+}
+
+Class Log{
+- log_stream
++ set_log_stream(lg)
++ get()
+}
+
+Objet <|-- Mur
+Objet <|-- Piege
+Piege <|-- Piege_1
+Piege <|-- Piege_2
+Piege <|-- Piege_3
+
+Controleur --> "1, *" Heros
+Controleur --> "1" Grille
+
+Objet -.-> DmgVisitor
+Heros -.-> DmgVisitor
+
+Grille --> "1, *" Case
+
+Jeu --> Jeu
+
+
+@enduml

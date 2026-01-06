@@ -10,12 +10,11 @@ class Objet:
 class Mur(Objet):
     def __init__(self, x, y):
         super().__init__(x,y)
-        self.cout = 5
     
     def get_cout(self):
-        return self.cout
+        return 5
 
-    def affichage_mur(self):
+    def affichage(self):
         return "#"
 
 class Piege(Objet):
@@ -24,53 +23,65 @@ class Piege(Objet):
         self.difficulte = 1
         self.active = True
     
+    def set_difficulte(self, i):
+        self.difficulte = i
+    
+    def get_difficulte(self):
+        return self.difficulte
+    
+    def is_active(self):
+        return self.active
+    
     @abstractmethod
     def degat(self)->int: pass
 
 
 class Piege_1(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
-        self.cout = self.difficulte * 10
+    def __init__(self, x, y):
+        super().__init__(x,y)
     
     def get_cout(self):
-        return self.cout
+        return self.difficulte * 10
     
     def degat(self):
-        self.active = False
-        return 10 * self.difficulte
+        if self.is_active():
+            self.active = False
+            return 10 * self.difficulte
     
     def affichage(self):
         return "_"
 
 class Piege_2(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
-        self.cout = self.difficulte * 10
+    def __init__(self, x, y):
+        super().__init__(x,y)
         self.num_max_attaque = 2
     
     def get_cout(self):
-        return self.cout
+        return self.difficulte * 15
     
     def degat(self):
-        if self.num_max_attaque > 0:
-            self.num_max_attaque -= 1
+        if self.is_active():
+            if self.num_max_attaque > 1:
+                self.num_max_attaque -= 1
+            else:
+                self.active = False
+            
             return 10 * self.difficulte
 
     def affichage(self):
         return "^"
     
 class Piege_3(Piege):
-    def __init__(self, x, y, difficulte):
-        super().__init__(x,y,difficulte)
-        self.cout = self.difficulte * 10
+    def __init__(self, x, y):
+        super().__init__(x,y)
     
     def get_cout(self):
-        return self.cout
+        return self.difficulte * 30
     
     def degat(self):
-        self.active = False
-        return 30 * self.difficulte
+        if self.is_active():
+            self.active = False
+            return 30 * self.difficulte
 
     def affichage(self):
         return "¤"
