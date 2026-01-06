@@ -1,3 +1,4 @@
-#caseDiv{
-    border-color: red;
+.caseDiv{
+    border: 1px solid grey;
+    background-color: rgb(20, 0, 39);
 }

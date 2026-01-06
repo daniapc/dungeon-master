@@ -54,11 +54,11 @@ class Jeu(MethodView, object):
         while True:
             os.system('cls' if os.name == 'nt' else 'clear')
             
-            self.grille.put_entree()
-            self.grille.put_tresor()
             self.grille.affichage()
             
             action = input("Continue? Y/N ")
+            self.grille.put_entree()
+            self.grille.put_tresor()
             
             self.log("Action: " + action)
             

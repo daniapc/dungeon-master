@@ -86,9 +86,7 @@ class Grille(MethodView):
         self = self.instance
         
         terrain_array = []        
-        
-        tresor = self.get_tresor()
-        
+                
         for row in self.terrain:
             row_array = []
             

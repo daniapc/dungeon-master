@@ -10,51 +10,9 @@ https://getbootstrap.com/docs/5.3/layout/grid/
   <div id="grid-board"></div>
 </div>
 
-<script>
-  /**
-   * GEMINI used for getting the structure of script
-
-   * Fetches the 16x16 matrix from Flask and renders it using Bootstrap Grid
-   */
-  async function renderGrid() {
-    try {
-      const response = await fetch("/grille");
-      const matrix = await response.json();
-
-      const board = document.getElementById("grid-board");
-      board.innerHTML = ""; // Clear "Loading..." text
-
-      matrix.forEach((rowData) => {
-        const rowDiv = document.createElement("div");
-        // 'row' for Bootstrap logic, 'g-0' to remove gaps between cells
-        rowDiv.className = "row";
-
-        // 3. Iterate through each cell in the row (Inner Array)
-        rowData.forEach((cellData) => {
-          const caseDiv = document.createElement("div");
-          // 'col' automatically distributes 1/16th of the width
-          caseDiv.className = "col";
-          caseDiv.id = "caseDiv";
-
-          // 4. Apply styles directly from the JSON object
-          caseDiv.style.color = cellData.color;
-          caseDiv.style.fontWeight = cellData.weight;
-          caseDiv.innerText = cellData.symbol;
-
-          caseDiv.style.minHeight = "30px";
-
-          rowDiv.appendChild(caseDiv);
-        });
-
-        board.appendChild(rowDiv);
-      });
-    } catch (error) {
-      console.error("Error rendering grid:", error);
-    }
-  }
-
-  // Start the process once the HTML document is fully loaded
-  document.addEventListener("DOMContentLoaded", renderGrid);
-</script>
+<script
+  src="{{ url_for('static', filename='js/renderGrille.js') }}"
+  defer
+></script>
 
 {% endblock %}
