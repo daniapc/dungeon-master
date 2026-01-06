@@ -1,6 +1,7 @@
 from pytest import *
 from src.heros import *
 from src.dmg_visitor import *
+from src.controleur import convertit_depl
 
 def test_init():
     heros = Heros((0,0))
