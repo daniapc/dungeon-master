@@ -2,6 +2,7 @@
 <!--
 https://getbootstrap.com/docs/5.3/layout/grid/ 
 -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jeu.css') }}" />
 
 <div class="container text-center mt-4">
   <h2>Grid Display</h2>
@@ -29,16 +30,16 @@ https://getbootstrap.com/docs/5.3/layout/grid/
         rowDiv.className = "row";
 
         // 3. Iterate through each cell in the row (Inner Array)
-        rowData.forEach((case) => {
+        rowData.forEach((cellData) => {
           const caseDiv = document.createElement("div");
           // 'col' automatically distributes 1/16th of the width
           caseDiv.className = "col";
+          caseDiv.id = "caseDiv";
 
           // 4. Apply styles directly from the JSON object
-          caseDiv.style.color = case.color;
-          caseDiv.style.fontWeight = case.weight;
-          caseDiv.innerText = case.symbol;
-          caseDiv.style.borderColor = 'red';
+          caseDiv.style.color = cellData.color;
+          caseDiv.style.fontWeight = cellData.weight;
+          caseDiv.innerText = cellData.symbol;
 
           caseDiv.style.minHeight = "30px";
 
