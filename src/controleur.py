@@ -1,9 +1,8 @@
 from random import *
 from src.heros import *
 from src.grille import *
-from objet import Mur 
-
-SIZE_GRILLE = 16
+from src.objet import Mur 
+from src.params import *
 
 class Controleur:
     def __init__(self, l_heros, grille, ):

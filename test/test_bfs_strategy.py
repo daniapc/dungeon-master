@@ -1,6 +1,4 @@
 import pytest
-from src.ia_strategy import *
-
 from src.ia_strategy import BFS
 
 # --- FONCTION UTILITAIRE (Fixture) ---

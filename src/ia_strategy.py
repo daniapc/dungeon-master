@@ -21,12 +21,12 @@ class BFS(IA_Stategy):
             voisins.append((pos[0], pos[1]-1))
         return voisins
     
-    def applique_stategie(self, grille):
+    def cherche_chemin(self, grille):
         xe, xy = grille.get_entree()
         E = (xe, xy)
         xt, yt = grille.get_tresor()
         T = (xt, yt)
-        
+
         p = {E: None}
         q = deque()
         chemin_trouve = False
