@@ -4,8 +4,8 @@ SIZE_GRILLE = 16
 
 
 class Heros():
-    def __init__(self, pos):
-        self.pos = pos
+    def __init__(self, x,y):
+        self.pos = (x,y)
         self.pv = 100
     
     def get_pv(self):
@@ -25,7 +25,7 @@ class Heros():
         self.pos[0] += i
         self.pos[1] += j
 
-    def degats(self, n):
+    def degat(self, n):
         if(self.pv < n):
             self.pv = 0
         else:
