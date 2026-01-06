@@ -67,5 +67,5 @@ class ConstructeurDonjon :
             return False, "Case déjà vide"
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
-        self.grille.get_case(i ,j).get_objets().remove_objet(self.grille.get_grille().get_case(i ,j).get_objets()[0])
+        self.grille.get_case(i ,j).get_objets().remove_objet(self.grille.get_case(i ,j).get_objets()[0])
         return True
