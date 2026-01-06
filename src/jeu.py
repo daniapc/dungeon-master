@@ -9,6 +9,10 @@ from src.enums.mode import Mode
 from src.log import Log
 from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
+<<<<<<< HEAD
+=======
+from src.params import *
+>>>>>>> first_part_game
 
 import io
 import logging
@@ -52,24 +56,79 @@ class Jeu(MethodView, object):
 
     def terminal_loop(self):
         time.sleep(1)  
-        
+
+        self.constructeur = ConstructeurDonjon(self.grille)
+        message = "Bienvenue Maitre du Donjon de la mort qui tue"
+
         while True:
             os.system('cls' if os.name == 'nt' else 'clear')
             
+            print("=== Crée ton Donjon ===")
+            print(f"{message}")
+            print(f"Budget : {self.constructeur.get_budget()}")
+            print("")
+
             self.grille.affichage()
             
-            action = input("Continue? Y/N ")
-            self.grille.put_entree()
-            self.grille.put_tresor()
-            
-            self.log("Action: " + action)
-            
-            if action.upper() == 'N':
+            print("\nCommandes :")
+            print(f"M x,y     :   Placer Mur ({PRIX_MUR} fleurs)")
+            print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
+            print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
+            print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
+            print(f"L         :   Lancer la vague")
+            print(f"Q         :   Quitter")
+
+            user_input = input("\nCommande >").strip().upper()
+            if user_input == 'Q' :
+                print("Fermeture du donjon")
                 os._exit(0)
+<<<<<<< HEAD
              
     # flask method   
     def get(self):
         return render_template('jeu.html')
+=======
+            elif user_input == 'L' :
+                message = "Première vague"
+            else :
+                try :
+                    cmd = user_input.split()
+                    if len(cmd) < 2 :
+                        message = "Format de commande invalide"
+                        continue 
+                    commande = cmd[0]
+                    coor = cmd[1].split(',')
+                    i = int(coor[0])
+                    j = int(coor[1])
+                    succes = False 
+                    msg = ""
+                    if commande == 'M' :
+                        succes, msg = self.constructeur.put_mur(i, j)
+                    elif commande == 'P1' :
+                        succes, msg = self.constructeur.put_piege(i, j, 1)
+                    elif commande == 'P2' :
+                        succes, msg = self.constructeur.put_piege(i, j, 2)
+                    elif commande == 'P3' :
+                        succes, msg = self.constructeur.put_piege(i, j, 3)
+                    elif commande == 'R' :
+                        succes, msg = self.constructeur.rm_objet(i, j)
+                    else :
+                        msg = "Commande inconnue"
+                    message = msg
+
+                except ValueError :
+                    message = "Erreur : Coordonnées invalides"
+                except Exception as e :
+                    message = f"Erreur : {e}"
+
+            # self.grille.put_entree()
+            # self.grille.put_tresor()
+            
+            # self.log("Action: " + action)
+            
+            # if action.upper() == 'N':
+            #     os._exit(0)
+>>>>>>> first_part_game
     
 if __name__ == "__main__":
     

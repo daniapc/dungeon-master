@@ -1,9 +1,12 @@
 DEGAT_PIEGE = 10
-COUT_MUR = 5
-COUT_PIEGE = 10
 SIZE_GRILLE = 16
 
 BUDGET_INITIAL = 500
+
+PRIX_MUR = 1
+PRIX_P1 = 2 
+PRIX_P2 = 3
+PRIX_P3 = 4
 
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"

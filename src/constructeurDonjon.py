@@ -30,7 +30,7 @@ class ConstructeurDonjon(MethodView):
     
     def is_empty(self, i, j) :
         case = self.grille.get_case(i, j)
-        if case.is_entree() | case.is_tresor() | len(case.objets) > 0 :
+        if case.is_entree() or case.is_tresor() or len(case.objets) > 0 :
             return False 
         return True
 
@@ -44,9 +44,9 @@ class ConstructeurDonjon(MethodView):
         if self.budget >= cout :
             self.grille.get_case(i, j).add_objet(mur)
             self.budget -= cout 
-            return True
+            return True, "Mur placé"
         else :
-            return False
+            return False, "Budget insuffisant"
     
     def put_piege(self, i, j, type_piege) :
         if not self.is_in_grid(i, j) :
@@ -63,9 +63,9 @@ class ConstructeurDonjon(MethodView):
         if self.budget >= cout :
             self.grille.get_case(i, j).add_objet(piege)
             self.budget -= cout 
-            return True
+            return True, f"Piège {type_piege} placé"
         else :
-            return False
+            return False, "Budget insuffisant"
         
     def rm_objet(self, i, j) :
         if not self.is_in_grid(i, j) :
