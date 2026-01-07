@@ -209,7 +209,7 @@ def boucle_jeu(controleur):
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
         controleur.get_grille().affichage()
-        score = controleur.set_score()
+        score = controleur.get_score()
         print(f"Tour de {joue}")
         print(f"Vague : {controleur.get_vague()}                        Score : {score}")
         positions = ""
