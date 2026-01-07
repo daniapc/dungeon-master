@@ -1,4 +1,4 @@
-from src.Objet.objet import *
+from src.objet import *
 
 def creation():
     m = Mur(1,1)

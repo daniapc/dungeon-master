@@ -1,7 +1,7 @@
 from src.controleur import *
 
 def test_deplacement():
-    heros = Heros(0,0)
+    heros = Heros(0,0,[])
     grille = Grille()
     mur = Mur(0,1)
     grille.get_grille()[0][1].add_objet(mur)
