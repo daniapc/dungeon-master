@@ -128,10 +128,41 @@ class Grille(MethodView):
         
         return terrain_array
         
-
-if __name__ == "__main__" :
-    grille = Grille()
-    grille.put_entree()
-    grille.put_tresor()
-    grille.affichage()
+    def to_dict(self) :
+        data_cases  = []
+        for i in range(len(self.terrain)) :
+            for j in range(len(self.terrain[0])) :
+                case = self.terrain[i][j]
+                if len(case.objets) > 0 :
+                    objet = case.objets[0]
+                    type_obj = type(objet).__name__ 
+                    data_objet = {
+                        "x" : i,
+                        "y" : j,
+                        "type" : type_obj
+                    }
+                    data_cases.append(data_objet)
+        return {
+            "entree" : self.pos_entree,
+            "tresor" : self.pos_tresor,
+            "objets" : data_cases
+        }
     
+    def from_dict(self, data, fabrique_mur, fabrique_pieges) :
+        self.reset()
+        self.pos_entree = data["entree"]
+        self.pos_tresor = data["tresor"]
+        self.terrain[self.pos_entree[0]][self.pos_entree[1]].set_entree()
+        self.terrain[self.pos_tresor[0]][self.pos_tresor[1]].set_tresor()
+        for data_objet in data["objets"] :
+            x, y = data_objet["x"], data_objet["y"]
+            type_obj = data_objet["type"]
+            if type_obj == "Mur" :
+                objet = fabrique_mur.fabrique_Objet(x, y)
+            elif type_obj == "Piege_1" :
+                objet = fabrique_pieges[0].fabrique_Objet(x, y)
+            elif type_obj == "Piege_2" :
+                objet = fabrique_pieges[1].fabrique_Objet(x, y)
+            elif type_obj == "Piege_3" :
+                objet = fabrique_pieges[2].fabrique_Objet(x, y)
+            self.terrain[x][y].add_objet(objet)
