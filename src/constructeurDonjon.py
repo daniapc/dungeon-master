@@ -98,7 +98,7 @@ class ConstructeurDonjon(MethodView):
                 
             return {"status": "success", "message": "Case mise a jour", "budget": self.instance.get_budget()}, 200 
     
-        return {"status": "ignored", "message": "Nothing happened"}, 200
+        return {"status": "ignored", "message": "Nothing happened", "budget": self.instance.get_budget()}, 200
 
     # N'EST PAS REBATISER OU SUPPRIMER
     def delete(self):
@@ -112,7 +112,7 @@ class ConstructeurDonjon(MethodView):
         if success:
             return {"status": "success", "message": message, "budget": self.instance.get_budget()}, 200 
         
-        return {"status": "ignored", "message": message}, 200 
+        return {"status": "ignored", "message": message, "budget": self.instance.get_budget()}, 200 
     
     def get(self):        
         objet = request.args.get('objet')
