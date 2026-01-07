@@ -8,8 +8,6 @@ from src.params import *
 import time
 import os
 
-SIZE_GRILLE = 16
-
 class Controleur:
     def __init__(self, grille, ):
         self.l_heros = []
@@ -45,8 +43,8 @@ class Controleur:
         global SIZE_GRILLE
         k = self.l_heros[indice].pos[0]
         l = self.l_heros[indice].pos[1]
-        if((0 <= k+i <= SIZE_GRILLE-1) and (0 <= l+j <= SIZE_GRILLE-1)):
-            case = self.grille.get_grille()[k+i][l+j].get_objets()
+        if((0 <= k+i < SIZE_GRILLE) and (0 <= l+j < SIZE_GRILLE)):
+            case = self.grille.get_case(k+i, l+j).get_objets()
             for elt in case:
                 if isinstance(elt, Mur):
                     return False
@@ -145,10 +143,11 @@ def boucle_jeu(controleur):
     joue = "Héros"
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"         === Vague : {controleur.get_vague()} ===")
         controleur.get_grille().affichage()
         score = controleur.set_score()
         print(f"Tour de {joue}")
-        print(f"Vague : {controleur.get_vague()}                        Score : {score}")
+        print(f"Score : {score}")
         positions = ""
         for i in range(len(controleur.get_liste())):
             positions += "Position héros " + str(i+1) + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
@@ -172,6 +171,10 @@ def boucle_jeu(controleur):
         elif action == 'Q' :
                 controleur.partie = False
                 controleur.set_score_final(controleur.get_score())
+                for indice in range(len(controleur.l_heros)) :
+                    k = controleur.l_heros[indice].pos[0]
+                    l = controleur.l_heros[indice].pos[1]
+                    controleur.grille.get_case(k,l).remove_heros(controleur.l_heros[indice])
                 return("Q")
         elif action == 'S':
             #sauvegarder la partie
@@ -183,11 +186,10 @@ def boucle_jeu(controleur):
 
 
 
-def vagues(grille):
+def lancer_vagues(grille):
     controleur = Controleur(grille)
     boucle = True
     while(boucle and controleur.get_vague() <= 3):
-        os.system('cls' if os.name == 'nt' else 'clear')
         controleur.vague_jeu()
         arrivee = boucle_jeu(controleur)
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -206,6 +208,7 @@ def vagues(grille):
             controleur.aug_vague()
         elif action == "S" and arrivee != "S":
             print("Partie sauvegardée.")
+            time.sleep(3)
             boucle = False
             #sauvegarder
             pass
@@ -220,4 +223,4 @@ if __name__ == "__main__":
     grille = Grille()
     grille.put_entree()
     grille.put_tresor()
-    vagues(grille)
+    lancer_vagues(grille)

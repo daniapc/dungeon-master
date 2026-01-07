@@ -9,6 +9,7 @@ from src.enums.mode import Mode
 from src.log import Log
 from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
+from src.controleur import *
 from src.params import *
 
 import io
@@ -72,6 +73,7 @@ class Jeu(MethodView, object):
             print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
             print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
+            print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
             print(f"Q         :   Quitter")
 
@@ -80,7 +82,9 @@ class Jeu(MethodView, object):
                 print("Fermeture du donjon")
                 os._exit(0)
             elif user_input == 'L' :
-                message = "Première vague"
+                time.sleep(1)
+                lancer_vagues(self.grille)
+                message = "Retour à la construction"
             else :
                 try :
                     cmd = user_input.split()
