@@ -1,6 +1,6 @@
-from params import *
-from heros import *
-from objet import *
+from src.params import *
+from src.heros import *
+from src.objet import *
 
 class Case :
 
