@@ -1,5 +1,6 @@
 import pytest
 from src.ia_strategy import BFS
+from src.controleur import *
 
 # --- FONCTION UTILITAIRE (Fixture) ---
 # Ce décorateur permet de réutiliser cette logique dans tous les tests
@@ -29,7 +30,6 @@ def preparer_grille(mocker):
     
     return _constructeur
 
-# --- LES TESTS ---
 
 def test_bfs_chemin_direct(preparer_grille):
     """Vérifie un chemin simple sans obstacles"""
@@ -37,7 +37,7 @@ def test_bfs_chemin_direct(preparer_grille):
     grille = preparer_grille(start=(0,0), end=(0,2), murs=[])
     
     algo = BFS()
-    chemin = algo.applique_stategie(grille)
+    chemin = algo.cherche_chemin(grille)
     
     assert chemin == [(0,0), (0,1), (0,2)]
 
@@ -48,7 +48,7 @@ def test_bfs_contournement_mur(preparer_grille):
     grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
     
     algo = BFS()
-    chemin = algo.applique_stategie(grille)
+    chemin = algo.cherche_chemin(grille)
     
     # Assertions simples et lisibles
     assert chemin is not None
@@ -59,11 +59,27 @@ def test_bfs_contournement_mur(preparer_grille):
 def test_bfs_impossible(preparer_grille):
     """Vérifie le cas où le trésor est inaccessible"""
     # On enferme le départ avec des murs autour de (0,0)
-    # (Supposons que les voisins sont (0,1), (1,0) etc.)
+    # (Supposons que les voisins sont (0,1), (1,0), (1,1))
     murs_bloquants = [(0, 1), (1, 0), (1, 1)] 
     grille = preparer_grille(start=(0,0), end=(5,5), murs=murs_bloquants)
     
     algo = BFS()
-    chemin = algo.applique_stategie(grille)
+    chemin = algo.cherche_chemin(grille)
     
     assert chemin is None or chemin == []
+
+def test_deplacer_heros():
+    murs = [(0, 1)]
+    grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
+    h = Heros(0,0)
+    ctr = Controleur([h], grille)
+
+    algo = BFS()
+    chemin = algo.cherche_chemin(grille)
+
+    ctr.set_strategie(algo)
+    ctr.execute_strategie()
+
+    assert h.get_pos() == (0,2)
+
+

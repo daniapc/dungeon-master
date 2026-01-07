@@ -57,3 +57,15 @@ class BFS(IA_Stategy):
         else:
             return None
     
+    def applique_stategie(self, grille):
+        chemin = self.cherche_chemin(grille)
+        if chemin is None:
+            return None
+        l_depl = list()
+        for i in range(1,len(chemin)):
+            a = chemin[i], b = chemin[i-1]
+            depl = (a[0] - b[0], a[1] - b[1])
+            l_depl.append(depl)
+        
+        return l_depl
+

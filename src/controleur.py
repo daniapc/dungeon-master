@@ -3,11 +3,13 @@ from src.heros import *
 from src.grille import *
 from src.objet import Mur 
 from src.params import *
+from src.ia_strategy import *
 
 class Controleur:
-    def __init__(self, l_heros, grille, ):
+    def __init__(self, l_heros, grille):
         self.l_heros = l_heros
         self.grille = grille
+        self.strategie = None
 
     def get_liste(self):
         return self.l_heros
@@ -15,6 +17,17 @@ class Controleur:
     def get_grille(self):
         return self.grille
     
+    def set_strategie(self, strategie):
+        self.strategie = strategie
+    
+    def execute_strategie(self):
+        if self.strategie is None:
+            return
+        
+        l_depl = self.strategie.applique_straegie(self.grille)
+
+        self.depl(l_depl)
+
     def peut_deplacer(self, i, j, indice):
         k = self.l_heros[indice].pos[0]
         l = self.l_heros[indice].pos[1]
@@ -42,6 +55,25 @@ class Controleur:
                 self.l_heros[indice].pos = (k+i, l+j)
                 self.grille[k][l].add_objet(self)
                 boucle = False
+
+    def depl_heros(self, indice, l_depl):
+        if l_depl is None:
+            return
+        h = self.get_liste()[indice]
+
+        for depl in l_depl:
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+            h.deplace(depl[0], depl[1])
+
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl(self, l_depl):
+        for i in range(len(self.l_heros)):
+            self.depl_heros(i, l_depl)
+    
 
 
 def convertit_depl(n):
