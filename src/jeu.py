@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 # https://flask.palletsprojects.com/en/stable/views/
 from flask.views import MethodView
 
@@ -120,13 +120,42 @@ class Jeu(MethodView, object):
             # if action.upper() == 'N':
             #     os._exit(0)
             
-    # N'EST PAS RETIRER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
+    def setup(self):
+        grille = Grille()
+        grille.put_entree()
+        grille.put_tresor()
+        self.set_grille(grille)
+        
+        constrDonjon = ConstructeurDonjon(grille=grille)
+        self.set_constrDonjon(constrDonjon)
+            
+        app.add_url_rule("/", view_func=Jeu.as_view("jeu"), methods=['GET', 'POST'])
+        app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
+        app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
+        app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
+            grille=grille, instance=constrDonjon), methods=['GET', 'POST', 'DELETE'])
+    
+    # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
     def get(self):
         return render_template('jeu.html')
     
-if __name__ == "__main__":
+    def post(self):
+        data = request.json
+        
+        action = data['action']
+        
+        if action == 'quitter':
+            self.grille.reset()
+            self.grille.put_entree()
+            self.grille.put_tresor()
+            
+            return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
     
+        return {"status": "ignored", "message": "Nothing happened"}, 200
+            
+        
+if __name__ == "__main__":
     is_prod = os.environ.get('APP_ENV') == 'prod'
     
     mode = Mode.WEB.value if is_prod else input(
@@ -134,17 +163,9 @@ if __name__ == "__main__":
     
     jeu = Jeu()
     jeu.set_mode(Mode(int(mode)))
+    jeu.setup()
     
-    grille = Grille()
-    grille.put_entree()
-    grille.put_tresor()
-    jeu.set_grille(grille)
-    
-    constrDonjon = ConstructeurDonjon(grille=grille)
-    jeu.set_constrDonjon(constrDonjon)
-        
-    # (day_1)
-    # GEMINI { 
+    # GEMINI { # (day_1)
     thread_terminal = threading.Thread(
             target=jeu.terminal_loop, 
             daemon=True
@@ -153,13 +174,6 @@ if __name__ == "__main__":
     
     if (jeu.mode == Mode.TER):    
         thread_terminal.start()
-    
-    app.add_url_rule("/", view_func=Jeu.as_view("jeu"))
-    app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
-    app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
-    app.add_url_rule(
-        "/constrdonjon", 
-        view_func=ConstructeurDonjon.as_view("constrdonjon", grille=grille, instance=constrDonjon))
        
     app.run(
         host='0.0.0.0', 

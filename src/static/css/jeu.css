@@ -33,9 +33,13 @@
     margin-bottom: 40px;
 }
 
-.selectionSidebar {
-
+.sideBar {
     max-width: 120px;
+}
+
+
+.controlSidebar {
+    padding-top: 10px;
 }
 
 .selectionSidebar .btn.palid{

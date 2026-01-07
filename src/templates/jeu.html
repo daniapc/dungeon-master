@@ -17,23 +17,37 @@ https://getbootstrap.com/docs/5.3/layout/grid/
   </div>
 
   <div class="row">
-    <div class="col selectionSidebar">
-      <div
-        class="btn-group-vertical"
-        role="group"
-        aria-label="Vertical button group"
-      >
-        <button type="button" class="btn btn-primary" data-type="mur">
-          Mur
+    <div class="col sideBar">
+      <div class="row selectionSidebar">
+        <div
+          class="btn-group-vertical"
+          role="group"
+          aria-label="Vertical button group"
+        >
+          <button type="button" class="btn btn-primary" data-type="mur">
+            Mur
+          </button>
+          <button type="button" class="btn btn-primary" data-type="piege 1">
+            Piège _
+          </button>
+          <button type="button" class="btn btn-primary" data-type="piege 2">
+            Piège ^
+          </button>
+          <button type="button" class="btn btn-primary" data-type="piege 3">
+            Piège ¤
+          </button>
+          <button type="button" class="btn btn-danger" data-type="supprimer">
+            Supprimer
+          </button>
+        </div>
+      </div>
+
+      <div class="row controlSidebar">
+        <button type="button" class="btn btn-success" data-type="lancer">
+          Lancer la vague
         </button>
-        <button type="button" class="btn btn-primary" data-type="piege 1">
-          Piège _
-        </button>
-        <button type="button" class="btn btn-primary" data-type="piege 2">
-          Piège ^
-        </button>
-        <button type="button" class="btn btn-primary" data-type="piege 3">
-          Piège ¤
+        <button type="button" class="btn btn-danger" data-type="quitter">
+          Quitter
         </button>
       </div>
     </div>

@@ -75,7 +75,7 @@ class ConstructeurDonjon(MethodView):
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
         self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
-        return True
+        return True, "Objet supprimé"
     
     def post(self):
         data = request.json
@@ -95,4 +95,17 @@ class ConstructeurDonjon(MethodView):
                 
             return {"status": "success", "message": "Case mise a jour"}, 200 
     
-        return {"status": "ignored", "message": "Nothing rappened"}, 200
+        return {"status": "ignored", "message": "Nothing happened"}, 200
+    
+    def delete(self):
+        data = request.json
+        
+        coord_x = int(data['x'])
+        coord_y = int(data['y'])
+        
+        success, message = self.rm_objet(coord_y, coord_x)
+        
+        if success:
+            return {"status": "success", "message": message}, 200 
+        
+        return {"status": "ignored", "message": message}, 200 
