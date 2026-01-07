@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Error fetching budget:", e);
     }
 
-
     /* ===============================
      SELECTION BUTTONS
       ================================ */ 
@@ -105,4 +104,38 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     }
+
+    const continuerButton = document.querySelector('[data-type="lancer"]');
+    if (continuerButton) {
+        continuerButton.addEventListener("click", async () => {
+            
+            const payload = { action: "lancer" };
+            
+            try {
+                const response = await fetch(`/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+    
+                if (response.ok) {
+                    result = await response.json();
+
+                    joue = result['joue'];
+                    score = result['score'];
+
+                    document.querySelector('.infoBar .joue').innerText = joue;
+                    document.querySelector('.infoBar .score').innerText = score;
+
+                    await renderGrille();                    
+                    await infoBarCards();                    
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
 });

@@ -9,6 +9,7 @@ from src.enums.mode import Mode
 from src.log import Log
 from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
+from src.controleur import Controleur
 from src.params import *
 
 import io
@@ -117,12 +118,18 @@ class Jeu(MethodView, object):
         self.grille = grille
         
         self.constructeur = ConstructeurDonjon(grille=grille)
+        
+        controleur = Controleur(grille=grille)
+        controleur.vague_jeu()
+        self.controleur = controleur
                     
         app.add_url_rule("/", view_func=Jeu.as_view("jeu"), methods=['GET', 'POST'])
         app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
         app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
             grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
+        app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
+            grille=grille, instance=controleur))
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
@@ -142,6 +149,23 @@ class Jeu(MethodView, object):
             self.constructeur.set_budget(BUDGET_INITIAL)
             
             return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
+        elif action == 'lancer':
+            controleur = self.controleur
+            
+            if controleur.get_tour() == 0:
+                controleur.check_collisions()
+                joue = "Héros"
+            else:
+                controleur.depl_alea()
+                joue = "Donjon"
+            score = controleur.set_score()
+            controleur.change_tour()
+            
+            return {"status": "success", 
+                    "message": "Le jeu a ete reseté",
+                    "joue": joue,
+                    "score": score
+                    }, 200 
     
         return {"status": "ignored", "message": "Nothing happened"}, 200
             

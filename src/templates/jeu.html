@@ -100,24 +100,22 @@
         <div class="panel-header">
           <i class="fa-solid fa-arrows-rotate"></i> Turn
         </div>
-        <div><small>Heros</small></div>
+        <div><small class="joue">Heros</small></div>
       </div>
       <div class="panel mb-3">
         <div class="panel-header">
           <i class="fa-regular fa-clock"></i> Vague
         </div>
-        <div><small>1</small></div>
+        <div><small class="vague">1</small></div>
       </div>
       <div class="panel mb-3">
         <div class="panel-header"><i class="fa-solid fa-star"></i> Score</div>
-        <div><small>100</small></div>
+        <div><small class="score">100</small></div>
       </div>
-      <div class="panel mb-3">
+      <div class="panel mb-3 heros">
         <div class="panel-header">
-          <i class="fa-solid fa-location-crosshairs"></i> Position Heros:
+          <i class="fa-solid fa-location-crosshairs"></i> Pos Héros (x,y)
         </div>
-        <div class="panel mb-3">1: (x, y)</div>
-        <div class="panel mb-3">2: (x, y)</div>
       </div>
     </div>
   </div>
@@ -129,6 +127,10 @@
 ></script>
 <script
   src="{{ url_for('static', filename='js/sideBarButtons.js') }}"
+  defer
+></script>
+<script
+  src="{{ url_for('static', filename='js/infoBarCards.js') }}"
   defer
 ></script>
 
