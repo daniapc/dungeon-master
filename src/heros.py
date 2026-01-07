@@ -1,5 +1,5 @@
 from random import *
-from src.observer import *
+from observer import *
 
 SIZE_GRILLE = 16
 
@@ -43,7 +43,7 @@ class Heros():
         else:
             self.pv -= n
     
-    def affichage(self):
+    def affichage():
         return("H")
     
     def notifyDeathObserver(self):
