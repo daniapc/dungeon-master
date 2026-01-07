@@ -68,18 +68,21 @@ def test_bfs_impossible(preparer_grille):
     
     assert chemin is None or chemin == []
 
-def test_deplacer_heros():
+def test_deplacer_heros(preparer_grille):
     murs = [(0, 1)]
     grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
     h = Heros(0,0)
     ctr = Controleur([h], grille)
+    ctr.update_compteur()
 
     algo = BFS()
     chemin = algo.cherche_chemin(grille)
 
     ctr.set_strategie(algo)
-    ctr.execute_strategie()
 
+    while h.get_pos() != (0,2):
+        ctr.execute_strategie()
+        ctr.update_compteur()
+        
     assert h.get_pos() == (0,2)
-
 

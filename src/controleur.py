@@ -10,6 +10,7 @@ class Controleur:
         self.l_heros = l_heros
         self.grille = grille
         self.strategie = None
+        self.compteur = 0
 
     def get_liste(self):
         return self.l_heros
@@ -20,13 +21,16 @@ class Controleur:
     def set_strategie(self, strategie):
         self.strategie = strategie
     
+    def update_compteur(self):
+        self.compteur +=1
+    
     def execute_strategie(self):
         if self.strategie is None:
             return
         
-        l_depl = self.strategie.applique_straegie(self.grille)
+        l_depl = self.strategie.applique_strategie(self.grille)
 
-        self.depl(l_depl)
+        self.depl_tour_all(l_depl, self.compteur)
 
     def peut_deplacer(self, i, j, indice):
         k = self.l_heros[indice].pos[0]
@@ -73,6 +77,27 @@ class Controleur:
     def depl(self, l_depl):
         for i in range(len(self.l_heros)):
             self.depl_heros(i, l_depl)
+    
+    def depl_tour(self, indice,l_depl, tour):
+        '''
+        tour est le compteur de tour
+        '''
+        if tour > len(l_depl):
+            return
+        h = self.get_liste()[indice]
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+        h.deplace(l_depl[tour-1][0], l_depl[tour-1][1])
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl_tour_all(self, l_depl, tour):
+        for i in range(len(self.l_heros)):
+            self.depl_tour(i, l_depl, tour)
+
     
 
 
