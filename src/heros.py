@@ -19,7 +19,15 @@ class Heros():
     
     def get_obs(self):
         return self.obs
-
+    
+    def get_state(self):
+        return self.state
+    
+    def get_score(self):
+        var = 0
+        for i in range(len(self.obs)):
+            var += self.obs[i].get_value()
+        return var
 
     def isdead(self):
         if self.pv == 0 and self.state == False:
@@ -34,8 +42,11 @@ class Heros():
         return False
         
     def deplace(self, i, j):
-        self.pos[0] += i
-        self.pos[1] += j
+        a = self.pos[0]
+        b = self.pos[1]
+        a += i
+        b += j
+        self.pos = (a,b)
 
     def degat(self, n):
         if(self.pv < n):
@@ -43,7 +54,7 @@ class Heros():
         else:
             self.pv -= n
     
-    def affichage(self):
+    def affichage():
         return("H")
     
     def notifyDeathObserver(self):

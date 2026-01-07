@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 # https://flask.palletsprojects.com/en/stable/views/
 from flask.views import MethodView
 
@@ -9,6 +9,7 @@ from src.enums.mode import Mode
 from src.log import Log
 from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
+from src.controleur import *
 from src.params import *
 
 import io
@@ -42,19 +43,14 @@ class Jeu(MethodView, object):
     def get_mode(self):
         return self.mode
     
-    def set_grille(self, gr):
-        self.grille = gr
-        
-    def set_constrDonjon(self, cd):
-        self.constructeurDonjon = cd
-    
     def log(self, message):
         logging.info(message)
 
     def terminal_loop(self):
         time.sleep(1)  
 
-        self.constructeur = ConstructeurDonjon(self.grille)
+        # Commented parce que le constructeur est deja initialisé a self.setup()
+        # self.constructeur = ConstructeurDonjon(self.grille)
         message = "Bienvenue Maitre du Donjon de la mort qui tue"
 
         while True:
@@ -72,6 +68,7 @@ class Jeu(MethodView, object):
             print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
             print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
+            print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
             print(f"Q         :   Quitter")
 
@@ -80,7 +77,10 @@ class Jeu(MethodView, object):
                 print("Fermeture du donjon")
                 os._exit(0)
             elif user_input == 'L' :
-                message = "Première vague"
+                time.sleep(1)
+                controleur = Controleur(self.grille, self.constructeur.get_budget())
+                lancer_vagues(controleur)
+                message = "Retour à la construction"
             else :
                 try :
                     cmd = user_input.split()
@@ -111,22 +111,70 @@ class Jeu(MethodView, object):
                     message = "Erreur : Coordonnées invalides"
                 except Exception as e :
                     message = f"Erreur : {e}"
-
-            # self.grille.put_entree()
-            # self.grille.put_tresor()
             
+            # TODO: improvement with logs, si on a des temps
             # self.log("Action: " + action)
             
-            # if action.upper() == 'N':
-            #     os._exit(0)
-            
-    # N'EST PAS RETIRER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
+    def setup(self):
+        grille = Grille()
+        grille.put_entree()
+        grille.put_tresor()
+        self.grille = grille
+        
+        self.constructeur = ConstructeurDonjon(grille=grille)
+        
+        controleur = Controleur(grille=grille)
+        controleur.vague_jeu()
+        self.controleur = controleur
+                    
+        app.add_url_rule("/", view_func=Jeu.as_view("jeu"), methods=['GET', 'POST'])
+        app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
+        app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
+        app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
+            grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
+        app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
+            grille=grille, instance=controleur))
+    
+    # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
     def get(self):
         return render_template('jeu.html')
     
-if __name__ == "__main__":
+    def post(self):
+        data = request.json
+        
+        action = data['action']
+        
+        if action == 'quitter':
+            self.grille.reset()
+            self.grille.put_entree()
+            self.grille.put_tresor()
+            
+            self.constructeur.set_budget(BUDGET_INITIAL)
+            
+            return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
+        elif action == 'lancer':
+            controleur = self.controleur
+            
+            if controleur.get_tour() == 0:
+                controleur.check_collisions()
+                joue = "Héros"
+            else:
+                controleur.depl_alea()
+                joue = "Donjon"
+            score = controleur.set_score()
+            controleur.change_tour()
+            
+            return {"status": "success", 
+                    "message": "Le jeu a ete reseté",
+                    "joue": joue,
+                    "score": score
+                    }, 200 
     
+        return {"status": "ignored", "message": "Nothing happened"}, 200
+            
+        
+if __name__ == "__main__":
     is_prod = os.environ.get('APP_ENV') == 'prod'
     
     mode = Mode.WEB.value if is_prod else input(
@@ -134,17 +182,9 @@ if __name__ == "__main__":
     
     jeu = Jeu()
     jeu.set_mode(Mode(int(mode)))
+    jeu.setup()
     
-    grille = Grille()
-    grille.put_entree()
-    grille.put_tresor()
-    jeu.set_grille(grille)
-    
-    constrDonjon = ConstructeurDonjon(grille=grille)
-    jeu.set_constrDonjon(constrDonjon)
-        
-    # (day_1)
-    # GEMINI { 
+    # GEMINI { # (day_1)
     thread_terminal = threading.Thread(
             target=jeu.terminal_loop, 
             daemon=True
@@ -153,13 +193,6 @@ if __name__ == "__main__":
     
     if (jeu.mode == Mode.TER):    
         thread_terminal.start()
-    
-    app.add_url_rule("/", view_func=Jeu.as_view("jeu"))
-    app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
-    app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
-    app.add_url_rule(
-        "/constrdonjon", 
-        view_func=ConstructeurDonjon.as_view("constrdonjon", grille=grille, instance=constrDonjon))
        
     app.run(
         host='0.0.0.0', 

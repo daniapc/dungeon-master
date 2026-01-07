@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from src.params import *
 
 class Objet:
     def __init__(self,x, y):
@@ -12,7 +13,7 @@ class Mur(Objet):
         super().__init__(x,y)
     
     def get_cout(self):
-        return 5
+        return PRIX_MUR
 
     def affichage(self):
         return "#"
@@ -35,13 +36,16 @@ class Piege(Objet):
     @abstractmethod
     def degat(self)->int: pass
 
+    @abstractmethod
+    def get_cout(self)->int: pass
+
 
 class Piege_1(Piege):
     def __init__(self, x, y):
         super().__init__(x,y)
     
     def get_cout(self):
-        return self.difficulte * 10
+        return PRIX_P1
     
     def degat(self):
         if self.is_active():
@@ -57,7 +61,7 @@ class Piege_2(Piege):
         self.num_max_attaque = 2
     
     def get_cout(self):
-        return self.difficulte * 15
+        return PRIX_P2
     
     def degat(self):
         if self.is_active():
@@ -76,7 +80,7 @@ class Piege_3(Piege):
         super().__init__(x,y)
     
     def get_cout(self):
-        return self.difficulte * 30
+        return PRIX_P3
     
     def degat(self):
         if self.is_active():
