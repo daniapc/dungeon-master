@@ -8,7 +8,7 @@ import os
 from src.ia_strategy import *
 
 class Controleur:
-    def __init__(self, grille, ):
+    def __init__(self, grille):
         self.l_heros = []
         self.grille = grille
         self.vague = 1

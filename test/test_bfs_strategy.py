@@ -71,8 +71,9 @@ def test_bfs_impossible(preparer_grille):
 def test_deplacer_heros(preparer_grille):
     murs = [(0, 1)]
     grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
-    h = Heros(0,0)
-    ctr = Controleur([h], grille)
+    h = Heros(0,0, [])
+    ctr = Controleur(grille)
+    ctr.ajouter_heros(h)
     ctr.update_compteur()
 
     algo = BFS()
