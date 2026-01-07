@@ -19,7 +19,9 @@ class Heros():
     
     def get_obs(self):
         return self.obs
-
+    
+    def get_state(self):
+        return self.state
 
     def isdead(self):
         if self.pv == 0 and self.state == False:

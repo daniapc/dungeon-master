@@ -9,7 +9,7 @@ abstract class Objet{
 class Mur{
 - pos
 + get_cout()
-+affichage_mur()
++affichage()
 }
 
 interface Piege{
@@ -27,6 +27,7 @@ class Piege_1{
 - difficulte
 - active
 + get_cout()
++ degat()
 +affichage()
 }
 
@@ -35,6 +36,7 @@ class Piege_2{
 - difficulte
 - active
 + get_cout()
++ degat()
 +affichage()
 }
 
@@ -43,6 +45,7 @@ class Piege_3{
 - difficulte
 - active
 + get_cout()
++ degat()
 +affichage()
 }
 
@@ -53,6 +56,7 @@ class Case{
 + get_objets()
 + add_objet()
 + remove_objet()
++ remove_heros(Heros heros)
 + set_entree()
 + set_tresor()
 + rm_entree()
@@ -60,17 +64,39 @@ class Case{
 + is_entree()
 + is_tresor()
 + has_hero()
-+ affichage_case()
++ has_mur()
++ affichage()
 }
 
 Class Controleur{
 - List<Heros> l_heros
 - Grille grille
+- int vague
+- int score
+- int score_final
+- int tour
+- bool partie
+- strategie
+- int compteur 
+- Fabrique_Heros fab
 +get_liste()
 +get_grille()
++ get_vague()
++ get_score()
++ get_tour()
++ get_partie()
++ get_fab()
++get_score_final()
 +peut_deplacer()
 +depl_alea()
 +depl_alea_heros()
++ ajouter_heros()
++ vague_jeu()
++ set_score()
++ check_collisions()
++ set_score_final()
++ aug_vague()
++ change_tour()
 }
 
 Class DmgVisitor{
@@ -84,28 +110,42 @@ Class Grille{
 + get_entree()
 + get_tresor()
 + get_grille()
++ get_case()
 + print_terrain()
 + affichage()
++ get()
 }
 
 Class Heros{
-- pos
-- pv
+- int, int pos
+- int pv
+- List<Observer> obs
+- bool state
 + get_pv()
 + get_pos()
++ get_obs()
++ get_state()
 + isdead()
-+ deplace()
-+ degat()
++at_treasure(int x, int y)
++ deplace(int i, int j)
++ degat(int n)
 + affichage()
++ notifyDeathObserver()
++ notifyTreasureObserver()
 }
 
 Class Jeu{
 - Jeu instance
-+ get()
-+set_mode()
+- mode
+- Grille grille
+- ConstructeurDonjon constructeurDonjon
++ set_mode()
 + get_mode()
++ set_grille()
++ set_constrDonjon(ConstructeurDonjon cd)
 + log()
 + terminal_loop()
++ get()
 }
 
 Class Log{
@@ -113,6 +153,76 @@ Class Log{
 + set_log_stream(lg)
 + get()
 }
+
+Class ConstructeurDonjon{
+- Grille grille
+- int budget
+- Fabrique_Mur fabrique_mur
+- Fabrique_Piege_1 fabrique_piege_1
+- Fabrique_Piege_2 fabrique_piege_2
+- Fabrique_Piege_3 fabrique_piege_3
++ get_budget()
++ is_in_grid(int i, int j)
++ is_empty(int i, int j)
++ put_mur(int i, int j)
++put_piehe(int i, int j, String type_piege)
++ rm_objet(ini i, int j)
++ post()
+}
+
+Class Fabrique_Heros{
++ fabrique_heros(int x, int y, List<Observer> obs)
+}
+
+Class Fabrique_Objet{
++ {abstract} fabrique_Objet()
+}
+
+Class Fabrique_Mur{
++ fabrique_Objet()
+}
+
+Class Fabrique_Piege_1{
++ fabrique_Objet()
+}
+
+Class Fabrique_Piege_2{
++ fabrique_Objet()
+}
+
+Class Fabrique_Piege_3{
++ fabrique_Objet()
+}
+
+Class IA_Strategy{
++ applique_strategie(Grille grille)
+}
+
+Class BFS{
++ voisins(int, int pos)
++ cherche_chemin(Grille grille)
+}
+
+Class Observer{
+- int value
++ get_value
+}
+
+Class DeathObserver{
+- int value
++ get_value()
+}
+
+Class TreasureObserver{
+- int value
++ get_value()
+}
+
+Class BudgetObserver{
+- int value
++ get_value()
+}
+
 
 Objet <|-- Mur
 Objet <|-- Piege
@@ -122,13 +232,34 @@ Piege <|-- Piege_3
 
 Controleur --> "1, *" Heros
 Controleur --> "1" Grille
+Controleur --> "1" Fabrique_Heros
 
 Objet -.-> DmgVisitor
 Heros -.-> DmgVisitor
+Heros --> "1.. *" Observer
 
 Grille --> "1, *" Case
 
 Jeu --> Jeu
 
+ConstructeurDonjon --> "1" Grille
+ConstructeurDonjon --> "1" Fabrique_Mur
+ConstructeurDonjon --> "1" Fabrique_Piege_1
+ConstructeurDonjon --> "1" Fabrique_Piege_2
+ConstructeurDonjon --> "1" Fabrique_Piege_3
 
+Fabrique_Objet <|-- Fabrique_Mur
+Fabrique_Objet <|-- Fabrique_Piege_1
+Fabrique_Objet <|-- Fabrique_Piege_2
+Fabrique_Objet <|-- Fabrique_Piege_3
+
+IA_Strategy <|-- BFS
+
+Jeu --> Grille
+Jeu --> ConstructeurDonjon
+
+
+Observer <|-- DeathObserver
+Observer <|-- TreasureObserver
+Observer <|-- BudgetObserver
 @enduml
