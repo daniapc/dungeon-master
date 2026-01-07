@@ -22,6 +22,8 @@ class ConstructeurDonjon(MethodView):
     
     def get_budget(self) :
         return self.budget
+    def set_budget(self, bg):
+        self.budget = bg
     
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :

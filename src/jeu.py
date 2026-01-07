@@ -42,19 +42,14 @@ class Jeu(MethodView, object):
     def get_mode(self):
         return self.mode
     
-    def set_grille(self, gr):
-        self.grille = gr
-        
-    def set_constrDonjon(self, cd):
-        self.constructeurDonjon = cd
-    
     def log(self, message):
         logging.info(message)
 
     def terminal_loop(self):
         time.sleep(1)  
 
-        self.constructeur = ConstructeurDonjon(self.grille)
+        # Commented parce que le constructeur est deja initialisé a self.setup()
+        # self.constructeur = ConstructeurDonjon(self.grille)
         message = "Bienvenue Maitre du Donjon de la mort qui tue"
 
         while True:
@@ -111,29 +106,23 @@ class Jeu(MethodView, object):
                     message = "Erreur : Coordonnées invalides"
                 except Exception as e :
                     message = f"Erreur : {e}"
-
-            # self.grille.put_entree()
-            # self.grille.put_tresor()
             
+            # TODO: improvement with logs, si on a des temps
             # self.log("Action: " + action)
-            
-            # if action.upper() == 'N':
-            #     os._exit(0)
             
     def setup(self):
         grille = Grille()
         grille.put_entree()
         grille.put_tresor()
-        self.set_grille(grille)
+        self.grille = grille
         
-        constrDonjon = ConstructeurDonjon(grille=grille)
-        self.set_constrDonjon(constrDonjon)
-            
+        self.constructeur = ConstructeurDonjon(grille=grille)
+                    
         app.add_url_rule("/", view_func=Jeu.as_view("jeu"), methods=['GET', 'POST'])
         app.add_url_rule("/logs", view_func=Log.as_view("logs", lg = log_stream))
         app.add_url_rule("/grille", view_func=Grille.as_view("grille", instance=grille))
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
-            grille=grille, instance=constrDonjon), methods=['GET', 'POST', 'DELETE'])
+            grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
@@ -149,6 +138,8 @@ class Jeu(MethodView, object):
             self.grille.reset()
             self.grille.put_entree()
             self.grille.put_tresor()
+            
+            self.constructeur.set_budget(BUDGET_INITIAL)
             
             return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
     
