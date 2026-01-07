@@ -6,6 +6,7 @@ from src.params import *
 import time
 import os
 from src.ia_strategy import *
+from src.fabrique_heros import *
 
 class Controleur:
     def __init__(self, grille):
@@ -18,12 +19,16 @@ class Controleur:
         self.partie = True
         self.strategie = None
         self.compteur = 0
+        self.fab = Fabrique_Heros() ############""""
 
     def get_liste(self):
         return self.l_heros
     
     def get_grille(self):
         return self.grille
+    
+    def get_fab(self): ######################
+        return self.fab
     
     def set_strategie(self, strategie):
         self.strategie = strategie
@@ -92,7 +97,7 @@ class Controleur:
         entree = self.grille.get_entree()
         self.l_heros = []
         for i in range(self.vague):
-            self.ajouter_heros(Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()]))
+            self.ajouter_heros(self.get_fab().fabrique_Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()])) #################""
         self.partie = True
 
     def set_score(self):
@@ -214,6 +219,7 @@ def boucle_jeu(controleur):
         if action == 'C':
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
+                controleur.update_compteur()
                 joue = "Héros"
             else:
                 controleur.depl_alea()
