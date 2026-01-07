@@ -8,8 +8,11 @@ import os
 from src.ia_strategy import *
 from src.fabrique_heros import *
 
-class Controleur:
-    def __init__(self, grille):
+from flask.views import MethodView
+from flask import request
+
+class Controleur(MethodView):
+    def __init__(self, grille, instance=None):
         self.l_heros = []
         self.grille = grille
         self.vague = 1
@@ -20,6 +23,8 @@ class Controleur:
         self.strategie = None
         self.compteur = 0
         self.fab = Fabrique_Heros() ############""""
+        
+        self.instance = instance
 
     def get_liste(self):
         return self.l_heros
@@ -187,6 +192,35 @@ class Controleur:
             if heros[i].at_treasure(tresor[0],tresor[1]):
                 return True
 
+    
+    # FLASK METHOD: N'EST PAS RETIRER OU REBAPTISER CE METHOD!
+    def get(self):
+        self = self.instance
+                
+        attribute = request.args.get('attribute')
+        
+        if attribute == 'heros':
+            liste = self.get_liste()
+            heros = []
+            for i in range(len(liste)):
+                heros.append(
+                    {
+                        'index': i,
+                        'x': liste[i].get_pos()[1],
+                        'y': liste[i].get_pos()[0]
+                    }
+                )
+            return {"status": "success", "message": "Heros list enviée", 'heros': heros}
+        elif attribute == 'vague':
+            return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
+        
+        return {"status": "ignored", "message": "Nothing happened"}, 200
+    
+    # FLASK METHOD: N'EST PAS RETIRER OU REBAPTISER CE METHOD!
+    def post(self):
+        self = self.instance
+        
+        return {"status": "ignored", "message": "Nothing happened"}, 200
 
     
 

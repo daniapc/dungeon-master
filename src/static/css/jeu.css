@@ -9,6 +9,7 @@
     --accent-hover: #a29bfe;
     --accent-danger: #e74c3c;
     --accent-success: #00b894;
+    --accent-sauvegarder: #0084b8;
     --grid-border: #2d3436;
     --gold: #fdcb6e;
 }
@@ -126,6 +127,7 @@ body {
     letter-spacing: 0.5px;
 }
 .btn-action.success { background-color: var(--accent-success); color: white; }
+.btn-action.sauvegarder { background-color: var(--accent-sauvegarder); color: white; }
 .btn-action.danger { background-color: var(--accent-danger); color: white; }
 .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
 

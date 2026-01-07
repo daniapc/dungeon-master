@@ -74,7 +74,14 @@
 
       <div class="panel controlSidebar d-grid gap-2">
         <button type="button" class="btn btn-action success" data-type="lancer">
-          <i class="fa-solid fa-play"></i> Lancer la vague
+          <i class="fa-solid fa-play"></i> Continuer la vague
+        </button>
+        <button
+          type="button"
+          class="btn btn-action sauvegarder"
+          data-type="lancer"
+        >
+          <i class="fa-solid fa-floppy-disk"></i> Sauvegarder
         </button>
         <button type="button" class="btn btn-action danger" data-type="quitter">
           <i class="fa-solid fa-door-open"></i> Quitter
@@ -83,9 +90,33 @@
     </div>
 
     <div
-      class="col-md-9 col-lg-10 d-flex justify-content-center align-items-start"
+      class="col-md-9 col-lg-8 d-flex justify-content-center align-items-start"
     >
       <div id="grid-board" class="shadow-lg"></div>
+    </div>
+
+    <div class="col-md-3 col-lg-2 infoBar">
+      <div class="panel mb-3">
+        <div class="panel-header">
+          <i class="fa-solid fa-arrows-rotate"></i> Turn
+        </div>
+        <div><small class="joue">Heros</small></div>
+      </div>
+      <div class="panel mb-3">
+        <div class="panel-header">
+          <i class="fa-regular fa-clock"></i> Vague
+        </div>
+        <div><small class="vague">-</small></div>
+      </div>
+      <div class="panel mb-3">
+        <div class="panel-header"><i class="fa-solid fa-star"></i> Score</div>
+        <div><small class="score">100</small></div>
+      </div>
+      <div class="panel mb-3 heros">
+        <div class="panel-header">
+          <i class="fa-solid fa-location-crosshairs"></i> Pos Héros (x,y)
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -96,6 +127,10 @@
 ></script>
 <script
   src="{{ url_for('static', filename='js/sideBarButtons.js') }}"
+  defer
+></script>
+<script
+  src="{{ url_for('static', filename='js/infoBarCards.js') }}"
   defer
 ></script>
 

@@ -6,8 +6,6 @@ from src.grille import *
 from flask.views import MethodView
 from flask import request
 
-import json
-
 class ConstructeurDonjon(MethodView):
     
     def __init__(self, grille, budget=BUDGET_INITIAL, instance=None) :
@@ -22,6 +20,8 @@ class ConstructeurDonjon(MethodView):
     
     def get_budget(self) :
         return self.budget
+    def set_budget(self, bg):
+        self.budget = bg
     
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :
@@ -79,6 +79,8 @@ class ConstructeurDonjon(MethodView):
     
     # N'EST PAS REBATISER OU SUPPRIMER
     def post(self):
+        self = self.instance
+        
         data = request.json
         
         action = data['action']
@@ -88,31 +90,35 @@ class ConstructeurDonjon(MethodView):
         
         if (action == 'put'):
             if objet == 'mur':
-                self.instance.put_mur(coord_y, coord_x)
+                self.put_mur(coord_y, coord_x)
                 
             elif 'piege' in objet:
                 piege = int(str(objet).split(' ')[1])
-                self.instance.put_piege(coord_y, coord_x, piege)
+                self.put_piege(coord_y, coord_x, piege)
                 
-            return {"status": "success", "message": "Case mise a jour", "budget": self.instance.get_budget()}, 200 
+            return {"status": "success", "message": "Case mise a jour", "budget": self.get_budget()}, 200 
     
-        return {"status": "ignored", "message": "Nothing happened"}, 200
+        return {"status": "ignored", "message": "Nothing happened", "budget": self.get_budget()}, 200
 
     # N'EST PAS REBATISER OU SUPPRIMER
     def delete(self):
+        self = self.instance
+        
         data = request.json
         
         coord_x = int(data['x'])
         coord_y = int(data['y'])
         
-        success, message = self.instance.rm_objet(coord_y, coord_x)
+        success, message = self.rm_objet(coord_y, coord_x)
         
         if success:
-            return {"status": "success", "message": message, "budget": self.instance.get_budget()}, 200 
+            return {"status": "success", "message": message, "budget": self.get_budget()}, 200 
         
-        return {"status": "ignored", "message": message}, 200 
+        return {"status": "ignored", "message": message, "budget": self.get_budget()}, 200 
     
     def get(self):        
+        self = self.instance
+        
         objet = request.args.get('objet')
         attribute = request.args.get('attribute')
         
@@ -135,7 +141,7 @@ class ConstructeurDonjon(MethodView):
             return {"status": "success", "message": "Cout a ete returné", "cout": cout}, 200 
         
         elif attribute == 'budget':
-            return {"status": "success", "message": "Budget a ete returné", "budget": self.instance.get_budget()}, 200 
+            return {"status": "success", "message": "Budget a ete returné", "budget": self.get_budget()}, 200 
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
                 
