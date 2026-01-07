@@ -1,6 +1,6 @@
-from params import *
-from heros import *
-from objet import *
+from src.params import *
+from src.heros import *
+from src.objet import *
 
 class Case :
 
@@ -18,7 +18,14 @@ class Case :
     def remove_objet(self, objet_to_remove) :
         for i in range(len(self.objets)) :
             if type(self.objets[i]) == type(objet_to_remove) :
-                self.objets.pop(i)   
+                self.objets.pop(i) 
+                break
+
+    def remove_heros(self, heros) :
+        for i in range(len(self.objets)) :
+            if self.objets[i] == heros :
+                self.objets.pop(i)
+                break
 
     def set_entree(self) :
         self.entree = True

@@ -75,7 +75,7 @@ class ConstructeurDonjon(MethodView):
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
         self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
-        return True
+        return True, "Case vidée"
     
     def post(self):
         data = request.json

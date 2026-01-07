@@ -1,9 +1,9 @@
 import random
-from heros import *
-from grille import *
-from objet import *
+from src.heros import *
+from src.grille import *
+from src.objet import *
 
-from params import *
+from src.params import *
 
 import time
 import os

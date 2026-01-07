@@ -1,5 +1,5 @@
 from random import *
-from observer import *
+from src.observer import *
 
 SIZE_GRILLE = 16
 

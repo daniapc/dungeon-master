@@ -1,6 +1,6 @@
 import random as rd
-from params import *
-from case import Case
+from src.params import *
+from src.case import Case
 
 from flask.views import MethodView
 
