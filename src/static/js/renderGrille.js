@@ -53,15 +53,21 @@ async function renderGrille() {
                     if (button == null)
                         return;
 
+                    const datatype = button.getAttribute("data-type");
+
                     payload = {}
 
-                    payload['action'] = 'put';
+                    payload['action'] = datatype == 'supprimer' 
+                        ? 'delete '
+                        : 'put';
                     payload['objet'] = button.getAttribute("data-type");
                     payload['x'] = `${currentX}`;
                     payload['y'] = `${currentY}`;
 
                     const response = await fetch(`/constrdonjon`, {
-                        method: 'POST',
+                        method: datatype == 'supprimer'
+                            ? 'DELETE' 
+                            : 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -70,6 +76,8 @@ async function renderGrille() {
 
                     if (response.ok) {
                         const result = await response.json();
+                        document.querySelector(".budget .value").innerText = result['budget'];
+                        
                         await renderGrille();
                         
                     } else {

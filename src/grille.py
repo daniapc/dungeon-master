@@ -7,10 +7,13 @@ from flask.views import MethodView
 class Grille(MethodView):
 
     def __init__(self, instance=None) :
-        self.terrain = [[Case() for _ in range(SIZE_GRILLE)] for _ in range(SIZE_GRILLE)]
+        self.reset()
         
         # important pour le flask
         self.instance = instance
+        
+    def reset(self):
+        self.terrain = [[Case() for _ in range(SIZE_GRILLE)] for _ in range(SIZE_GRILLE)]
     
     def put_entree(self) :
         self.pos_entree = []
