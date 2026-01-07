@@ -198,7 +198,6 @@ class Controleur(MethodView):
                     }
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
-            
         elif attribute == 'vague':
             return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
         
