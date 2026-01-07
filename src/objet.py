@@ -36,6 +36,9 @@ class Piege(Objet):
     @abstractmethod
     def degat(self)->int: pass
 
+    @abstractmethod
+    def get_cout(self)->int: pass
+
 
 class Piege_1(Piege):
     def __init__(self, x, y):
