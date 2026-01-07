@@ -180,6 +180,13 @@ class Controleur:
         for i in range(len(self.l_heros)):
             self.depl_tour(i, l_depl, tour)
 
+    def check_treso(self):
+        heros = self.l_heros
+        tresor = self.grille.get_tresor()
+        for i in range(len(heros)):
+            if heros[i].at_treasure(tresor[0],tresor[1]):
+                return True
+
 
     
 
@@ -219,6 +226,9 @@ def boucle_jeu(controleur):
         if action == 'C':
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
+                if controleur.check_treso():
+                    #score
+                    return("Q")
                 controleur.update_compteur()
                 joue = "Héros"
             else:
