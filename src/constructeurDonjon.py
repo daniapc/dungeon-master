@@ -77,6 +77,7 @@ class ConstructeurDonjon(MethodView):
         self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
         return True, "Objet supprimé"
     
+    # N'EST PAS REBATISER OU SUPPRIMER
     def post(self):
         data = request.json
         
@@ -87,25 +88,56 @@ class ConstructeurDonjon(MethodView):
         
         if (action == 'put'):
             if objet == 'mur':
-                self.put_mur(coord_y, coord_x)
+                self.instance.put_mur(coord_y, coord_x)
                 
             elif 'piege' in objet:
                 piege = int(str(objet).split(' ')[1])
-                self.put_piege(coord_y, coord_x, piege)
+                self.instance.put_piege(coord_y, coord_x, piege)
                 
-            return {"status": "success", "message": "Case mise a jour"}, 200 
+            return {"status": "success", "message": "Case mise a jour", "budget": self.instance.get_budget()}, 200 
     
         return {"status": "ignored", "message": "Nothing happened"}, 200
-    
+
+    # N'EST PAS REBATISER OU SUPPRIMER
     def delete(self):
         data = request.json
         
         coord_x = int(data['x'])
         coord_y = int(data['y'])
         
-        success, message = self.rm_objet(coord_y, coord_x)
+        success, message = self.instance.rm_objet(coord_y, coord_x)
         
         if success:
-            return {"status": "success", "message": message}, 200 
+            return {"status": "success", "message": message, "budget": self.instance.get_budget()}, 200 
         
         return {"status": "ignored", "message": message}, 200 
+    
+    def get(self):        
+        objet = request.args.get('objet')
+        attribute = request.args.get('attribute')
+        
+        if (attribute == 'cout' and objet != 'supprimer'):
+            cout = 0 
+            if objet == 'mur':
+                cout = Mur(0,0).get_cout()
+                
+            elif 'piege' in objet:
+                piege = int(str(objet).split(' ')[1])
+                
+                match piege:
+                    case 1:
+                        cout = Piege_1(0,0).get_cout()
+                    case 2: 
+                        cout = Piege_2(0,0).get_cout()
+                    case 3:
+                        cout = Piege_3(0,0).get_cout()
+            
+            return {"status": "success", "message": "Cout a ete returné", "cout": cout}, 200 
+        
+        elif attribute == 'budget':
+            return {"status": "success", "message": "Budget a ete returné", "budget": self.instance.get_budget()}, 200 
+        
+        return {"status": "ignored", "message": "Nothing happened"}, 200
+                
+                
+                                

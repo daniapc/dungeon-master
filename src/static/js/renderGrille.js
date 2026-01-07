@@ -76,6 +76,8 @@ async function renderGrille() {
 
                     if (response.ok) {
                         const result = await response.json();
+                        document.querySelector(".budget .value").innerText = result['budget'];
+                        
                         await renderGrille();
                         
                     } else {

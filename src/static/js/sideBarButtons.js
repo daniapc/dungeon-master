@@ -1,11 +1,30 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
+    /* ===============================
+     BUDGET
+      ================================ */ 
+    const budget = document.querySelector(".budget");
+
+    const response = await fetch(`/constrdonjon?attribute=${'budget'}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    const data = await response.json();
+    if (data.status == "success")
+        budget.querySelector(".value").innerText = data['budget'];
+
+
+    /* ===============================
+     SELECTION BUTTONS
+      ================================ */ 
     const selectionSidebar = document.querySelector(".selectionSidebar");
     const selectionButtons = selectionSidebar.querySelectorAll(".btn");
 
-    selectionButtons.forEach(btn => {
-        btn.addEventListener("click", () => 
-    {
+    selectionButtons.forEach(async btn => {
+        btn.addEventListener("click", () => {
         selectionButtons.forEach(b => {
             b.classList.add("palid")
             b.classList.remove("active")
@@ -15,8 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.classList.remove("palid")
         btn.classList.add("active");
 
-    }
-        )
+        });
+
+        objet = btn.getAttribute("data-type");
+        attribute = 'cout'
+
+        const response = await fetch(`/constrdonjon?objet=${objet}&attribute=${attribute}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const data = await response.json();
+
+        if (data['status'] == 'success'){
+            btn.querySelector(".cout").innerText = data['cout'];
+        }
+
+
     })
 
     window.addEventListener("click", (event) => {
@@ -28,6 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 b.classList.remove("active")});
         }
     });
+
+    /* ===============================
+     CONTROL BUTTONS
+      ================================ */ 
 
     const quitterButton = document.querySelector('[data-type="quitter"]');
 
