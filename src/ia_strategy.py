@@ -13,9 +13,9 @@ class BFS(IA_Stategy):
         voisins = list()
         if pos[0]-1 >= 0:
             voisins.append((pos[0]-1, pos[1]))
-        if pos[1]+1 <= SIZE_GRILLE:
+        if pos[1]+1 < SIZE_GRILLE:
             voisins.append((pos[0],pos[1]+1))
-        if pos[0]+1 <= SIZE_GRILLE:
+        if pos[0]+1 < SIZE_GRILLE:
             voisins.append((pos[0]+1,pos[1]))
         if pos[1]-1 >= 0:
             voisins.append((pos[0], pos[1]-1))

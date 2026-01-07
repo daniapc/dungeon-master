@@ -9,17 +9,17 @@ from src.ia_strategy import *
 from src.fabrique_heros import *
 
 class Controleur:
-    def __init__(self, grille):
+    def __init__(self, grille, budget):
         self.l_heros = []
         self.grille = grille
         self.vague = 1
         self.score = 0
-        self.score_final = 0
+        self.score_final = budget
         self.tour = 1
         self.partie = True
         self.strategie = None
         self.compteur = 0
-        self.fab = Fabrique_Heros() ############""""
+        self.fab = Fabrique_Heros() 
 
     def get_liste(self):
         return self.l_heros
@@ -27,7 +27,7 @@ class Controleur:
     def get_grille(self):
         return self.grille
     
-    def get_fab(self): ######################
+    def get_fab(self): 
         return self.fab
     
     def set_strategie(self, strategie):
@@ -93,12 +93,12 @@ class Controleur:
         self.l_heros.append(heros)
 
     def vague_jeu(self):
-        time.sleep(2)
         entree = self.grille.get_entree()
         self.l_heros = []
         for i in range(self.vague):
-            self.ajouter_heros(self.get_fab().fabrique_Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()])) #################""
+            self.ajouter_heros(self.get_fab().fabrique_Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()]))
         self.partie = True
+        self.compteur = 0
 
     def set_score(self):
         heros = self.get_liste()
@@ -110,30 +110,37 @@ class Controleur:
         self.score = 0
         for i in range(len(observeurs)):
             self.score += observeurs[i].get_value()
-        self.score += self.score_final
+        # self.score += self.score_final
         #ATTENTION IL FAUDRA AUSSI LE BUDGET
 
     def check_collisions(self):
         l_heros = self.get_liste()
         grille = self.get_grille()
         indices_morts = []
+        indices_objets = []
         for i in range(len(l_heros)):
             heros = l_heros[i]
             (x,y) = heros.get_pos()
             L = grille.get_case(x,y).get_objets()
-            for i in range(len(L)):
-                if isinstance(L[i], Piege):
-                    L[i].degats()
-                    heros.degats(20)
+            for j in range(len(L)):
+                if isinstance(L[j], Piege):
+                    L[j].degat()
+                    heros.degat(20)
                     if(not(L[i].is_active())):
-                        grille.get_case(x,y).remove_objet(L[i])
+                        indices_objets.append(i)
                     if heros.isdead():
-                        indices_morts.append(i)
+                        if j not in indices_morts:
+                            self.score_final += heros.get_score()
+                            indices_morts.append(j)
+            for k in range(len(indices_objets)):
+                grille.get_case(x,y).remove_objet(L[indices_objets[k]])
+            L = [] 
         for i in range(len(indices_morts)):
-            grille.get_case(x,y).remove_objet(L[indices_morts[i]])
+            grille.get_case(x,y).remove_heros(self.l_heros[indices_morts[i]])
+            self.l_heros.pop(indices_morts[i])
 
     def set_score_final(self, n):
-        self.score_final = n
+        self.score_final += n
 
     def aug_vague(self):
         self. vague += 1
@@ -149,12 +156,11 @@ class Controleur:
 
         for depl in l_depl:
             pos = h.get_pos()
-            self.grille.get_case(pos[0], pos[1]).remove_object(h)
-
+            self.grille.get_case(pos[0], pos[1]).remove_heros(h)
             h.deplace(depl[0], depl[1])
 
             pos = h.get_pos()
-            self.grille.get_case(pos[0], pos[1]).add_object(h)
+            self.grille.get_case(pos[0], pos[1]).add_objet(h)
     
     def depl(self, l_depl):
         for i in range(len(self.l_heros)):
@@ -169,12 +175,12 @@ class Controleur:
         h = self.get_liste()[indice]
 
         pos = h.get_pos()
-        self.grille.get_case(pos[0], pos[1]).remove_object(h)
+        self.grille.get_case(pos[0], pos[1]).remove_heros(h)
 
         h.deplace(l_depl[tour-1][0], l_depl[tour-1][1])
 
         pos = h.get_pos()
-        self.grille.get_case(pos[0], pos[1]).add_object(h)
+        self.grille.get_case(pos[0], pos[1]).add_objet(h)
     
     def depl_tour_all(self, l_depl, tour):
         for i in range(len(self.l_heros)):
@@ -186,6 +192,12 @@ class Controleur:
         for i in range(len(heros)):
             if heros[i].at_treasure(tresor[0],tresor[1]):
                 return True
+    
+    def enleve_heros(self):
+        for indice in range(len(self.l_heros)) :
+            k = self.l_heros[indice].pos[0]
+            l = self.l_heros[indice].pos[1]
+            self.grille.get_case(k,l).remove_heros(self.l_heros[indice])
 
 
     
@@ -206,11 +218,13 @@ def convertit_depl(n):
 def boucle_jeu(controleur):
     partie = True
     joue = "Héros"
+    controleur.set_strategie(BFS())
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"         === Vague : {controleur.get_vague()} ===")
         controleur.get_grille().affichage()
-        score = controleur.get_score()
+        controleur.set_score()
+        score = controleur.get_score() + controleur.get_score_final()
         print(f"Tour de {joue}")
         print(f"Score : {score}")
         positions = ""
@@ -227,36 +241,44 @@ def boucle_jeu(controleur):
         if action == 'C':
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
+                if controleur.get_liste() == []:
+                    controleur.partie = False
                 if controleur.check_treso():
-                    #score
+                    controleur.partie = False
+                    controleur.set_score()
+                    controleur.set_score_final(controleur.get_score())
+                    controleur.enleve_heros()
                     return("Q")
                 controleur.update_compteur()
                 joue = "Héros"
             else:
-                controleur.depl_alea()
+                # controleur.depl_alea()
+                controleur.execute_strategie()
                 joue = "Donjon"
-            score = controleur.set_score()
+            controleur.set_score()
+            score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
         elif action == 'Q' :
                 controleur.partie = False
+                controleur.set_score()
                 controleur.set_score_final(controleur.get_score())
-                for indice in range(len(controleur.l_heros)) :
-                    k = controleur.l_heros[indice].pos[0]
-                    l = controleur.l_heros[indice].pos[1]
-                    controleur.grille.get_case(k,l).remove_heros(controleur.l_heros[indice])
+                controleur.enleve_heros()
                 return("Q")
         elif action == 'S':
             #sauvegarder la partie
+            controleur.enleve_heros()
             return("S")
         else:
             print(f"Pas d'action pour cette touche.")
             time.sleep(1)
+    controleur.set_score()
+    controleur.set_score_final(controleur.get_score())
+    controleur.enleve_heros()
     return("F")
 
 
 
-def lancer_vagues(grille):
-    controleur = Controleur(grille)
+def lancer_vagues(controleur):
     boucle = True
     while(boucle and controleur.get_vague() <= 3):
         controleur.vague_jeu()

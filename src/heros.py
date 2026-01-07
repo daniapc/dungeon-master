@@ -22,6 +22,12 @@ class Heros():
     
     def get_state(self):
         return self.state
+    
+    def get_score(self):
+        var = 0
+        for i in range(len(self.obs)):
+            var += self.obs[i].get_value()
+        return var
 
     def isdead(self):
         if self.pv == 0 and self.state == False:
