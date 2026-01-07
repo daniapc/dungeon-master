@@ -78,7 +78,8 @@ class Jeu(MethodView, object):
                 os._exit(0)
             elif user_input == 'L' :
                 time.sleep(1)
-                lancer_vagues(self.grille)
+                controleur = Controleur(self.grille, self.constructeur.get_budget())
+                lancer_vagues(controleur)
                 message = "Retour à la construction"
             else :
                 try :
