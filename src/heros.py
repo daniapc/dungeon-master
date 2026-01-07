@@ -46,7 +46,7 @@ class Heros():
         else:
             self.pv -= n
     
-    def affichage(self):
+    def affichage():
         return("H")
     
     def notifyDeathObserver(self):
