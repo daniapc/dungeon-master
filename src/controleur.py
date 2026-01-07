@@ -4,6 +4,7 @@ from src.grille import *
 from src.objet import *
 
 from src.params import *
+from src.ia_strategy import *
 
 class Controleur:
     def __init__(self, grille, ):
@@ -13,12 +14,29 @@ class Controleur:
         self.score = 0
         self.tour = 0
         self.partie = True
+        self.strategie = None
+        self.compteur = 0
 
     def get_liste(self):
         return self.l_heros
     
     def get_grille(self):
         return self.grille
+    
+    def set_strategie(self, strategie):
+        self.strategie = strategie
+    
+    def update_compteur(self):
+        self.compteur +=1
+    
+    def execute_strategie(self):
+        if self.strategie is None:
+            return
+        
+        l_depl = self.strategie.applique_strategie(self.grille)
+
+        self.depl_tour_all(l_depl, self.compteur)
+
     
     def get_vague(self):
         return self.vague
@@ -96,8 +114,85 @@ class Controleur:
         for i in range(len(L)):
             grille.get_case(x,y).remove_objet(L[indices_morts[i]])
 
+    def depl_heros(self, indice, l_depl):
+        if l_depl is None:
+            return
+        h = self.get_liste()[indice]
 
+        for depl in l_depl:
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_object(h)
 
+            h.deplace(depl[0], depl[1])
+
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl(self, l_depl):
+        for i in range(len(self.l_heros)):
+            self.depl_heros(i, l_depl)
+    
+    def depl_tour(self, indice,l_depl, tour):
+        '''
+        tour est le compteur de tour
+        '''
+        if tour > len(l_depl):
+            return
+        h = self.get_liste()[indice]
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+        h.deplace(l_depl[tour-1][0], l_depl[tour-1][1])
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl_tour_all(self, l_depl, tour):
+        for i in range(len(self.l_heros)):
+            self.depl_tour(i, l_depl, tour)
+
+    
+
+    def depl_heros(self, indice, l_depl):
+        if l_depl is None:
+            return
+        h = self.get_liste()[indice]
+
+        for depl in l_depl:
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+            h.deplace(depl[0], depl[1])
+
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl(self, l_depl):
+        for i in range(len(self.l_heros)):
+            self.depl_heros(i, l_depl)
+    
+    def depl_tour(self, indice,l_depl, tour):
+        '''
+        tour est le compteur de tour
+        '''
+        if tour > len(l_depl):
+            return
+        h = self.get_liste()[indice]
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+        h.deplace(l_depl[tour-1][0], l_depl[tour-1][1])
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl_tour_all(self, l_depl, tour):
+        for i in range(len(self.l_heros)):
+            self.depl_tour(i, l_depl, tour)
+
+    
 
 
 def convertit_depl(n):
