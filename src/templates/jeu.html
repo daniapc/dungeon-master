@@ -1,59 +1,92 @@
 {% extends "base.html" %} {% block content %}
-<!--
-https://getbootstrap.com/docs/5.3/layout/grid/ 
--->
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/jeu.css') }}" />
 
-<div class="container mt-4">
-  <div class="row justify-content-center text-center title">
+<div class="container-fluid game-container mt-4">
+  <div class="row justify-content-center text-center title-section">
     <div class="col-12">
       <img
         src="{{ url_for('static', filename='temp.png') }}"
-        alt="Jeu logo"
-        style="max-height: 100px; width: auto"
-        class="img-fluid mb-3"
+        alt="Game Logo"
+        class="img-fluid game-logo"
       />
     </div>
   </div>
 
-  <div class="row">
-    <div class="col sideBar">
-      <div class="row budget">Budget: <span class="value">--</span></div>
+  <div class="row main-layout">
+    <div class="col-md-3 col-lg-2 sideBar">
+      <div class="panel budget-panel mb-3">
+        <div class="panel-header"><i class="fa-solid fa-coins"></i> Budget</div>
+        <div class="budget-value budget">
+          <span class="value">--</span> <small>gold</small>
+        </div>
+      </div>
 
-      <div class="row selectionSidebar">
-        <div
-          class="btn-group-vertical"
-          role="group"
-          aria-label="Vertical button group"
-        >
-          <button type="button" class="btn btn-primary" data-type="mur">
-            Mur (cout: <span class="cout">--</span>)
+      <div class="panel tools-panel mb-3">
+        <div class="panel-header">
+          <i class="fa-solid fa-hammer"></i> Build Tools
+        </div>
+
+        <div class="selectionSidebar d-grid gap-2">
+          <button type="button" class="btn btn-game" data-type="mur">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fa-solid fa-square"></i> Mur</span>
+              <span class="badge-cost"><span class="cout">--</span></span>
+            </div>
           </button>
-          <button type="button" class="btn btn-primary" data-type="piege 1">
-            Piège _ (cout: <span class="cout">--</span>)
+
+          <button type="button" class="btn btn-game" data-type="piege 1">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fa-solid fa-skull"></i> Piège _</span>
+              <span class="badge-cost"><span class="cout">--</span></span>
+            </div>
           </button>
-          <button type="button" class="btn btn-primary" data-type="piege 2">
-            Piège ^ (cout: <span class="cout">--</span>)
+
+          <button type="button" class="btn btn-game" data-type="piege 2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fa-solid fa-bolt"></i> Piège ^</span>
+              <span class="badge-cost"><span class="cout">--</span></span>
+            </div>
           </button>
-          <button type="button" class="btn btn-primary" data-type="piege 3">
-            Piège ¤ (cout: <span class="cout">--</span>)
+
+          <button type="button" class="btn btn-game" data-type="piege 3">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fa-solid fa-bomb"></i> Piège ¤</span>
+              <span class="badge-cost"><span class="cout">--</span></span>
+            </div>
           </button>
-          <button type="button" class="btn btn-danger" data-type="supprimer">
-            Supprimer
+
+          <hr class="separator" />
+
+          <button
+            type="button"
+            class="btn btn-game btn-delete"
+            data-type="supprimer"
+          >
+            <span><i class="fa-solid fa-trash"></i> Supprimer</span>
           </button>
         </div>
       </div>
 
-      <div class="row controlSidebar">
-        <button type="button" class="btn btn-success" data-type="lancer">
-          Lancer la vague
+      <div class="panel controlSidebar d-grid gap-2">
+        <button type="button" class="btn btn-action success" data-type="lancer">
+          <i class="fa-solid fa-play"></i> Lancer la vague
         </button>
-        <button type="button" class="btn btn-danger" data-type="quitter">
-          Quitter
+        <button type="button" class="btn btn-action danger" data-type="quitter">
+          <i class="fa-solid fa-door-open"></i> Quitter
         </button>
       </div>
     </div>
-    <div class="col" id="grid-board"></div>
+
+    <div
+      class="col-md-9 col-lg-10 d-flex justify-content-center align-items-start"
+    >
+      <div id="grid-board" class="shadow-lg"></div>
+    </div>
   </div>
 </div>
 

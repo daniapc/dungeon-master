@@ -5,93 +5,104 @@ document.addEventListener("DOMContentLoaded", async () => {
       ================================ */ 
     const budget = document.querySelector(".budget");
 
-    const response = await fetch(`/constrdonjon?attribute=${'budget'}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    });
+    try {
+        const response = await fetch(`/constrdonjon?attribute=budget`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
 
-    const data = await response.json();
-    if (data.status == "success")
-        budget.querySelector(".value").innerText = data['budget'];
+        const data = await response.json();
+        if (data.status === "success")
+            budget.querySelector(".value").innerText = data['budget'];
+    } catch (e) {
+        console.error("Error fetching budget:", e);
+    }
 
 
     /* ===============================
      SELECTION BUTTONS
       ================================ */ 
     const selectionSidebar = document.querySelector(".selectionSidebar");
-    const selectionButtons = selectionSidebar.querySelectorAll(".btn");
+    // Update selector to match the new HTML class 'btn-game' or generic 'btn'
+    const selectionButtons = selectionSidebar.querySelectorAll(".btn"); 
 
     selectionButtons.forEach(async btn => {
-        btn.addEventListener("click", () => {
-        selectionButtons.forEach(b => {
-            b.classList.add("palid")
-            b.classList.remove("active")
+        
+        // 1. Click Event Logic
+        btn.addEventListener("click", (e) => {
+            // CRITICAL: Stop the click from reaching the window listener immediately
+            e.stopPropagation();
 
+            selectionButtons.forEach(b => {
+                b.classList.add("palid");
+                b.classList.remove("active");
+            });
+        
+            btn.classList.remove("palid");
+            btn.classList.add("active");
         });
+
+        // 2. Fetch Cost Logic (Initial Load)
+        const objet = btn.getAttribute("data-type");
+        
+        // Skip fetch for delete button or if no data-type
+        if (objet && objet !== 'supprimer') {
+            try {
+                const response = await fetch(`/constrdonjon?objet=${objet}&attribute=cout`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                });
     
-        btn.classList.remove("palid")
-        btn.classList.add("active");
-
-        });
-
-        objet = btn.getAttribute("data-type");
-        attribute = 'cout'
-
-        const response = await fetch(`/constrdonjon?objet=${objet}&attribute=${attribute}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-
-        const data = await response.json();
-
-        if (data['status'] == 'success'){
-            btn.querySelector(".cout").innerText = data['cout'];
-        }
-
-
-    })
-
-    window.addEventListener("click", (event) => {
-
-
-        if (!document.querySelector(".btn-group-vertical").contains(event.target)) {
-            selectionButtons.forEach(b => { 
-                b.classList.remove("palid")
-                b.classList.remove("active")});
+                const data = await response.json();
+    
+                if (data['status'] === 'success'){
+                    // Update the span inside the button
+                    const costSpan = btn.querySelector(".cout");
+                    if(costSpan) costSpan.innerText = data['cout'];
+                }
+            } catch (err) {
+                console.error("Error fetching cost for " + objet);
+            }
         }
     });
+
+    // 3. Click Outside Logic (Deselect)
+    window.addEventListener("click", (event) => {
+        // Check if click is inside the sidebar
+        if (!selectionSidebar.contains(event.target)) {
+            selectionButtons.forEach(b => { 
+                b.classList.remove("palid");
+                b.classList.remove("active");
+            });
+        }
+    });
+
 
     /* ===============================
      CONTROL BUTTONS
       ================================ */ 
-
     const quitterButton = document.querySelector('[data-type="quitter"]');
 
-    // TODO: "are you sure?"
-    quitterButton.addEventListener("click", async () => {
-        
-        payload = {
-            action: "quitter"
-        }
-        
-        const response = await fetch(`/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-            window.location.reload();
-        } else {
-            console.error("Server error:", response.status);
-        }
-    })
-
+    if (quitterButton) {
+        quitterButton.addEventListener("click", async () => {
+            
+            const payload = { action: "quitter" };
+            
+            try {
+                const response = await fetch(`/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
     
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
 });
