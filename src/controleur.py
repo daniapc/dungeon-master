@@ -2,14 +2,14 @@ import random
 from src.heros import *
 from src.grille import *
 from src.objet import *
-
 from src.params import *
-
 import time
 import os
+from src.ia_strategy import *
+from src.fabrique_heros import *
 
 class Controleur:
-    def __init__(self, grille, ):
+    def __init__(self, grille):
         self.l_heros = []
         self.grille = grille
         self.vague = 1
@@ -17,12 +17,33 @@ class Controleur:
         self.score_final = 0
         self.tour = 1
         self.partie = True
+        self.strategie = None
+        self.compteur = 0
+        self.fab = Fabrique_Heros() ############""""
 
     def get_liste(self):
         return self.l_heros
     
     def get_grille(self):
         return self.grille
+    
+    def get_fab(self): ######################
+        return self.fab
+    
+    def set_strategie(self, strategie):
+        self.strategie = strategie
+    
+    def update_compteur(self):
+        self.compteur +=1
+    
+    def execute_strategie(self):
+        if self.strategie is None:
+            return
+        
+        l_depl = self.strategie.applique_strategie(self.grille)
+
+        self.depl_tour_all(l_depl, self.compteur)
+
     
     def get_vague(self):
         return self.vague
@@ -76,7 +97,7 @@ class Controleur:
         entree = self.grille.get_entree()
         self.l_heros = []
         for i in range(self.vague):
-            self.ajouter_heros(Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()]))
+            self.ajouter_heros(self.get_fab().fabrique_Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()])) #################""
         self.partie = True
 
     def set_score(self):
@@ -111,7 +132,6 @@ class Controleur:
         for i in range(len(indices_morts)):
             grille.get_case(x,y).remove_objet(L[indices_morts[i]])
 
-
     def set_score_final(self, n):
         self.score_final = n
 
@@ -122,8 +142,53 @@ class Controleur:
         self.tour += 1
         self.tour = self.tour % 2
 
+    def depl_heros(self, indice, l_depl):
+        if l_depl is None:
+            return
+        h = self.get_liste()[indice]
+
+        for depl in l_depl:
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+            h.deplace(depl[0], depl[1])
+
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl(self, l_depl):
+        for i in range(len(self.l_heros)):
+            self.depl_heros(i, l_depl)
+    
+    def depl_tour(self, indice,l_depl, tour):
+        '''
+        tour est le compteur de tour
+        '''
+        if tour > len(l_depl):
+            return
+        h = self.get_liste()[indice]
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).remove_object(h)
+
+        h.deplace(l_depl[tour-1][0], l_depl[tour-1][1])
+
+        pos = h.get_pos()
+        self.grille.get_case(pos[0], pos[1]).add_object(h)
+    
+    def depl_tour_all(self, l_depl, tour):
+        for i in range(len(self.l_heros)):
+            self.depl_tour(i, l_depl, tour)
+
+    def check_treso(self):
+        heros = self.l_heros
+        tresor = self.grille.get_tresor()
+        for i in range(len(heros)):
+            if heros[i].at_treasure(tresor[0],tresor[1]):
+                return True
 
 
+    
 
 
 def convertit_depl(n):
@@ -145,7 +210,7 @@ def boucle_jeu(controleur):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"         === Vague : {controleur.get_vague()} ===")
         controleur.get_grille().affichage()
-        score = controleur.set_score()
+        score = controleur.get_score()
         print(f"Tour de {joue}")
         print(f"Score : {score}")
         positions = ""
@@ -162,6 +227,10 @@ def boucle_jeu(controleur):
         if action == 'C':
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
+                if controleur.check_treso():
+                    #score
+                    return("Q")
+                controleur.update_compteur()
                 joue = "Héros"
             else:
                 controleur.depl_alea()

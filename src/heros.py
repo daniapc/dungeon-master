@@ -19,7 +19,9 @@ class Heros():
     
     def get_obs(self):
         return self.obs
-
+    
+    def get_state(self):
+        return self.state
 
     def isdead(self):
         if self.pv == 0 and self.state == False:
@@ -34,8 +36,11 @@ class Heros():
         return False
         
     def deplace(self, i, j):
-        self.pos[0] += i
-        self.pos[1] += j
+        a = self.pos[0]
+        b = self.pos[1]
+        a += i
+        b += j
+        self.pos = (a,b)
 
     def degat(self, n):
         if(self.pv < n):
