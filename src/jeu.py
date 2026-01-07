@@ -123,7 +123,7 @@ class Jeu(MethodView, object):
         
         self.constructeur = ConstructeurDonjon(grille=grille)
         
-        controleur = Controleur(grille=grille)
+        controleur = Controleur(grille=grille, budget=self.constructeur.get_budget())
         controleur.vague_jeu()
         self.controleur = controleur
                     

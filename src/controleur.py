@@ -11,7 +11,7 @@ from src.fabrique_heros import *
 from flask.views import MethodView
 from flask import request
 
-class Controleur:
+class Controleur(MethodView):
     def __init__(self, grille, budget, instance = None):
         self.l_heros = []
         self.grille = grille
