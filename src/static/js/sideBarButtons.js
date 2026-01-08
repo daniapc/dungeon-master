@@ -38,6 +38,9 @@ async function updateButtonsState(){
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
     const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
+
+    const grille = document.querySelector('#grid-board');
+    const recap = document.querySelector('#recap-board');
     
     budgetPanel.style.display = !boucle ? '' : 'none';
     toolsPanel.style.display = !boucle ? '' : 'none';
@@ -45,6 +48,9 @@ async function updateButtonsState(){
     continuerButton.style.display = (boucle && partie)  ? '' : 'none';
     lancerButton.style.display = !boucle ? '' : 'none';
     sauvegarderButton.style.display = !boucle ? 'none' : '';
+
+    grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
+    recap.style.display = (boucle && partie) || (!boucle) ? 'none' : '';
 
 }
 

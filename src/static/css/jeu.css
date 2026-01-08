@@ -192,3 +192,6 @@ body {
 .icon-hero {
     color: var(--accent-primary)
 }
+.icon-life {
+    color: var(--accent-danger)
+}

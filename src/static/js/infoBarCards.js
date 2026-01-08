@@ -32,6 +32,8 @@ async function infoBarCards () {
                 heroDiv.innerHTML = `
                         <i class="fa-solid fa-${hero['index'] + 1} me-2 text-accent icon-hero"></i>
                         <span>(${hero['x']}, ${hero['y']})</span>
+                        <i class="fa-solid fa-droplet icon-life"></i>
+                        <span> ${hero['pv']}</span>
                     `;
 
                 heros.appendChild(heroDiv);
