@@ -141,6 +141,24 @@ class A(IA_Strategy):
         pq = [(0, start)]
         heapq.heapify(pq)
 
+        while pq:
+            curr_cout, curr = heapq.heappop(pq)
+
+            if curr == T:
+                break
+
+            else:
+                for v in self.voisins(curr):
+                    nouv_cout = curr_cout + self.cout_case(v[0], v[1], grille)
+                
+                    if v not in cout_min or nouv_cout < cout_min[v]:
+                        cout_min[v] = nouv_cout
+                        p[v] = curr
+
+                        #calcul du coût réel (cout + heuristique) pour aller dans v
+                        score = nouv_cout + self.heuristique(v, T)
+                        heapq.heappush(pq, (score, v))
+                        
         if T not in p:
             return None
         else:
