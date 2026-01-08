@@ -35,6 +35,8 @@ class Controleur(MethodView):
                        "nb_piege_puissant_active" : 0,
                        "nb_piege_puissant_active_total" : 0,
                        "tresor_trouve" : False}
+        
+        self.boucle = False
 
     def get_liste(self):
         return self.l_heros
@@ -66,6 +68,11 @@ class Controleur(MethodView):
             pos = h.get_pos()
             self.grille.get_case(pos[0], pos[1]).add_objet(h)
 
+    def get_boucle(self):
+        return self.boucle
+    
+    def set_boucle(self, bc):
+        self.boucle = bc
     
     def get_vague(self):
         return self.vague
@@ -78,6 +85,8 @@ class Controleur(MethodView):
     
     def get_partie(self):
         return self.partie
+    def set_partie(self, pt):
+        self.partie = pt
     
     def get_score_final(self):
         return self.score_final
@@ -282,13 +291,64 @@ class Controleur(MethodView):
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
         elif attribute == 'vague':
-            return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
+            vague = str(self.get_vague())
+            
+            if not(self.get_partie()):
+                vague += " (terminée)"
+            
+            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
+        elif attribute == 'boucle':
+            return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
+        elif attribute == 'partie':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
     # FLASK METHOD: N'EST PAS RETIRER OU REBAPTISER CE METHOD!
     def post(self):
         self = self.instance
+        
+        data = request.json
+        
+        action = data['action']
+
+        if action == 'lancer':
+            self.set_boucle(True)
+            self.set_strategie(BFS())
+            
+            return {"status": "success", "message": "La vague a eté lancée"}, 200 
+        elif action == 'continuer':
+            fini = False
+            
+            if self.get_tour() == 0:
+                self.check_collisions()
+                if self.get_liste() == []:
+                    self.partie = False
+                if self.check_treso():
+                    self.partie = False
+                    self.set_score()
+                    self.set_score_final(self.get_score())
+                    self.enleve_heros()
+                    # self.set_boucle(False)
+                    
+                    fini = True
+                    
+                self.update_compteur()
+                joue = "Héros"
+            else:
+                # self.depl_alea()
+                self.execute_strategie()
+                joue = "Donjon"
+            self.set_score()
+            self.score = self.get_score() + self.get_score_final()
+            self.change_tour()
+            
+            return {"status": "success", 
+                    "message": "La vague a eté continué",
+                    "joue": joue,
+                    "score": self.score,
+                    "fini": fini
+                    }, 200 
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
 
@@ -333,9 +393,9 @@ def boucle_jeu(controleur):
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
-                    controleur.partie = False
+                    controleur.set_partie(False)
                 if controleur.check_treso():
-                    controleur.partie = False
+                    controleur.set_partie(False)
                     controleur.set_score()
                     controleur.set_score_final(controleur.get_score())
                     controleur.enleve_heros()
@@ -350,7 +410,7 @@ def boucle_jeu(controleur):
             score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
         elif action == 'Q' :
-                controleur.partie = False
+                controleur.set_partie(False)
                 controleur.set_score()
                 controleur.set_score_final(controleur.get_score())
                 controleur.enleve_heros()
@@ -369,9 +429,10 @@ def boucle_jeu(controleur):
 
 
 
-def lancer_vagues(controleur):
-    boucle = True
-    while(boucle and controleur.get_vague() <= 3):
+def lancer_vagues(controleur: Controleur):
+    controleur.set_boucle(True)
+
+    while(controleur.get_boucle() and controleur.get_vague() <= 3):
         controleur.vague_jeu()
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
@@ -404,12 +465,12 @@ def lancer_vagues(controleur):
         elif action == "S" and arrivee != "S":
             print("Partie sauvegardée.")
             time.sleep(3)
-            boucle = False
+            controleur.set_boucle(False)
             #sauvegarder
             pass
         elif action == "Q":
             controleur.reset_recap()
-            boucle = False
+            controleur.set_boucle(False)
         else:
             print(f"Pas d'action pour cette touche.")
             time.sleep(3)
