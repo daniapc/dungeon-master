@@ -141,14 +141,19 @@ class Grille(MethodView):
             for j in range(len(self.terrain[0])) :
                 case = self.terrain[i][j]
                 if len(case.objets) > 0 :
-                    objet = case.objets[0]
-                    type_obj = type(objet).__name__ 
-                    data_objet = {
-                        "x" : i,
-                        "y" : j,
-                        "type" : type_obj
-                    }
-                    data_cases.append(data_objet)
+                    objet_to_save = None 
+                    for objet in case.objets :
+                        if type(objet).__name__ != "Heros" :
+                            objet_to_save = objet
+                            break
+                    if objet_to_save :
+                        type_obj = type(objet).__name__ 
+                        data_objet = {
+                            "x" : i,
+                            "y" : j,
+                            "type" : type_obj
+                        }
+                        data_cases.append(data_objet)
         return {
             "entree" : self.pos_entree,
             "tresor" : self.pos_tresor,
