@@ -369,7 +369,10 @@ def convertit_depl(n):
 
 def boucle_jeu(controleur):
     partie = True
-    joue = "Héros"
+    if controleur.get_tour() == 0:
+        joue = "Donjon"
+    else:
+        joue = "Héros"
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"         === Vague : {controleur.get_vague()} ===")
