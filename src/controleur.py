@@ -9,6 +9,7 @@ from src.ia_strategy import *
 from src.fabrique_heros import *
 from src.sauvegarde import GestionSauvegarde
 from src.fabrique_objet import *
+from src.monstre import *
 
 from flask.views import MethodView
 from flask import request
@@ -36,7 +37,9 @@ class Controleur(MethodView):
                        "nb_piege_moyen_active_total" : 0,
                        "nb_piege_puissant_active" : 0,
                        "nb_piege_puissant_active_total" : 0,
-                       "tresor_trouve" : False}
+                       "tresor_trouve" : False, 
+                       "nb_monstres_morts" : 0,
+                       "nb_monstres_morts_total" : 0,}
         
         self.boucle = False
         self.monstres = monstres
@@ -98,6 +101,9 @@ class Controleur(MethodView):
     
     def get_recap(self):
         return self.recap
+
+    def get_liste_monstres(self):
+        return self.monstres
     
     def set_recap(self, key):
         if key == "tresor_trouve" : 
@@ -152,6 +158,7 @@ class Controleur(MethodView):
         self.recap["nb_piege_faible_active"] = 0
         self.recap["nb_piege_moyen_active"] = 0
         self.recap["nb_piege_puissant_active"] = 0
+        self.recap["nb_monstres_morts"] = 0
         self.tour = 1
 
     def set_score(self):
@@ -164,8 +171,6 @@ class Controleur(MethodView):
         self.score = 0
         for i in range(len(observeurs)):
             self.score += observeurs[i].get_value()
-        # self.score += self.score_final
-        #ATTENTION IL FAUDRA AUSSI LE BUDGET
 
     def reset_recap(self):
         self.recap = { "nb_heros" : 0,
@@ -178,13 +183,16 @@ class Controleur(MethodView):
                        "nb_piege_moyen_active_total" : 0,
                        "nb_piege_puissant_active" : 0,
                        "nb_piege_puissant_active_total" : 0,
-                       "tresor_trouve" : False}
+                       "tresor_trouve" : False,
+                       "nb_monstres_morts" : 0,
+                       "nb_monstres_morts_total" : 0,}
 
     def check_collisions(self):
         l_heros = self.get_liste()
         grille = self.get_grille()
         indices_morts = []
         indices_objets = []
+        indices_monstres = []
         for i in range(len(l_heros)):
             heros = l_heros[i]
             (x,y) = heros.get_pos()
@@ -206,15 +214,32 @@ class Controleur(MethodView):
                         indices_objets.append(j)
                     if heros.isdead():
                         if j not in indices_morts:
+                            self.verif_target_monstre(heros)
                             self.score_final += heros.get_score()
                             self.set_recap("nb_heros_morts")
                             indices_morts.append(j)
+                if isinstance(L[j], Monstre):
+                    heros.degat(DEGATS_3)
+                    L[j].degat(DEGATS_4)
+                    if(L[j].isdead()):
+                        indices_monstres.append(j)
+                        self.set_recap("nb_monstres_morts")
+                    if heros.isdead():
+                        if j not in indices_morts:
+                            self.verif_target_monstre(heros)
+                            self.score_final += heros.get_score()
+                            self.set_recap("nb_heros_morts")
+                            indices_morts.append(j)
+                
             for k in range(len(indices_objets)):
                 grille.get_case(x,y).remove_objet(L[indices_objets[k]])
             L = [] 
         for i in range(len(indices_morts)):
             grille.get_case(x,y).remove_heros(self.l_heros[indices_morts[i]])
             self.l_heros.pop(indices_morts[i])
+        for i in range(len(indices_monstres)):
+            grille.get_case(x,y).remove_monstre(self.l_heros[indices_monstres[i]])
+            self.monstres.pop(indices_monstres[i])
 
     def set_score_final(self, n):
         self.score_final += n
@@ -265,7 +290,7 @@ class Controleur(MethodView):
 
     def execute_strategie_monstre(self):
         for m in self.get_liste_monstres():
-            l_depl = BFS().applique_strategie(self.grille, m)
+            l_depl = BFS().applique_strategie(m, m)
 
             pos = m.get_pos()
             self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
@@ -278,16 +303,20 @@ class Controleur(MethodView):
     def init_monstre(self):
         for i in range(len(self.monstres)):
             n = randint(0,len(self.l_heros)-1)
-            self.monstres[i].set_target(n)
+            self.monstres[i].set_target(self.l_heros[n])
 
-    def change_target(self, j):
+    def change_target(self, j, monstre):
         boucle = True
         while(boucle):
-            for i in range(len(self.monstres)):
-                n = randint(0,len(self.l_heros)-1)
-                if n != j:
-                    self.monstres[i].set_target(n)
-                    boucle = False
+            n = randint(0,len(self.l_heros)-1)
+            if self.l_heros[n] != j:
+                monstre.set_target(self.l_heros[n])
+                boucle = False
+    
+    def verif_target_monstre(self, h):
+        for i in range(len(self.monstres)):
+            if self.monstres[i].get_target() == h:
+                self.change_target(h, self.monstres[i])
 
 
     def check_treso(self):
@@ -319,7 +348,8 @@ class Controleur(MethodView):
                     {
                         'index': i,
                         'x': liste[i].get_pos()[1],
-                        'y': liste[i].get_pos()[0]
+                        'y': liste[i].get_pos()[0],
+                        'pv': liste[i].get_pv()
                     }
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
@@ -329,11 +359,13 @@ class Controleur(MethodView):
             if not(self.get_partie()):
                 vague += " (terminée)"
             
-            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
+            return {"status": "success", "message": "Vague value enviée", 'vague': vague}
         elif attribute == 'boucle':
             return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
         elif attribute == 'partie':
             return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
+        elif attribute == 'recap':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_recap()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -345,9 +377,17 @@ class Controleur(MethodView):
         
         action = data['action']
 
-        if action == 'lancer':
+        if action == 'strategie':
+            choix = data['strategie']
+            
+            self.set_strategie(BFS() if choix == 'C' else Dijkstra())
+            
+            return {"status": "success", "message": "La strategie a ete changée"}, 200 
+        elif action == 'lancer':
             self.set_boucle(True)
-            self.set_strategie(BFS())
+            
+            if self.strategie == None:
+                self.set_strategie(BFS())
             
             return {"status": "success", "message": "La vague a eté lancée"}, 200 
         elif action == 'continuer':
@@ -489,7 +529,7 @@ def boucle_jeu(controleur):
         partie = controleur.get_partie()
         if action == 'C':
             if controleur.get_tour() == 0:
-                controleur.execute_strategie_monstre()
+                # controleur.execute_strategie_monstre()
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)
@@ -546,6 +586,7 @@ def lancer_vagues(controleur, sauvegarde=False):
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
         if not sauvegarde :
             controleur.vague_jeu()
+            controleur.init_monstre()
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
         if not sauvegarde :
@@ -613,6 +654,8 @@ def recap(controleur):
     txt = "Nombre de pièges moyens activés : " + str(dico["nb_piege_moyen_active"]) + " ( " + str(dico["nb_piege_moyen_active_total"]) + " )"
     print(f"" + txt)
     txt = "Nombre de pièges puissants activés : " + str(dico["nb_piege_puissant_active"]) + " ( " + str(dico["nb_piege_puissant_active_total"]) + " )"
+    print(f"" + txt)
+    txt = "Nombre de monstres morts : " + str(dico["nb_monstres_morts"]) + " ( " + str(dico["nb_monstres_morts_total"]) + " )"
     print(f"" + txt)
     if dico["tresor_trouve"]:
         print(f"Trésor trouvé : oui")

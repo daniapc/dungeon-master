@@ -13,6 +13,7 @@ class ConstructeurDonjon(MethodView):
     def __init__(self, grille, budget=BUDGET_INITIAL, instance=None) :
         self.grille = grille 
         self.budget = budget
+        self.l_monstres = []
         self.fabrique_mur = Fabrique_Mur()
         self.fabrique_monstre = Fabrique_Monstre()
         self.fabrique_piege_1 = Fabrique_Piege_1()
@@ -25,6 +26,9 @@ class ConstructeurDonjon(MethodView):
         return self.budget
     def set_budget(self, bg):
         self.budget = bg
+    
+    def get_l_monstres(self) :
+        return self.l_monstres
     
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :
@@ -80,6 +84,7 @@ class ConstructeurDonjon(MethodView):
         if self.budget >= cout :
             self.grille.get_case(i, j).add_objet(monstre)
             self.budget -= cout 
+            self.l_monstres.append(monstre)
             return True, "Monstre placé"
         else :
             return False, "Budget insuffisant"
@@ -91,7 +96,12 @@ class ConstructeurDonjon(MethodView):
             return False, "Case déjà vide"
         cout = self.grille.get_case(i ,j).get_objets()[0].get_cout()
         self.budget += cout
-        self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
+        objet_to_remove = self.grille.get_case(i ,j).get_objets()[0]
+        if isinstance(objet_to_remove, Monstre) :
+            for i in range(len(self.l_monstres)) :
+                if self.l_monstres[i] == objet_to_remove :
+                    self.l_monstres.pop(i)    
+        self.grille.get_case(i ,j).remove_objet(objet_to_remove)
         return True, "Case vidée"
     
     def save_donjon(self) :

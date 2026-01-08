@@ -1,6 +1,5 @@
 from enum import Enum
 
 class State(Enum):
-    CON = "construction"
-    FIN = "terminee" # terminé
-    BOU = "boucle" # boucle
+    MEN = 1 # menu
+    JEU = 2 # jeu
