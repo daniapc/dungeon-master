@@ -18,6 +18,11 @@ async function infoBarCards () {
         const data = await response.json();
         if (data.status === "success"){
             herosList = data['heros'];
+            heros.innerHTML =`
+                <div class="panel-header">
+                    <i class="fa-solid fa-location-crosshairs"></i> Pos Héros (x,y)
+                </div>
+            `;
 
             herosList.forEach(hero => {
                 const heroDiv = document.createElement('div');

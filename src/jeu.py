@@ -147,34 +147,24 @@ class Jeu(MethodView, object):
         controleur = self.controleur
 
         if action == 'quitter':
-            self.grille.reset()
-            self.grille.put_entree()
-            self.grille.put_tresor()
+            boucle = controleur.get_boucle()
             
-            self.constructeur.set_budget(BUDGET_INITIAL)
+            if boucle:
+                controleur.set_boucle(False)
+                controleur.partie = False
+                controleur.set_score()
+                controleur.set_score_final(controleur.get_score())
+                controleur.enleve_heros()
+                
+                return {"status": "success", "message": "Quitée le boucle"}, 200 
             
-            return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
-        elif action == 'lancer':
-            controleur.set_boucle(True)
+            # self.grille.reset()
+            # self.grille.put_entree()
+            # self.grille.put_tresor()
             
-            return {"status": "success", "message": "La vague a eté lancée"}, 200 
-        elif action == 'continuer':
+            # self.constructeur.set_budget(BUDGET_INITIAL)
             
-            if controleur.get_tour() == 0:
-                controleur.check_collisions()
-                joue = "Héros"
-            else:
-                controleur.depl_alea()
-                joue = "Donjon"
-            score = controleur.set_score()
-            controleur.change_tour()
-            
-            return {"status": "success", 
-                    "message": "Le jeu a ete reseté",
-                    "joue": joue,
-                    "score": score
-                    }, 200 
-    
+        
         return {"status": "ignored", "message": "Nothing happened"}, 200
             
         

@@ -1,3 +1,40 @@
+async function updateButtonsState(){
+    /** ==============================
+     * GETTING STATE OF THE GAME
+     ======================================*/
+    let boucle = false;
+
+    try {
+        const response = await fetch(`/controleur?attribute=boucle`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.status === "success")
+            boucle = data['boucle'];
+    } catch (e) {
+        console.error("Error fetching boucle:", e);
+    }
+    
+    const toolsPanel = document.querySelector('.tools-panel');
+    const continuerButton = document.querySelector('[data-type="continuer"]');
+    const lancerButton = document.querySelector('[data-type="lancer"]');
+    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
+    
+    if (!boucle){
+        toolsPanel.style.display = '';
+        continuerButton.style.display = 'none';
+        lancerButton.style.display = '';
+        sauvegarderButton.style.display = 'none';
+    } else {
+        toolsPanel.style.display = 'none';
+        continuerButton.style.display = '';
+        lancerButton.style.display = 'none';
+        sauvegarderButton.style.display = '';
+    }
+}
+
 async function sideBarButtons() {
 
     /* ===============================
@@ -112,14 +149,14 @@ async function sideBarButtons() {
             const payload = { action: "lancer" };
             
             try {
-                const response = await fetch(`/`, {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
     
                 if (response.ok) {
-                    sideBarButtons();                 
+                    updateButtonsState();                 
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -137,7 +174,7 @@ async function sideBarButtons() {
             const payload = { action: "continuer" };
             
             try {
-                const response = await fetch(`/`, {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -145,15 +182,26 @@ async function sideBarButtons() {
     
                 if (response.ok) {
                     result = await response.json();
-
+                    
                     joue = result['joue'];
                     score = result['score'];
-
+                    fini = result['fini'];
+                                
                     document.querySelector('.infoBar .joue').innerText = joue;
                     document.querySelector('.infoBar .score').innerText = score;
 
+                    if (fini){
+                        continuerButton.style.display = 'none';
+                        
+                        const vague = document.querySelector(".vague-terminée");
+                        vague.style.display = '';
+                        
+                    }
+                    else {
+                    }
                     await renderGrille();                    
-                    await infoBarCards();                    
+                    await infoBarCards();
+                    
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -163,38 +211,7 @@ async function sideBarButtons() {
         });
     }
 
-    /** ==============================
-     * GETTING STATE OF THE GAME
-     ======================================*/
-    let boucle = false;
-
-    try {
-        const response = await fetch(`/controleur?attribute=boucle`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        const data = await response.json();
-        if (data.status === "success")
-            boucle = data['boucle'];
-    } catch (e) {
-        console.error("Error fetching boucle:", e);
-    }
-
-    const toolsPanel = document.querySelector('.tools-panel');
-    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
-    
-    if (!boucle){
-        toolsPanel.style.display = '';
-        continuerButton.style.display = 'none';
-        lancerButton.style.display = '';
-        sauvegarderButton.style.display = 'none';
-    } else {
-        toolsPanel.style.display = 'none';
-        continuerButton.style.display = '';
-        lancerButton.style.display = 'none';
-        sauvegarderButton.style.display = '';
-    }
+    updateButtonsState();
 
 };
 

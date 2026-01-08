@@ -240,6 +240,48 @@ class Controleur(MethodView):
     def post(self):
         self = self.instance
         
+        data = request.json
+        
+        action = data['action']
+
+        if action == 'lancer':
+            self.set_boucle(True)
+            self.set_strategie(BFS())
+            
+            return {"status": "success", "message": "La vague a eté lancée"}, 200 
+        elif action == 'continuer':
+            fini = False
+            
+            if self.get_tour() == 0:
+                self.check_collisions()
+                if self.get_liste() == []:
+                    self.partie = False
+                if self.check_treso():
+                    self.partie = False
+                    self.set_score()
+                    self.set_score_final(self.get_score())
+                    self.enleve_heros()
+                    self.set_boucle(False)
+                    
+                    fini = True
+                    
+                self.update_compteur()
+                joue = "Héros"
+            else:
+                # self.depl_alea()
+                self.execute_strategie()
+                joue = "Donjon"
+            self.set_score()
+            self.score = self.get_score() + self.get_score_final()
+            self.change_tour()
+            
+            return {"status": "success", 
+                    "message": "La vague a eté continué",
+                    "joue": joue,
+                    "score": self.score,
+                    "fini": fini
+                    }, 200 
+        
         return {"status": "ignored", "message": "Nothing happened"}, 200
 
     
