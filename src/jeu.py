@@ -5,6 +5,7 @@ from flask.views import MethodView
 app = Flask(__name__)
 
 from src.enums.mode import Mode
+from src.enums.state import State
 
 from src.log import Log
 from src.grille import Grille
@@ -45,6 +46,11 @@ class Jeu(MethodView, object):
     def get_mode(self):
         return self.mode
     
+    def set_state(self, st):
+        self.state = st
+    def get_state(self):
+        return self.state
+    
     def log(self, message):
         logging.info(message)
 
@@ -77,7 +83,8 @@ class Jeu(MethodView, object):
             user_input = input("\nCommande >").strip().upper()
             if user_input == 'Q' :
                 print("Fermeture du jeu")
-                os._exit(0)
+                time.sleep(1)
+                break
             elif user_input == 'L' :
                 time.sleep(1)
                 controleur = Controleur(self.grille, self.constructeur.get_budget())
@@ -117,6 +124,29 @@ class Jeu(MethodView, object):
             # TODO: improvement with logs, si on a des temps
             # self.log("Action: " + action)
             
+    def menu_principal(self):
+        time.sleep(1)  
+        
+        user_input = ""
+        while user_input != "Q":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            
+            print(f"Bienvenue dans Dungeon Manager !")
+            print()
+            print(f"[J] Jouer")
+            print(f"[C] Charger une partie")
+            print(f"[Q] Quitter")
+            print()
+            user_input = input("\nCommande >").strip().upper()
+            if user_input == "J":
+                self.terminal_loop()
+            elif user_input == "C":
+                #charger une partie
+                pass
+            
+        print(f"Fermeture du jeu.")
+        os._exit(0)
+            
     def setup(self):
         grille = Grille()
         grille.put_entree()
@@ -140,6 +170,9 @@ class Jeu(MethodView, object):
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
     def get(self):
+        if self.state == State.MEN:
+            return render_template('menu.html')
+        
         return render_template('jeu.html')
     
     def post(self):
@@ -188,40 +221,26 @@ if __name__ == "__main__":
     
     mode = Mode.WEB.value if is_prod else input(
         "Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
-    user_input = ""
-    while user_input != "Q":
-        print(f"Bienvenue dans Dungeon Manager !")
-        print()
-        print(f"[J] Jouer")
-        print(f"[C] Charger une partie")
-        print(f"[Q] Quitter")
-        print()
-        user_input = input("\nCommande >").strip().upper()
-        if user_input == "J":
-            jeu = Jeu()
-            jeu.set_mode(Mode(int(mode)))
-            jeu.setup()
-            
-            # GEMINI { # (day_1)
-            thread_terminal = threading.Thread(
-                    target=jeu.terminal_loop, 
-                    daemon=True
-                )
-            # } GEMINI 
-            
-            if (jeu.mode == Mode.TER):    
-                thread_terminal.start()
-            elif not(is_prod):
-                Timer(1.5, jeu_web).start()
-            
-            app.run(
-                host='0.0.0.0', 
-                port=5000,
-                debug=not is_prod,  # prod
-                use_reloader=False)
-        elif user_input == "C":
-            #charger une partie
-            pass
-    print(f"Fermeture du jeu.")
-    exit()
+
+    jeu = Jeu()
+    jeu.set_mode(Mode(int(mode)))
+    jeu.setup()
+    
+    # GEMINI { # (day_1)
+    thread_terminal = threading.Thread(
+            target=jeu.menu_principal, 
+            daemon=True
+        )
+    # } GEMINI 
+    
+    if (jeu.mode == Mode.TER):    
+        thread_terminal.start()
+    elif not(is_prod):
+        Timer(1.5, jeu_web).start()
+    
+    app.run(
+        host='0.0.0.0', 
+        port=5000,
+        debug=not is_prod,  # prod
+        use_reloader=False)
 
