@@ -214,6 +214,8 @@ class Jeu(MethodView, object):
                 self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
                 self.controleur.vague_jeu()
                 
+                self.set_state(State.MEN)
+                
                 return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
             
         

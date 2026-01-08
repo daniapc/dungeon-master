@@ -24,6 +24,14 @@ async function menu() {
             }
         });
     }
+
+    const quitButton = document.querySelector('[data-type="quitter"]');
+    
+    quitButton.addEventListener("click", async () => {
+        window.close();
+            
+    });
+
 }
 
 document.addEventListener("DOMContentLoaded", menu);

@@ -200,8 +200,9 @@ async function sideBarButtons() {
                     
                     result = await response.json();
 
-                    if (result['reset'])
-                        window.location.reload();
+                    if (result['reset']){
+                        window.location.href = "/";
+                    }
 
                 } else {
                     console.error("Server error:", response.status);
