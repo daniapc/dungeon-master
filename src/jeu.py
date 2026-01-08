@@ -84,7 +84,7 @@ class Jeu(MethodView, object):
                 os._exit(0)
             elif user_input == 'L' :
                 time.sleep(1)
-                controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
+                controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                 lancer_vagues(controleur)
                 self.grille.vide()
                 self.constructeur.set_budget(BUDGET_INITIAL)
