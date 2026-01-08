@@ -367,16 +367,19 @@ def boucle_jeu(controleur):
     controleur.enleve_heros()
     return("F")
 
-
-
-def lancer_vagues(controleur):
+def verifier_chem_possible(controleur):
     tester = BFS()
     chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree())
     if chem_possible is not None:
         boucle = True
     else:
-        bouclr = False
+        boucle = False
         print(f"Pas de chemin laissé de l'entrée au trésor.")
+    
+    return boucle
+
+def lancer_vagues(controleur):
+    boucle = verifier_chem_possible(controleur)
     
     while(boucle and controleur.get_vague() <= 3):
         controleur.vague_jeu()
