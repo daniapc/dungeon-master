@@ -500,8 +500,6 @@ def lancer_vagues(controleur, sauvegarde=False):
             controleur.vague_jeu()
         else :
             sauvegarde = False
-        arrivee = boucle_jeu(controleur)
-
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
         while(ia):
