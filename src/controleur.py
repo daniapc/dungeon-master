@@ -85,8 +85,10 @@ class Controleur(MethodView):
     
     def get_partie(self):
         return self.partie
+    
     def set_partie(self, pt):
         self.partie = pt
+        self.tour = 1
     
     def get_score_final(self):
         return self.score_final
@@ -147,6 +149,7 @@ class Controleur(MethodView):
         self.recap["nb_piege_faible_active"] = 0
         self.recap["nb_piege_moyen_active"] = 0
         self.recap["nb_piege_puissant_active"] = 0
+        self.tour = 1
 
     def set_score(self):
         heros = self.get_liste()
@@ -454,29 +457,34 @@ def lancer_vagues(controleur: Controleur):
                 print(f"Pas d'action pour cette touche.")
                 time.sleep(3)
         arrivee = boucle_jeu(controleur)
-        recap(controleur)
-        if(arrivee == "F"):
-            print(f"P         :   Prochaine vague")
-        if(arrivee != "S"):
-            print(f"S         :   Sauvegarder")
-        else:
-            print(f"Partie sauvegardée.")
-        print(f"Q         :   Quitter")
-        action = input("\nCommande >").strip().upper()
-        if action == "P" and arrivee == "F":
-            controleur.aug_vague()
-        elif action == "S" and arrivee != "S":
-            print("Partie sauvegardée.")
-            time.sleep(3)
-            controleur.set_boucle(False)
-            #sauvegarder
-            pass
-        elif action == "Q":
-            controleur.reset_recap()
-            controleur.set_boucle(False)
-        else:
-            print(f"Pas d'action pour cette touche.")
-            time.sleep(3)
+        boucle = True
+        while(boucle):
+            recap(controleur)
+            if(arrivee == "F"):
+                print(f"P         :   Prochaine vague")
+            if(arrivee != "S"):
+                print(f"S         :   Sauvegarder")
+            else:
+                print(f"Partie sauvegardée.")
+            print(f"Q         :   Quitter")
+            action = input("\nCommande >").strip().upper()
+            if action == "P" and arrivee == "F":
+                controleur.aug_vague()
+                boucle = False
+            elif action == "S" and arrivee != "S":
+                print("Partie sauvegardée.")
+                time.sleep(3)
+                controleur.set_boucle(False)
+                boucle = False
+                #sauvegarder
+                pass
+            elif action == "Q":
+                controleur.reset_recap()
+                controleur.set_boucle(False)
+                boucle = False
+            else:
+                print(f"Pas d'action pour cette touche.")
+                time.sleep(3)
 
 
 def recap(controleur):
