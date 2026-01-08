@@ -28,6 +28,9 @@ class Heros():
         for i in range(len(self.obs)):
             var += self.obs[i].get_value()
         return var
+    
+    def set_pv(self, pv) :
+        self.pv = pv
 
     def isdead(self):
         if self.pv == 0 and self.state == False:

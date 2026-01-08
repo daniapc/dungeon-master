@@ -7,6 +7,8 @@ import time
 import os
 from src.ia_strategy import *
 from src.fabrique_heros import *
+from src.sauvegarde import GestionSauvegarde
+from src.fabrique_objet import *
 
 from flask.views import MethodView
 from flask import request
@@ -237,7 +239,7 @@ class Controleur(MethodView):
         for i in range(len(self.l_heros)):
             self.depl_heros(i, l_depl)
     
-    def depl_tour(self, indice,l_depl, tour):
+    def depl_tour(self, indice, l_depl, tour):
         '''
         tour est le compteur de tour
         '''
@@ -351,8 +353,65 @@ class Controleur(MethodView):
                     }, 200 
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
-
     
+    def get_data_heros(self) :
+        data = []
+        for heros in self.l_heros :
+            data.append({
+                "x" : heros.pos[0],
+                "y" : heros.pos[1],
+                "pv" : heros.get_pv()
+            })
+        return data
+    
+    def save_current_game(self) :
+        current_grille = self.grille.to_dict()
+        strategie = type(self.strategie).__name__ 
+        data_game = {
+            "grille" : current_grille,
+            "heros" : self.get_data_heros(),
+            "vague" : self.vague,
+            "score" : self.score_final,
+            "tour" : self.tour,
+            "compteur" : self.compteur,
+            "strategie" : strategie
+        }
+        file_name = input("Nom de la sauvegarde : ")
+        if not file_name :
+            file_name = "name_defaut"
+        GestionSauvegarde.sauvegarder_donjon(file_name, data_game)
+        return file_name
+    
+    def load_game(self, file_name) :
+        data_game = GestionSauvegarde.charger_donjon(file_name)
+        if not data_game :
+            return False, "Fichier introuvable"
+        try :
+            self.vague = data_game.get("vague", 1)
+            self.score_final = data_game.get("score", 0)
+            self.compteur = data_game.get("compteur", 0)
+            strategie = data_game["strategie"]
+            if strategie == "BFS" :
+                self.set_strategie(BFS())
+            elif strategie == "Dijkstra" :
+                self.set_strategie(Dijkstra())
+            #elif strategie == "A" :
+                #self.set_strategie(A())
+            fabrique_Mur = Fabrique_Mur()
+            fabriques_pieges = [Fabrique_Piege_1(), Fabrique_Piege_2(), Fabrique_Piege_3()]
+            self.l_heros = []
+            data_heros = data_game.get("heros", [])
+            for data_hero in data_heros :
+                heros = self.fab.fabrique_Heros(data_hero["x"], data_hero["y"], [DeathObserver(), TreasureObserver()])
+                heros.set_pv(data_hero["pv"])
+                self.ajouter_heros(heros)
+                self.grille.get_case(data_hero["x"], data_hero["y"]).add_objet(heros)
+            return True, "Partie chargée"
+
+        except KeyError as e :
+            return False, f"Fichier de sauvegarde corrompu : {e}"
+        except Exception as e :
+            return False, f"Erreur lors du chargement : {e}"
 
 
 def convertit_depl(n):
@@ -419,7 +478,9 @@ def boucle_jeu(controleur):
                 controleur.enleve_heros()
                 return("Q")
         elif action == 'S':
-            #sauvegarder la partie
+            file_name = controleur.save_current_game()
+            print(f"Partie sauvegardée : {file_name}.json")
+            time.sleep(2)
             controleur.enleve_heros()
             return("S")
         else:
@@ -432,11 +493,15 @@ def boucle_jeu(controleur):
 
 
 
-def lancer_vagues(controleur: Controleur):
+def lancer_vagues(controleur, sauvegarde=False):
     controleur.set_boucle(True)
-
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
-        controleur.vague_jeu()
+        if not sauvegarde :
+            controleur.vague_jeu()
+        else :
+            sauvegarde = False
+        arrivee = boucle_jeu(controleur)
+
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
         while(ia):
