@@ -124,41 +124,61 @@
       class="col-md-9 col-lg-8 d-flex justify-content-center align-items-start"
     >
       <div id="grid-board" class="shadow-lg"></div>
-      <div id="recap-board" class="shadow-lg" style="display: none">
-        <div class="row">
-          <div class="col"></div>
-          <div class="col">Cette vague</div>
-          <div class="col">Total</div>
+
+      <div id="recap-board" class="panel shadow-lg" style="display: none">
+        <div class="recap-header">
+          <div class="label">Rapport de Vague</div>
+          <div class="value-head">Vague</div>
+          <div class="value-head">Total</div>
         </div>
-        <div class="row heros-engages">
-          <div class="col">Nombre de héros engagés</div>
-          <div class="col vague">2 of 3</div>
-          <div class="col total">3 of 3</div>
+
+        <div class="recap-row heros-engages">
+          <div class="label">
+            <i class="fa-solid fa-users"></i> Héros engagés
+          </div>
+          <div class="value vague">--</div>
+          <div class="value total">--</div>
         </div>
-        <div class="row heros-morts">
-          <div class="col">Nombre de héros morts</div>
-          <div class="col vague">2 of 3</div>
-          <div class="col total">3 of 3</div>
+
+        <div class="recap-row heros-morts">
+          <div class="label">
+            <i class="fa-solid fa-skull"></i> Héros éliminés
+          </div>
+          <div class="value vague">--</div>
+          <div class="value total">--</div>
         </div>
-        <div class="row pieges-faibles">
-          <div class="col">Nombre de pièges faibles activés</div>
-          <div class="col vague">2 of 3</div>
-          <div class="col total">3 of 3</div>
+
+        <div class="divider"></div>
+
+        <div class="recap-row pieges-faibles">
+          <div class="label">
+            <i class="fa-solid fa-bolt"></i> Pièges Faibles
+          </div>
+          <div class="value vague">--</div>
+          <div class="value total">--</div>
         </div>
-        <div class="row pieges-moyens">
-          <div class="col">Nombre de pièges moyens activés</div>
-          <div class="col vague">2 of 3</div>
-          <div class="col total">3 of 3</div>
+
+        <div class="recap-row pieges-moyens">
+          <div class="label">
+            <i class="fa-solid fa-bomb"></i> Pièges Moyens
+          </div>
+          <div class="value vague">--</div>
+          <div class="value total">--</div>
         </div>
-        <div class="row pieges-puissants">
-          <div class="col">Nombre de pièges moyens activés</div>
-          <div class="col vague">2 of 3</div>
-          <div class="col total">3 of 3</div>
+
+        <div class="recap-row pieges-puissants">
+          <div class="label">
+            <i class="fa-solid fa-explosion"></i> Pièges Puissants
+          </div>
+          <div class="value vague">--</div>
+          <div class="value total">--</div>
         </div>
-        <div class="row"></div>
-        <div class="row tresor">
-          <div class="col">Trésor trouvé</div>
-          <div class="col trouve">2 of 3</div>
+
+        <div class="divider"></div>
+
+        <div class="recap-row tresor highlight">
+          <div class="label"><i class="fa-solid fa-gem"></i> Trésor trouvé</div>
+          <div class="value trouve full-width">--</div>
         </div>
       </div>
     </div>
