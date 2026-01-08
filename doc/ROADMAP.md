@@ -36,19 +36,19 @@ Joueur qui veut concevoir, tester et optimiser un donjon contre des vagues de h�
 | 8 | Faire une boucle de jeu (placement & vagues) | Haute | DONE |
 | 9 | Calcul de budjet selon placements faits | Haute | DONE |
 | 10 | Calcul de score | Haute | DONE |
-| 11 | Faire un système de sauvegarde/chargement de partie | Haute | DOING |
+| 11 | Faire un système de sauvegarde/chargement de partie | Haute | DONE |
 | 12 | Développer les interfaces | Moyenne | DOING |
 | 13 | Implémenter une stratégie "plus court chemin " pour le déplacement des héros | Haute | DONE |
 | 14 | Implémenter une stratégie "chemin le plus sûr" | Haute | DONE |
-| 15 | Pouvoir choisir la stratégie à appliquer | Moyenne | TODO |
+| 15 | Pouvoir choisir la stratégie à appliquer | Moyenne | DONE |
 | 16 | Configuration de serveur | Faible | DONE |
 | 17 | Configuration de l'application Flask | Haute | DONE |
 | 18 | Intégration de menus de contrôle sur interfaces | Moyenne | DONE |
-| 19 | Faire un menu de lancement | Moyenne | TODO |
-| 20 | Avoir un récapitulatif en fin de partie | Moyenne | TODO |
+| 19 | Faire un menu de lancement | Moyenne | DONE |
+| 20 | Avoir un récapitulatif en fin de partie | Moyenne | DONE |
 | 21 | Faire des tests unitaires sur le code | Moyenne | DOING |
-| 22 | Avoir un README | Haute | DOING |
-| 23 | Implémenter des monstres | Faible | TODO |
+| 22 | Avoir un README complet| Haute | DOING |
+| 23 | Implémenter des monstres | Faible | DOING |
 | 24 | Amélioration de l'UX | Faible | TODO |
 | 25 | Préparer la vidéo de démonstration | Haute | TODO |
 | 26 | Tourner la vidéo de démonstration | Haute  | TODO |
@@ -89,13 +89,22 @@ Objectif : Intelligence Artificielle et Intégration.
 
     - Réalisation du Diagramme UML et documentation technique.
 ### Sprint DAY_4 – [08/01/2026]
-- ...
+Objectif : Finalisation des fonctionnalités, Expérience Utilisateur (UX) et Nettoyage.
+
+    - Nettoyage du dépôt Git et mise à jour de la documentation.
+
+    - Implémentation et intégration des algorithmes Dijkstra et A* pour le déplacement des héros.
+
+    - Finalisation du système de Sauvegarde/Chargement (Donjon et Partie).
+
+    - Création des menus d'interface : Menu de lancement, Sélection de stratégie et Récapitulatif de fin de partie.
+
+    - Adaptation et intégration complète des fonctionnalités sur l'interface Web.
+
+    - (Bonus) Implémentation initiale des Monstres.
 ### Sprint DAY_5 – [09/01/2026]
 - ...
 
 ## 5. Dette technique et améliorations futures
-
-> Tâches non prioritaires pendant la semaine, mais à garder en mémoire.
-- [ ] Ajouter une troisième stratégie IA.
 - [ ] Améliorer l’ergonomie de l’IHM (raccourcis, couleurs, etc.).
 - [ ] Ajouter plus de tests (cas extrêmes, erreurs utilisateur).
