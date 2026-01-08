@@ -16,6 +16,12 @@ class Monstre():
     def get_pos(self):
         return self.pos
     
+    def set_target(self, i):
+        self.target = i
+
+    def get_tresor(self):
+        return self.target.get_pos()
+    
     def deplace(self, i, j):
         a = self.pos[0]
         b = self.pos[1]
@@ -23,5 +29,17 @@ class Monstre():
         b += j
         self.pos = (a,b)
 
-    def affichage():
+    def affichage(self):
         return("M")
+    
+    def degat(self, n):
+        if(self.pv < n):
+            self.pv = 0
+        else:
+            self.pv -= n
+    
+
+    def isdead(self):
+        if self.pv == 0:
+            return True
+        return False
