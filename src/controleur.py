@@ -518,7 +518,7 @@ def boucle_jeu(controleur):
         partie = controleur.get_partie()
         if action == 'C':
             if controleur.get_tour() == 0:
-                controleur.execute_strategie_monstre()
+                # controleur.execute_strategie_monstre()
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)
