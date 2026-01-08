@@ -7,6 +7,8 @@ import time
 import os
 from src.ia_strategy import *
 from src.fabrique_heros import *
+from src.sauvegarde import GestionSauvegarde
+from src.fabrique_objet import *
 
 from flask.views import MethodView
 from flask import request
@@ -35,6 +37,8 @@ class Controleur(MethodView):
                        "nb_piege_puissant_active" : 0,
                        "nb_piege_puissant_active_total" : 0,
                        "tresor_trouve" : False}
+        
+        self.boucle = False
 
     def get_liste(self):
         return self.l_heros
@@ -66,6 +70,11 @@ class Controleur(MethodView):
             pos = h.get_pos()
             self.grille.get_case(pos[0], pos[1]).add_objet(h)
 
+    def get_boucle(self):
+        return self.boucle
+    
+    def set_boucle(self, bc):
+        self.boucle = bc
     
     def get_vague(self):
         return self.vague
@@ -78,6 +87,8 @@ class Controleur(MethodView):
     
     def get_partie(self):
         return self.partie
+    def set_partie(self, pt):
+        self.partie = pt
     
     def get_score_final(self):
         return self.score_final
@@ -228,7 +239,7 @@ class Controleur(MethodView):
         for i in range(len(self.l_heros)):
             self.depl_heros(i, l_depl)
     
-    def depl_tour(self, indice,l_depl, tour):
+    def depl_tour(self, indice, l_depl, tour):
         '''
         tour est le compteur de tour
         '''
@@ -282,7 +293,16 @@ class Controleur(MethodView):
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
         elif attribute == 'vague':
-            return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
+            vague = str(self.get_vague())
+            
+            if not(self.get_partie()):
+                vague += " (terminée)"
+            
+            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
+        elif attribute == 'boucle':
+            return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
+        elif attribute == 'partie':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -290,9 +310,108 @@ class Controleur(MethodView):
     def post(self):
         self = self.instance
         
-        return {"status": "ignored", "message": "Nothing happened"}, 200
+        data = request.json
+        
+        action = data['action']
 
+        if action == 'lancer':
+            self.set_boucle(True)
+            self.set_strategie(BFS())
+            
+            return {"status": "success", "message": "La vague a eté lancée"}, 200 
+        elif action == 'continuer':
+            fini = False
+            
+            if self.get_tour() == 0:
+                self.check_collisions()
+                if self.get_liste() == []:
+                    self.partie = False
+                if self.check_treso():
+                    self.partie = False
+                    self.set_score()
+                    self.set_score_final(self.get_score())
+                    self.enleve_heros()
+                    # self.set_boucle(False)
+                    
+                    fini = True
+                    
+                self.update_compteur()
+                joue = "Héros"
+            else:
+                # self.depl_alea()
+                self.execute_strategie()
+                joue = "Donjon"
+            self.set_score()
+            self.score = self.get_score() + self.get_score_final()
+            self.change_tour()
+            
+            return {"status": "success", 
+                    "message": "La vague a eté continué",
+                    "joue": joue,
+                    "score": self.score,
+                    "fini": fini
+                    }, 200 
+        
+        return {"status": "ignored", "message": "Nothing happened"}, 200
     
+    def get_data_heros(self) :
+        data = []
+        for heros in self.l_heros :
+            data.append({
+                "x" : heros.pos[0],
+                "y" : heros.pos[1],
+                "pv" : heros.get_pv()
+            })
+        return data
+    
+    def save_current_game(self) :
+        current_grille = self.grille.to_dict()
+        strategie = type(self.strategie).__name__ 
+        data_game = {
+            "grille" : current_grille,
+            "heros" : self.get_data_heros(),
+            "vague" : self.vague,
+            "score" : self.score_final,
+            "tour" : self.tour,
+            "compteur" : self.compteur,
+            "strategie" : strategie
+        }
+        file_name = input("Nom de la sauvegarde : ")
+        if not file_name :
+            file_name = "name_defaut"
+        GestionSauvegarde.sauvegarder_donjon(file_name, data_game)
+        return file_name
+    
+    def load_game(self, file_name) :
+        data_game = GestionSauvegarde.charger_donjon(file_name)
+        if not data_game :
+            return False, "Fichier introuvable"
+        try :
+            self.vague = data_game.get("vague", 1)
+            self.score_final = data_game.get("score", 0)
+            self.compteur = data_game.get("compteur", 0)
+            strategie = data_game["strategie"]
+            if strategie == "BFS" :
+                self.set_strategie(BFS())
+            elif strategie == "Dijkstra" :
+                self.set_strategie(Dijkstra())
+            #elif strategie == "A" :
+                #self.set_strategie(A())
+            fabrique_Mur = Fabrique_Mur()
+            fabriques_pieges = [Fabrique_Piege_1(), Fabrique_Piege_2(), Fabrique_Piege_3()]
+            self.l_heros = []
+            data_heros = data_game.get("heros", [])
+            for data_hero in data_heros :
+                heros = self.fab.fabrique_Heros(data_hero["x"], data_hero["y"], [DeathObserver(), TreasureObserver()])
+                heros.set_pv(data_hero["pv"])
+                self.ajouter_heros(heros)
+                self.grille.get_case(data_hero["x"], data_hero["y"]).add_objet(heros)
+            return True, "Partie chargée"
+
+        except KeyError as e :
+            return False, f"Fichier de sauvegarde corrompu : {e}"
+        except Exception as e :
+            return False, f"Erreur lors du chargement : {e}"
 
 
 def convertit_depl(n):
@@ -309,7 +428,10 @@ def convertit_depl(n):
 
 def boucle_jeu(controleur):
     partie = True
-    joue = "Héros"
+    if controleur.get_tour() == 0:
+        joue = "Donjon"
+    else:
+        joue = "Héros"
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"         === Vague : {controleur.get_vague()} ===")
@@ -333,9 +455,9 @@ def boucle_jeu(controleur):
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
-                    controleur.partie = False
+                    controleur.set_partie(False)
                 if controleur.check_treso():
-                    controleur.partie = False
+                    controleur.set_partie(False)
                     controleur.set_score()
                     controleur.set_score_final(controleur.get_score())
                     controleur.enleve_heros()
@@ -350,13 +472,15 @@ def boucle_jeu(controleur):
             score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
         elif action == 'Q' :
-                controleur.partie = False
+                controleur.set_partie(False)
                 controleur.set_score()
                 controleur.set_score_final(controleur.get_score())
                 controleur.enleve_heros()
                 return("Q")
         elif action == 'S':
-            #sauvegarder la partie
+            file_name = controleur.save_current_game()
+            print(f"Partie sauvegardée : {file_name}.json")
+            time.sleep(2)
             controleur.enleve_heros()
             return("S")
         else:
@@ -379,11 +503,14 @@ def verifier_chem_possible(controleur):
     
     return boucle
 
-def lancer_vagues(controleur):
+def lancer_vagues(controleur, sauvegarde=False):
     boucle = verifier_chem_possible(controleur)
-    
-    while(boucle and controleur.get_vague() <= 3):
-        controleur.vague_jeu()
+    controleur.set_boucle(boucle)
+    while(controleur.get_boucle() and controleur.get_vague() <= 3):
+        if not sauvegarde :
+            controleur.vague_jeu()
+        else :
+            sauvegarde = False
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
         while(ia):
@@ -418,12 +545,12 @@ def lancer_vagues(controleur):
         elif action == "S" and arrivee != "S":
             print("Partie sauvegardée.")
             time.sleep(3)
-            boucle = False
+            controleur.set_boucle(False)
             #sauvegarder
             pass
         elif action == "Q":
             controleur.reset_recap()
-            boucle = False
+            controleur.set_boucle(False)
         else:
             print(f"Pas d'action pour cette touche.")
             time.sleep(3)

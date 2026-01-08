@@ -18,6 +18,11 @@ async function infoBarCards () {
         const data = await response.json();
         if (data.status === "success"){
             herosList = data['heros'];
+            heros.innerHTML =`
+                <div class="panel-header">
+                    <i class="fa-solid fa-location-crosshairs"></i> Pos Héros (x,y)
+                </div>
+            `;
 
             herosList.forEach(hero => {
                 const heroDiv = document.createElement('div');
@@ -25,7 +30,7 @@ async function infoBarCards () {
                 heroDiv.className = 'panel mb-3';
 
                 heroDiv.innerHTML = `
-                        <i class="fa-solid fa-${hero['index'] + 1} me-2 text-accent"></i>
+                        <i class="fa-solid fa-${hero['index'] + 1} me-2 text-accent icon-hero"></i>
                         <span>(${hero['x']}, ${hero['y']})</span>
                     `;
 
@@ -49,7 +54,6 @@ async function infoBarCards () {
         });
 
         const data = await response.json();
-        console.log(data);
         if (data.status === "success")
             vague.innerText = data['vague'];
     } catch (e) {
