@@ -2,6 +2,7 @@ from src.objet import *
 from src.fabrique_objet import *
 from src.params import *
 from src.grille import *
+from src.sauvegarde import GestionSauvegarde
 
 from flask.views import MethodView
 from flask import request
@@ -77,6 +78,24 @@ class ConstructeurDonjon(MethodView):
         self.grille.get_case(i ,j).remove_objet(self.grille.get_case(i ,j).get_objets()[0])
         return True, "Case vidée"
     
+    def save_donjon(self) :
+        data_donjon = self.grille.to_dict()
+        data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.budget
+        file_name = input("Nom de la sauvegarde : ")
+        if not file_name :
+            file_name = "donjon_defaut"
+        GestionSauvegarde.sauvegarder_donjon(file_name, data_donjon)
+        return f"Donjon sauvegardé : {file_name}.json"
+        
+    def load_donjon(self, file_name) :
+        data_donjon = GestionSauvegarde.charger_donjon(file_name)
+        if data_donjon :
+            fabriques_piege = [self.fabrique_piege_1, self.fabrique_piege_2, self.fabrique_piege_3]
+            self.grille.from_dict(data_donjon, self.fabrique_mur, fabriques_piege)
+            self.budget = BUDGET_INITIAL - data_donjon("budget_dépensé")
+            return True, "Donjon chargé"
+        return False, "Erreur chargement"
+
     # N'EST PAS REBATISER OU SUPPRIMER
     def post(self):
         self = self.instance

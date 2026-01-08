@@ -7,6 +7,7 @@ import time
 import os
 from src.ia_strategy import *
 from src.fabrique_heros import *
+from src.sauvegarde import GestionSauvegarde
 
 from flask.views import MethodView
 from flask import request
@@ -170,7 +171,7 @@ class Controleur(MethodView):
         for i in range(len(self.l_heros)):
             self.depl_heros(i, l_depl)
     
-    def depl_tour(self, indice,l_depl, tour):
+    def depl_tour(self, indice, l_depl, tour):
         '''
         tour est le compteur de tour
         '''
@@ -232,6 +233,30 @@ class Controleur(MethodView):
         self = self.instance
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
+    
+    def get_data_heros(self) :
+        data = []
+        for heros in self.l_heros :
+            data.append({
+                "x" : heros.pos[0],
+                "y" : heros.pos[1],
+                "pv" : heros.get_pv()
+            })
+        return data
+    
+    def save_current_game(self) :
+        current_grille = self.grille.to_dict()
+        data_game = {
+            "grille" : current_grille,
+            "heros" : self.get_data_heros(),
+            "vague" : self.vague,
+            "score" : self.score_final,
+            "compteur" : self.compteur,
+            "strategie" : self.strategie
+        }
+        file_name = f"save_vague_{self.vague}" # Trouver comment nommer depuis jeu
+        GestionSauvegarde.sauvegarder_donjon(file_name, data_game)
+        return file_name
 
     
 
@@ -298,7 +323,9 @@ def boucle_jeu(controleur):
                 controleur.enleve_heros()
                 return("Q")
         elif action == 'S':
-            #sauvegarder la partie
+            file_name = controleur.save_current_game()
+            print(f"Partie sauvegardée : {file_name}.json")
+            time.sleep(2)
             controleur.enleve_heros()
             return("S")
         else:
