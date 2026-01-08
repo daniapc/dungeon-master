@@ -375,6 +375,7 @@ def lancer_vagues(controleur):
     if chem_possible is not None:
         boucle = True
     else:
+        bouclr = False
         print(f"Pas de chemin laissé de l'entrée au trésor.")
     
     while(boucle and controleur.get_vague() <= 3):
