@@ -379,6 +379,7 @@ def lancer_vagues(controleur):
             print(f"Choix de l'IA")
             print(f"C         :   Chemin le plus court")
             print(f"S         :   Chemin le plus sûr")
+            print(f"I         :   Chemin le plus sûr et court")
             action = input("\nCommande >").strip().upper()
             if action == "C":
                 controleur.set_strategie(BFS())
@@ -386,6 +387,8 @@ def lancer_vagues(controleur):
             elif action == "S":
                 controleur.set_strategie(Dijkstra())
                 ia = False
+            elif action == "I":
+                controleur.set_strategie(A())
             else:
                 print(f"Pas d'action pour cette touche.")
                 time.sleep(3)
