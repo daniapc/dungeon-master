@@ -491,10 +491,20 @@ def boucle_jeu(controleur):
     controleur.enleve_heros()
     return("F")
 
-
+def verifier_chem_possible(controleur):
+    tester = BFS()
+    chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree())
+    if chem_possible is not None:
+        boucle = True
+    else:
+        boucle = False
+        print(f"Pas de chemin laissé de l'entrée au trésor.")
+    
+    return boucle
 
 def lancer_vagues(controleur, sauvegarde=False):
-    controleur.set_boucle(True)
+    boucle = verifier_chem_possible(controleur)
+    controleur.set_boucle(boucle)
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
         if not sauvegarde :
             controleur.vague_jeu()
@@ -506,6 +516,7 @@ def lancer_vagues(controleur, sauvegarde=False):
             print(f"Choix de l'IA")
             print(f"C         :   Chemin le plus court")
             print(f"S         :   Chemin le plus sûr")
+            print(f"I         :   Chemin le plus sûr et court")
             action = input("\nCommande >").strip().upper()
             if action == "C":
                 controleur.set_strategie(BFS())
@@ -513,6 +524,8 @@ def lancer_vagues(controleur, sauvegarde=False):
             elif action == "S":
                 controleur.set_strategie(Dijkstra())
                 ia = False
+            elif action == "I":
+                controleur.set_strategie(A())
             else:
                 print(f"Pas d'action pour cette touche.")
                 time.sleep(3)
