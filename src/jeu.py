@@ -11,6 +11,7 @@ from src.grille import Grille
 from src.constructeurDonjon import ConstructeurDonjon
 from src.controleur import *
 from src.params import *
+from src.sauvegarde import GestionSauvegarde
 
 import io
 import logging
@@ -72,6 +73,8 @@ class Jeu(MethodView, object):
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
+            print(f"S         :   Sauvegarder donjon") # récupérer le nom
+            print(f"C         :   Charger une sauvegarde")
             print(f"Q         :   Quitter")
 
             user_input = input("\nCommande >").strip().upper()
@@ -85,6 +88,30 @@ class Jeu(MethodView, object):
                 self.grille.vide()
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
+            elif user_input == 'S' :
+                msg = self.constructeur.save_donjon()
+                message = msg
+            elif user_input == 'C' :
+                file_name = input("Nom du fichier à charger : ")
+                data_donjon = GestionSauvegarde.charger_donjon(file_name)
+                if data_donjon :
+                    if "heros" in data_donjon :
+                        print("Sauvegarde de partie en cours détectée, lancement...")
+                        time.sleep(2)
+                        controleur = Controleur(self.grille, self.constructeur.get_budget())
+                        succes, msg = controleur.load_game(file_name)
+                        if succes :
+                            lancer_vagues(controleur, sauvegarde=True)
+                            message = "Partie chargée"
+                        else :
+                            message = f"Erreur : {msg}"
+                    else :
+                        print("Sauvegarde de Donjon détectée, chargement...")
+                        time.sleep(2)
+                        succes, msg = self.constructeur.load_donjon(file_name)
+                        message = msg 
+                else :
+                    message = "Fichier introuvable"
             else :
                 try :
                     cmd = user_input.split()
