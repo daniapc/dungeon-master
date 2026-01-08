@@ -42,11 +42,11 @@ class IA_Strategy():
         chemin.reverse()
         return chemin
     
-    def cherche_chemin(self, grille, start):
+    def cherche_chemin(self, grille, start, end):
         pass
 
     def applique_strategie(self, grille, h):
-        chemin = self.cherche_chemin(grille, h.get_pos())
+        chemin = self.cherche_chemin(grille, h.get_pos(), grille.get_tresor())
         if chemin is None:
             return None
         l_depl = list()
@@ -59,25 +59,20 @@ class IA_Strategy():
         return l_depl
 
 class BFS(IA_Strategy):
-    def cherche_chemin(self, grille, start):
+    def cherche_chemin(self, grille, start, end):
         '''
         :param start: coordonnées position du héros
         '''
-        xe, xy = start
-        E = (xe, xy)
-        xt, yt = grille.get_tresor()
-        T = (xt, yt)
-
-        p = {E: None}
+        p = {start: None}
         q = deque()
         chemin_trouve = False
         res = list()
-        q.append(E)
+        q.append(start)
 
         while q:
             curr = q.popleft()
             
-            if curr == T:
+            if curr == end:
                 chemin_trouve = True
             else:
                 for v in self.voisins(curr):
@@ -89,25 +84,20 @@ class BFS(IA_Strategy):
         if not chemin_trouve:
             return None
         else:
-            return self.reconstruir_chemin(p, T)
+            return self.reconstruir_chemin(p, end)
 
 
 class Dijkstra(IA_Strategy):        
-    def cherche_chemin(self, grille, start):
-        xe, xy = start
-        E = (xe, xy)
-        xt, yt = grille.get_tresor()
-        T = (xt, yt)
-
-        p = {E: None}
-        cout_min = {E:0}
-        pq = [(0, E)]
+    def cherche_chemin(self, grille, start, end):
+        p = {start: None}
+        cout_min = {start:0}
+        pq = [(0, start)]
         heapq.heapify(pq)
 
         while pq:
             curr_cout, curr = heapq.heappop(pq)
 
-            if curr == T:
+            if curr == end:
                 break
             else:
                 for v in self.voisins(curr):
@@ -118,10 +108,10 @@ class Dijkstra(IA_Strategy):
                         p[v] = curr
                         heapq.heappush(pq, (nouv_cout, v))
         
-        if T not in p:
+        if end not in p:
             return None
         else:
-            return self.reconstruir_chemin(p, T)
+            return self.reconstruir_chemin(p, end)
 
 class A(IA_Strategy):
     def heuristique(self, start, tresor):
@@ -132,10 +122,7 @@ class A(IA_Strategy):
         '''
         return abs(start[0] - tresor[0]) + abs(start[1] - tresor[1])
 
-    def cherche_chemin(self, grille, start):
-        xt, yt = grille.get_tresor()
-        T = (xt, yt)
-
+    def cherche_chemin(self, grille, start, end):
         p = {start: None}
         cout_min = {start:0}
         pq = [(0, start)]
@@ -144,7 +131,7 @@ class A(IA_Strategy):
         while pq:
             curr_cout, curr = heapq.heappop(pq)
 
-            if curr == T:
+            if curr == end:
                 break
 
             else:
@@ -156,10 +143,10 @@ class A(IA_Strategy):
                         p[v] = curr
 
                         #calcul du coût réel (cout + heuristique) pour aller dans v
-                        score = nouv_cout + self.heuristique(v, T)
+                        score = nouv_cout + self.heuristique(v, end)
                         heapq.heappush(pq, (score, v))
                         
-        if T not in p:
+        if end not in p:
             return None
         else:
-            return self.reconstruir_chemin(p, T)
+            return self.reconstruir_chemin(p, end)

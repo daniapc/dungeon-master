@@ -12,8 +12,10 @@ def test_instance():
     p1 = fab_p1.fabrique_Objet(0,0)
     assert isinstance(p1, Piege_1)
 
+    obs = DeathObserver()
+    obs2 = TreasureObserver()
     fab_h = Fabrique_Heros()
-    h = fab_h.fabrique_Heros(0,0)
+    h = fab_h.fabrique_Heros(0,0,[obs,obs2])
     assert isinstance(h, Heros)
     assert h.get_pv() == 100
 

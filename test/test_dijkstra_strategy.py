@@ -64,7 +64,7 @@ def test_dijkstra_evite_piege(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=[], pieges=pieges)
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     # Vérifications
     assert chemin is not None
@@ -88,7 +88,7 @@ def test_dijkstra_traverse_si_obligatoire(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=pieges)
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     assert chemin is not None
     assert (0, 1) in chemin, "L'IA doit traverser le piège si aucun autre chemin n'existe"
@@ -99,7 +99,7 @@ def test_dijkstra_mur_infranchissable(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=[])
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     assert (0, 1) not in chemin
 
@@ -112,7 +112,7 @@ def test_deplacer_heros(preparer_grille_ponderee):
     ctr.update_compteur()
 
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
 
     ctr.set_strategie(algo)
 

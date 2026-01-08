@@ -18,3 +18,16 @@ def test_tresor() :
     assert case.is_tresor() == True 
     case.rm_tresor()
     assert case.is_tresor() == False 
+
+def test_heros():
+    case = Case()
+    assert case.has_hero() == False
+    case.add_objet(Heros(1,1,[]))
+    assert case.has_hero() == True
+
+def test_mur():
+    case = Case()
+    assert case.has_mur() == False
+    case.add_objet(Mur(1,1))
+    assert case.has_mur() == True
+

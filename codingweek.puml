@@ -200,7 +200,7 @@ Class IA_Strategy{
 
 Class BFS{
 + voisins(int, int pos)
-+ cherche_chemin(Grille grille)
++ cherche_chemin(Grille grille, Tuple start, Tuple end)
 }
 
 Class Observer{
