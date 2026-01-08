@@ -375,6 +375,7 @@ def verifier_chem_possible(controleur):
     else:
         boucle = False
         print(f"Pas de chemin laissé de l'entrée au trésor.")
+        time.sleep(3)
     
     return boucle
 
