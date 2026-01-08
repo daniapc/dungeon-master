@@ -27,6 +27,12 @@ class Case :
                 self.objets.pop(i)
                 break
 
+    def remove_monstre(self, monstre) :
+        for i in range(len(self.objets)) :
+            if self.objets[i] == monstre :
+                self.objets.pop(i)
+                break
+
     def set_entree(self) :
         self.entree = True
 

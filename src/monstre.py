@@ -29,3 +29,4 @@ class Monstre():
 
     def affichage():
         return("M")
+    
