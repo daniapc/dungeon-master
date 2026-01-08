@@ -71,6 +71,7 @@ class Jeu(MethodView, object):
             print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
             print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
+            print(f"O x,y    :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
             print(f"S         :   Sauvegarder donjon") 
@@ -83,7 +84,7 @@ class Jeu(MethodView, object):
                 os._exit(0)
             elif user_input == 'L' :
                 time.sleep(1)
-                controleur = Controleur(self.grille, self.constructeur.get_budget())
+                controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
                 lancer_vagues(controleur)
                 self.grille.vide()
                 self.constructeur.set_budget(BUDGET_INITIAL)
@@ -135,6 +136,8 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.put_piege(i, j, 2)
                     elif commande == 'P3' :
                         succes, msg = self.constructeur.put_piege(i, j, 3)
+                    elif commande == 'O' :
+                        succes, msg = self.constructeur.put_monstre(i, j)
                     elif commande == 'R' :
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
@@ -157,7 +160,7 @@ class Jeu(MethodView, object):
         
         self.constructeur = ConstructeurDonjon(grille=grille)
         
-        controleur = Controleur(grille=grille, budget=self.constructeur.get_budget())
+        controleur = Controleur(grille=grille, budget=self.constructeur.get_budget(), monstres=[])
         controleur.vague_jeu()
         self.controleur = controleur
                     

@@ -12,6 +12,8 @@ DEGATS_2 = 40
 DEGATS_3 = 25 #dégats de monstre à héros
 DEGATS_4 = 25 #dégats de héros à monstre
 
+PRIX_MONSTRE = 5
+
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"
 BOLD = "\033[1m"

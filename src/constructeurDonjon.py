@@ -1,5 +1,6 @@
 from src.objet import *
 from src.fabrique_objet import *
+from src.fabrique_monstres import *
 from src.params import *
 from src.grille import *
 from src.sauvegarde import GestionSauvegarde
@@ -13,6 +14,7 @@ class ConstructeurDonjon(MethodView):
         self.grille = grille 
         self.budget = budget
         self.fabrique_mur = Fabrique_Mur()
+        self.fabrique_monstre = Fabrique_Monstre()
         self.fabrique_piege_1 = Fabrique_Piege_1()
         self.fabrique_piege_2 = Fabrique_Piege_2()
         self.fabrique_piege_3 = Fabrique_Piege_3()
@@ -65,6 +67,20 @@ class ConstructeurDonjon(MethodView):
             self.grille.get_case(i, j).add_objet(piege)
             self.budget -= cout 
             return True, f"Piège {type_piege} placé"
+        else :
+            return False, "Budget insuffisant"
+        
+    def put_monstre(self, i, j) :
+        if not self.is_in_grid(i, j) :
+            return False, "Emplacement hors limites"
+        if not self.is_empty(i, j) :
+            return False, "Emplacement déjà occupé"
+        monstre = self.fabrique_monstre.fabrique_Monstre(i, j)
+        cout = monstre.get_cout()
+        if self.budget >= cout :
+            self.grille.get_case(i, j).add_objet(monstre)
+            self.budget -= cout 
+            return True, "Monstre placé"
         else :
             return False, "Budget insuffisant"
         
