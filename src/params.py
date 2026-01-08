@@ -10,6 +10,8 @@ PRIX_P3 = 4
 DEGATS_1 = 20
 DEGATS_2 = 40
 
+PRIX_MONSTRE = 5
+
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"
 BOLD = "\033[1m"

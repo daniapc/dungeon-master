@@ -1,5 +1,6 @@
 from random import *
 from src.observer import *
+from src.params import *
 
 SIZE_GRILLE = 16
 
@@ -16,6 +17,9 @@ class Monstre():
     def get_pos(self):
         return self.pos
     
+    def get_cout(self) :
+        return PRIX_MONSTRE
+    
     def deplace(self, i, j):
         a = self.pos[0]
         b = self.pos[1]
@@ -23,5 +27,6 @@ class Monstre():
         b += j
         self.pos = (a,b)
 
-    def affichage():
+    def affichage(self):
         return("M")
+    
