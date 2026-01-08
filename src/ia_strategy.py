@@ -34,10 +34,9 @@ class IA_Strategy():
     
     def reconstruir_chemin(self, p, T):
         chemin = []
-        e = T
-        while e is not None:
-            chemin.append(e)
-            e = p[e]
+        while T is not None:
+            chemin.append(T)
+            T = p[T]
         
         chemin.reverse()
         return chemin
