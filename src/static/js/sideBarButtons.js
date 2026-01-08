@@ -160,8 +160,12 @@ async function sideBarButtons() {
                     updateButtonsState();
                     renderGrille();
                     infoBarCards();
+                    
+                    result = await response.json();
 
-                    // window.location.reload();
+                    if (result['reset'])
+                        window.location.reload();
+
                 } else {
                     console.error("Server error:", response.status);
                 }

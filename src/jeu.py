@@ -17,6 +17,8 @@ import logging
 import threading
 import time
 import os
+import webbrowser
+from threading import Timer
 
 # (day_1)
 # GEMINI { 
@@ -148,9 +150,9 @@ class Jeu(MethodView, object):
 
         if action == 'quitter':
             boucle = controleur.get_boucle()
-            partie = controleur.get_partie()
             
             if boucle:
+                partie = controleur.get_partie()
                 if partie:
                     self.controleur.set_partie(False)
                     self.controleur.set_score()
@@ -159,22 +161,27 @@ class Jeu(MethodView, object):
                     
                     return {"status": "success", "message": "Quitée le partie"}, 200 
                 else:
-                    self.controleur.set_boucle(False)
                     # TODO: change it to be more joli
                     self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
                     self.controleur.vague_jeu()
                     return {"status": "success", "message": "Quitée le boucle"}, 200 
-                    
-            
-            # self.grille.reset()
-            # self.grille.put_entree()
-            # self.grille.put_tresor()
-            
-            # self.constructeur.set_budget(BUDGET_INITIAL)
+            else:
+                self.grille.reset()
+                self.grille.put_entree()
+                self.grille.put_tresor()
+                
+                self.constructeur.set_budget(BUDGET_INITIAL)
+                
+                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                self.controleur.vague_jeu()
+                
+                return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
             
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
             
+def jeu_web():
+    webbrowser.open("http://127.0.0.1:5000/")        
         
 if __name__ == "__main__":
     is_prod = os.environ.get('APP_ENV') == 'prod'
@@ -195,7 +202,9 @@ if __name__ == "__main__":
     
     if (jeu.mode == Mode.TER):    
         thread_terminal.start()
-       
+    elif not(is_prod):
+        Timer(1.5, jeu_web).start()
+    
     app.run(
         host='0.0.0.0', 
         port=5000,
