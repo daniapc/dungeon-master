@@ -7,13 +7,11 @@ abstract class Objet{
 }
 
 class Mur{
-- pos
 + get_cout()
-+affichage()
++ affichage()
 }
 
-interface Piege{
-- pos
+abstract Piege{
 - difficulte
 - active
 + set_difficulte()
@@ -23,30 +21,21 @@ interface Piege{
 }
 
 class Piege_1{
-- pos
-- difficulte
-- active
 + get_cout()
 + degat()
-+affichage()
++ affichage()
 }
 
 class Piege_2{
-- pos
-- difficulte
-- active
 + get_cout()
 + degat()
-+affichage()
++ affichage()
 }
 
 class Piege_3{
-- pos
-- difficulte
-- active
 + get_cout()
 + degat()
-+affichage()
++ affichage()
 }
 
 class Case{
@@ -54,9 +43,10 @@ class Case{
 - Bool entree
 - Bool tresor
 + get_objets()
-+ add_objet()
-+ remove_objet()
++ add_objet(Objet obj)
++ remove_objet(Objet obj)
 + remove_heros(Heros heros)
++ remove_monstre(Monstre m)
 + set_entree()
 + set_tresor()
 + rm_entree()
@@ -117,7 +107,7 @@ Class Grille{
 }
 
 Class Heros{
-- int, int pos
+- Tuple pos
 - int pv
 - List<Observer> obs
 - bool state
@@ -126,7 +116,7 @@ Class Heros{
 + get_obs()
 + get_state()
 + isdead()
-+at_treasure(int x, int y)
++ at_treasure(int x, int y)
 + deplace(int i, int j)
 + degat(int n)
 + affichage()
@@ -195,11 +185,20 @@ Class Fabrique_Piege_3{
 }
 
 Class IA_Strategy{
++ voisins(Tuple pos)
 + applique_strategie(Grille grille)
 }
 
 Class BFS{
-+ voisins(int, int pos)
++ cherche_chemin(Grille grille, Tuple start, Tuple end)
+}
+
+Class Dijkstra{
++ cherche_chemin(Grille grille, Tuple start, Tuple end)
+}
+
+Class A{
++ heuristique()
 + cherche_chemin(Grille grille, Tuple start, Tuple end)
 }
 
@@ -209,18 +208,15 @@ Class Observer{
 }
 
 Class DeathObserver{
-- int value
-+ get_value()
++ death()
 }
 
 Class TreasureObserver{
-- int value
-+ get_value()
++ treasure()
 }
 
 Class BudgetObserver{
-- int value
-+ get_value()
++ budget()
 }
 
 
