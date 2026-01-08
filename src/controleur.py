@@ -374,7 +374,8 @@ class Controleur(MethodView):
             "score" : self.score_final,
             "tour" : self.tour,
             "compteur" : self.compteur,
-            "strategie" : strategie
+            "strategie" : strategie,
+            "recap" : self.recap
         }
         file_name = input("Nom de la sauvegarde : ")
         if not file_name :
@@ -390,6 +391,8 @@ class Controleur(MethodView):
             self.vague = data_game.get("vague", 1)
             self.score_final = data_game.get("score", 0)
             self.compteur = data_game.get("compteur", 0)
+            self.tour = data_game.get("tour", 0)
+            self.recap = data_game.get("recap", self.recap)
             strategie = data_game["strategie"]
             if strategie == "BFS" :
                 self.set_strategie(BFS())
