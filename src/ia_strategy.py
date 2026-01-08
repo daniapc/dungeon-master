@@ -7,6 +7,18 @@ from src.case import *
 from src.heros import Heros
 
 class IA_Strategy():
+    def voisins(self, pos):
+        voisins = list()
+        if pos[0]-1 >= 0:
+            voisins.append((pos[0]-1, pos[1]))
+        if pos[1]+1 < SIZE_GRILLE:
+            voisins.append((pos[0],pos[1]+1))
+        if pos[0]+1 < SIZE_GRILLE:
+            voisins.append((pos[0]+1,pos[1]))
+        if pos[1]-1 >= 0:
+            voisins.append((pos[0], pos[1]-1))
+        return voisins
+    
     def cherche_chemin(self, grille, start):
         pass
 
@@ -24,18 +36,6 @@ class IA_Strategy():
         return l_depl
 
 class BFS(IA_Strategy):
-
-    def voisins(self, pos):
-        voisins = list()
-        if pos[0]-1 >= 0:
-            voisins.append((pos[0]-1, pos[1]))
-        if pos[1]+1 < SIZE_GRILLE:
-            voisins.append((pos[0],pos[1]+1))
-        if pos[0]+1 < SIZE_GRILLE:
-            voisins.append((pos[0]+1,pos[1]))
-        if pos[1]-1 >= 0:
-            voisins.append((pos[0], pos[1]-1))
-        return voisins
     
     def cherche_chemin(self, grille, start):
         '''
@@ -78,18 +78,6 @@ class BFS(IA_Strategy):
 
 
 class Dijkstra(IA_Strategy):
-    def voisins(self, pos):
-        voisins = list()
-        if pos[0]-1 >= 0:
-            voisins.append((pos[0]-1, pos[1]))
-        if pos[1]+1 < SIZE_GRILLE:
-            voisins.append((pos[0],pos[1]+1))
-        if pos[0]+1 < SIZE_GRILLE:
-            voisins.append((pos[0]+1,pos[1]))
-        if pos[1]-1 >= 0:
-            voisins.append((pos[0], pos[1]-1))
-        return voisins
-    
     def cout_case(self,x, y, grille):
         objets = grille.get_case(x,y).get_objets()
 
@@ -140,3 +128,5 @@ class Dijkstra(IA_Strategy):
             chemin.reverse()
             return chemin
 
+class A(IA_Strategy):
+    pass
