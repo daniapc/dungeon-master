@@ -9,10 +9,9 @@ def preparer_grille(mocker):
     """
     Permet de configurer le départ, l'arrivée et les murs
     """
-    def _constructeur(start, end, murs):
+    def _constructeur(end, murs):
         # 1. On crée le mock de la grille
         mock_grille = mocker.Mock()
-        mock_grille.get_entree.return_value = start
         mock_grille.get_tresor.return_value = end
 
         # 2. La logique dynamique pour get_case(x, y)
@@ -34,10 +33,10 @@ def preparer_grille(mocker):
 def test_bfs_chemin_direct(preparer_grille):
     """Vérifie un chemin simple sans obstacles"""
     # On prépare une grille : Départ (0,0), Fin (0,2), pas de murs
-    grille = preparer_grille(start=(0,0), end=(0,2), murs=[])
+    grille = preparer_grille(end=(0,2), murs=[])
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     assert chemin == [(0,0), (0,1), (0,2)]
 
@@ -45,10 +44,10 @@ def test_bfs_contournement_mur(preparer_grille):
     """Vérifie que l'IA contourne un mur"""
     # Mur en (0,1) qui bloque le chemin direct
     murs = [(0, 1)]
-    grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
+    grille = preparer_grille(end=(0,2), murs=murs)
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     # Assertions simples et lisibles
     assert chemin is not None
@@ -61,23 +60,23 @@ def test_bfs_impossible(preparer_grille):
     # On enferme le départ avec des murs autour de (0,0)
     # (Supposons que les voisins sont (0,1), (1,0), (1,1))
     murs_bloquants = [(0, 1), (1, 0), (1, 1)] 
-    grille = preparer_grille(start=(0,0), end=(5,5), murs=murs_bloquants)
+    grille = preparer_grille(end=(5,5), murs=murs_bloquants)
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     assert chemin is None or chemin == []
 
 def test_deplacer_heros(preparer_grille):
     murs = [(0, 1)]
-    grille = preparer_grille(start=(0,0), end=(0,2), murs=murs)
+    grille = preparer_grille(end=(0,2), murs=murs)
     h = Heros(0,0, [])
-    ctr = Controleur(grille)
+    ctr = Controleur(grille, 100)
     ctr.ajouter_heros(h)
     ctr.update_compteur()
 
     algo = BFS()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
 
     ctr.set_strategie(algo)
 

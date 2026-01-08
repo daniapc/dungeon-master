@@ -4,13 +4,14 @@ from math import inf
 from src.params import *
 from src.grille import *
 from src.case import *
+from src.heros import Heros
 
 class IA_Strategy():
-    def cherche_chemin(self, grille):
+    def cherche_chemin(self, grille, start):
         pass
 
-    def applique_strategie(self, grille):
-        chemin = self.cherche_chemin(grille)
+    def applique_strategie(self, grille, h):
+        chemin = self.cherche_chemin(grille, h.get_pos())
         if chemin is None:
             return None
         l_depl = list()
@@ -36,8 +37,11 @@ class BFS(IA_Strategy):
             voisins.append((pos[0], pos[1]-1))
         return voisins
     
-    def cherche_chemin(self, grille):
-        xe, xy = grille.get_entree()
+    def cherche_chemin(self, grille, start):
+        '''
+        :param start: coordonnées position du héros
+        '''
+        xe, xy = start
         E = (xe, xy)
         xt, yt = grille.get_tresor()
         T = (xt, yt)
@@ -99,8 +103,8 @@ class Dijkstra(IA_Strategy):
         
         return cout
             
-    def cherche_chemin(self, grille):
-        xe, xy = grille.get_entree()
+    def cherche_chemin(self, grille, start):
+        xe, xy = start
         E = (xe, xy)
         xt, yt = grille.get_tresor()
         T = (xt, yt)

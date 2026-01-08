@@ -44,9 +44,16 @@ class Controleur(MethodView):
         if self.strategie is None:
             return
         
-        l_depl = self.strategie.applique_strategie(self.grille)
+        for h in self.get_liste():
+            l_depl = self.strategie.applique_strategie(self.grille, h)
 
-        self.depl_tour_all(l_depl, self.compteur)
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_heros(h)
+
+            h.deplace(l_depl[0][0], l_depl[0][1])
+            
+            pos = h.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_objet(h)
 
     
     def get_vague(self):
