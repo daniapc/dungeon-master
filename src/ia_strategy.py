@@ -19,6 +19,29 @@ class IA_Strategy():
             voisins.append((pos[0], pos[1]-1))
         return voisins
     
+    def cout_case(self,x, y, grille):
+        objets = grille.get_case(x,y).get_objets()
+
+        cout = 1 #par défaut
+
+        for ob in objets:
+            if isinstance(ob, Piege):
+                cout += ob.get_cout()
+            if isinstance(ob, Mur):
+                cout = inf
+        
+        return cout
+    
+    def reconstruir_chemin(self, p, T):
+        chemin = []
+        e = T
+        while e is not None:
+            chemin.append(e)
+            e = p[e]
+        
+        chemin.reverse()
+        return chemin
+    
     def cherche_chemin(self, grille, start):
         pass
 
@@ -36,7 +59,6 @@ class IA_Strategy():
         return l_depl
 
 class BFS(IA_Strategy):
-    
     def cherche_chemin(self, grille, start):
         '''
         :param start: coordonnées position du héros
@@ -67,30 +89,10 @@ class BFS(IA_Strategy):
         if not chemin_trouve:
             return None
         else:
-            chemin = []
-            e = T
-            while e is not None:
-                chemin.append(e)
-                e = p[e]
-            
-            chemin.reverse()
-            return chemin
+            return self.reconstruir_chemin(p, T)
 
 
-class Dijkstra(IA_Strategy):
-    def cout_case(self,x, y, grille):
-        objets = grille.get_case(x,y).get_objets()
-
-        cout = 1 #par défaut
-
-        for ob in objets:
-            if isinstance(ob, Piege):
-                cout += ob.get_cout()
-            if isinstance(ob, Mur):
-                cout = inf
-        
-        return cout
-            
+class Dijkstra(IA_Strategy):        
     def cherche_chemin(self, grille, start):
         xe, xy = start
         E = (xe, xy)
@@ -119,14 +121,27 @@ class Dijkstra(IA_Strategy):
         if T not in p:
             return None
         else:
-            chemin = []
-            e = T
-            while e is not None:
-                chemin.append(e)
-                e = p[e]
-            
-            chemin.reverse()
-            return chemin
+            return self.reconstruir_chemin(p, T)
 
 class A(IA_Strategy):
-    pass
+    def heuristique(self, start, tresor):
+        '''
+        :param start: Position actuelle
+        :param tresor: Position du trésor
+        :return d: Distance Manhatan
+        '''
+        return abs(start[0] - tresor[0]) + abs(start[1] - tresor[1])
+
+    def cherche_chemin(self, grille, start):
+        xt, yt = grille.get_tresor()
+        T = (xt, yt)
+
+        p = {start: None}
+        cout_min = {start:0}
+        pq = [(0, start)]
+        heapq.heapify(pq)
+
+        if T not in p:
+            return None
+        else:
+            return self.reconstruir_chemin(p, T)
