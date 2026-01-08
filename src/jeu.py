@@ -18,6 +18,8 @@ import logging
 import threading
 import time
 import os
+import webbrowser
+from threading import Timer
 
 # (day_1)
 # GEMINI { 
@@ -77,12 +79,14 @@ class Jeu(MethodView, object):
 
             user_input = input("\nCommande >").strip().upper()
             if user_input == 'Q' :
-                print("Fermeture du donjon")
+                print("Fermeture du jeu")
                 os._exit(0)
             elif user_input == 'L' :
                 time.sleep(1)
                 controleur = Controleur(self.grille, self.constructeur.get_budget())
                 lancer_vagues(controleur)
+                self.grille.vide()
+                self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             elif user_input == 'S' :
                 msg = self.constructeur.save_donjon()
@@ -160,7 +164,7 @@ class Jeu(MethodView, object):
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
             grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
         app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
-            grille=grille, instance=controleur))
+            grille=grille, instance=controleur, budget=self.constructeur.get_budget()))
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
@@ -171,59 +175,82 @@ class Jeu(MethodView, object):
         data = request.json
         
         action = data['action']
-        
+        controleur = self.controleur
+
         if action == 'quitter':
-            self.grille.reset()
-            self.grille.put_entree()
-            self.grille.put_tresor()
+            boucle = controleur.get_boucle()
             
-            self.constructeur.set_budget(BUDGET_INITIAL)
-            
-            return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
-        elif action == 'lancer':
-            controleur = self.controleur
-            
-            if controleur.get_tour() == 0:
-                controleur.check_collisions()
-                joue = "Héros"
+            if boucle:
+                partie = controleur.get_partie()
+                if partie:
+                    self.controleur.set_partie(False)
+                    self.controleur.set_score()
+                    self.controleur.set_score_final(self.controleur.get_score())
+                    self.controleur.enleve_heros()
+                    
+                    return {"status": "success", "message": "Quitée le partie"}, 200 
+                else:
+                    # TODO: change it to be more joli
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                    self.controleur.vague_jeu()
+                    return {"status": "success", "message": "Quitée le boucle"}, 200 
             else:
-                controleur.depl_alea()
-                joue = "Donjon"
-            score = controleur.set_score()
-            controleur.change_tour()
+                self.grille.reset()
+                self.grille.put_entree()
+                self.grille.put_tresor()
+                
+                self.constructeur.set_budget(BUDGET_INITIAL)
+                
+                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                self.controleur.vague_jeu()
+                
+                return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
             
-            return {"status": "success", 
-                    "message": "Le jeu a ete reseté",
-                    "joue": joue,
-                    "score": score
-                    }, 200 
-    
+        
         return {"status": "ignored", "message": "Nothing happened"}, 200
             
+def jeu_web():
+    webbrowser.open("http://127.0.0.1:5000/")        
         
 if __name__ == "__main__":
     is_prod = os.environ.get('APP_ENV') == 'prod'
     
     mode = Mode.WEB.value if is_prod else input(
         "Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
-    
-    jeu = Jeu()
-    jeu.set_mode(Mode(int(mode)))
-    jeu.setup()
-    
-    # GEMINI { # (day_1)
-    thread_terminal = threading.Thread(
-            target=jeu.terminal_loop, 
-            daemon=True
-        )
-    # } GEMINI 
-    
-    if (jeu.mode == Mode.TER):    
-        thread_terminal.start()
-       
-    app.run(
-        host='0.0.0.0', 
-        port=5000,
-        debug=not is_prod,  # prod
-        use_reloader=False)
+    user_input = ""
+    while user_input != "Q":
+        print(f"Bienvenue dans Dungeon Manager !")
+        print()
+        print(f"[J] Jouer")
+        print(f"[C] Charger une partie")
+        print(f"[Q] Quitter")
+        print()
+        user_input = input("\nCommande >").strip().upper()
+        if user_input == "J":
+            jeu = Jeu()
+            jeu.set_mode(Mode(int(mode)))
+            jeu.setup()
+            
+            # GEMINI { # (day_1)
+            thread_terminal = threading.Thread(
+                    target=jeu.terminal_loop, 
+                    daemon=True
+                )
+            # } GEMINI 
+            
+            if (jeu.mode == Mode.TER):    
+                thread_terminal.start()
+            elif not(is_prod):
+                Timer(1.5, jeu_web).start()
+            
+            app.run(
+                host='0.0.0.0', 
+                port=5000,
+                debug=not is_prod,  # prod
+                use_reloader=False)
+        elif user_input == "C":
+            #charger une partie
+            pass
+    print(f"Fermeture du jeu.")
+    exit()
 

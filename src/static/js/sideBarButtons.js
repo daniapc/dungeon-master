@@ -1,4 +1,66 @@
-document.addEventListener("DOMContentLoaded", async () => {
+async function updateButtonsState(){
+    /** ==============================
+     * GETTING STATE OF THE GAME
+     ======================================*/
+    let boucle = false;
+
+    try {
+        const response = await fetch(`/controleur?attribute=boucle`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.status === "success")
+            boucle = data['boucle'];
+    } catch (e) {
+        console.error("Error fetching boucle:", e);
+    }
+
+    let partie = false;
+
+    try {
+        const response = await fetch(`/controleur?attribute=partie`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.status === "success")
+            partie = data['partie'];
+    } catch (e) {
+        console.error("Error fetching partie:", e);
+    }
+    
+    const toolsPanel = document.querySelector('.tools-panel');
+    const continuerButton = document.querySelector('[data-type="continuer"]');
+    const lancerButton = document.querySelector('[data-type="lancer"]');
+    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
+    
+    console.log(partie);
+
+    toolsPanel.style.display = !boucle ? '' : 'none';
+    continuerButton.style.display = (boucle && partie)  ? '' : 'none';
+    lancerButton.style.display = !boucle ? '' : 'none';
+    sauvegarderButton.style.display = !boucle ? 'none' : '';
+
+    // if (boucle)
+    //     continuerButton.style.display = !partie  ? 'none' : '';
+
+    // if (!boucle){
+    //     toolsPanel.style.display = '';
+    //     continuerButton.style.display = 'none';
+    //     lancerButton.style.display = '';
+    //     sauvegarderButton.style.display = 'none';
+    // } else {
+    //     toolsPanel.style.display = 'none';
+    //     continuerButton.style.display = '';
+    //     lancerButton.style.display = 'none';
+    //     sauvegarderButton.style.display = '';
+    // }
+}
+
+async function sideBarButtons() {
 
     /* ===============================
      BUDGET
@@ -95,7 +157,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
     
                 if (response.ok) {
-                    window.location.reload();
+                    updateButtonsState();
+                    renderGrille();
+                    infoBarCards();
+                    
+                    result = await response.json();
+
+                    if (result['reset'])
+                        window.location.reload();
+
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -105,14 +175,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const continuerButton = document.querySelector('[data-type="lancer"]');
-    if (continuerButton) {
-        continuerButton.addEventListener("click", async () => {
+    const lancerButton = document.querySelector('[data-type="lancer"]');
+    if (lancerButton){
+        lancerButton.addEventListener("click", async () => {
             
             const payload = { action: "lancer" };
             
             try {
-                const response = await fetch(`/`, {
+                const response = await fetch(`/controleur`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+    
+                if (response.ok) {
+                    updateButtonsState();                 
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
+
+    const continuerButton = document.querySelector('[data-type="continuer"]');
+    if (continuerButton) {
+        continuerButton.addEventListener("click", async () => {
+            
+            const payload = { action: "continuer" };
+            
+            try {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -120,15 +215,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     
                 if (response.ok) {
                     result = await response.json();
-
+                    
                     joue = result['joue'];
                     score = result['score'];
-
+                    fini = result['fini'];
+                                
                     document.querySelector('.infoBar .joue').innerText = joue;
                     document.querySelector('.infoBar .score').innerText = score;
 
                     await renderGrille();                    
-                    await infoBarCards();                    
+                    await infoBarCards();
+                    await updateButtonsState();
+                    
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -138,4 +236,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-});
+    updateButtonsState();
+
+};
+
+document.addEventListener("DOMContentLoaded", sideBarButtons);

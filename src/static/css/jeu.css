@@ -15,6 +15,7 @@
 }
 
 body {
+    zoom: 0.8;
     background-color: var(--bg-dark);
     color: var(--text-main);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -182,4 +183,12 @@ body {
 .caseDiv.coordinate:hover {
     filter: none;
     border: none;
+}
+
+/* ===================================
+    INFO BAR
+    ==============================*/
+
+.icon-hero {
+    color: var(--accent-primary)
 }

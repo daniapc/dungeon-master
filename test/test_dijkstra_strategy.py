@@ -11,7 +11,6 @@ def preparer_grille_ponderee(mocker):
     def _constructeur(start, end, murs, pieges):
         # 1. Mock de la grille de base
         mock_grille = mocker.Mock()
-        mock_grille.get_entree.return_value = start
         mock_grille.get_tresor.return_value = end
 
         # 2. Logique pour get_case(x, y)
@@ -65,7 +64,7 @@ def test_dijkstra_evite_piege(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=[], pieges=pieges)
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     # Vérifications
     assert chemin is not None
@@ -89,7 +88,7 @@ def test_dijkstra_traverse_si_obligatoire(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=pieges)
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     assert chemin is not None
     assert (0, 1) in chemin, "L'IA doit traverser le piège si aucun autre chemin n'existe"
@@ -100,7 +99,7 @@ def test_dijkstra_mur_infranchissable(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=[])
     
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
     
     assert (0, 1) not in chemin
 
@@ -108,12 +107,12 @@ def test_deplacer_heros(preparer_grille_ponderee):
     murs = [(0, 1)]
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=[])
     h = Heros(0,0, [])
-    ctr = Controleur(grille)
+    ctr = Controleur(grille, 100)
     ctr.ajouter_heros(h)
     ctr.update_compteur()
 
     algo = Dijkstra()
-    chemin = algo.cherche_chemin(grille)
+    chemin = algo.cherche_chemin(grille, (0,0))
 
     ctr.set_strategie(algo)
 

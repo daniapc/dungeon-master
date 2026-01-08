@@ -7,6 +7,8 @@ PRIX_MUR = 1
 PRIX_P1 = 2 
 PRIX_P2 = 3
 PRIX_P3 = 4
+DEGATS_1 = 20
+DEGATS_2 = 40
 
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"
