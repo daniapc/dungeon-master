@@ -148,15 +148,23 @@ class Jeu(MethodView, object):
 
         if action == 'quitter':
             boucle = controleur.get_boucle()
+            partie = controleur.get_partie()
             
             if boucle:
-                controleur.set_boucle(False)
-                controleur.partie = False
-                controleur.set_score()
-                controleur.set_score_final(controleur.get_score())
-                controleur.enleve_heros()
-                
-                return {"status": "success", "message": "Quitée le boucle"}, 200 
+                if partie:
+                    self.controleur.set_partie(False)
+                    self.controleur.set_score()
+                    self.controleur.set_score_final(self.controleur.get_score())
+                    self.controleur.enleve_heros()
+                    
+                    return {"status": "success", "message": "Quitée le partie"}, 200 
+                else:
+                    self.controleur.set_boucle(False)
+                    # TODO: change it to be more joli
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                    self.controleur.vague_jeu()
+                    return {"status": "success", "message": "Quitée le boucle"}, 200 
+                    
             
             # self.grille.reset()
             # self.grille.put_entree()

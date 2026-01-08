@@ -16,23 +16,48 @@ async function updateButtonsState(){
     } catch (e) {
         console.error("Error fetching boucle:", e);
     }
+
+    let partie = false;
+
+    try {
+        const response = await fetch(`/controleur?attribute=partie`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.status === "success")
+            partie = data['partie'];
+    } catch (e) {
+        console.error("Error fetching partie:", e);
+    }
     
     const toolsPanel = document.querySelector('.tools-panel');
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
     const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
     
-    if (!boucle){
-        toolsPanel.style.display = '';
-        continuerButton.style.display = 'none';
-        lancerButton.style.display = '';
-        sauvegarderButton.style.display = 'none';
-    } else {
-        toolsPanel.style.display = 'none';
-        continuerButton.style.display = '';
-        lancerButton.style.display = 'none';
-        sauvegarderButton.style.display = '';
-    }
+    console.log(partie);
+
+    toolsPanel.style.display = !boucle ? '' : 'none';
+    continuerButton.style.display = (boucle && partie)  ? '' : 'none';
+    lancerButton.style.display = !boucle ? '' : 'none';
+    sauvegarderButton.style.display = !boucle ? 'none' : '';
+
+    // if (boucle)
+    //     continuerButton.style.display = !partie  ? 'none' : '';
+
+    // if (!boucle){
+    //     toolsPanel.style.display = '';
+    //     continuerButton.style.display = 'none';
+    //     lancerButton.style.display = '';
+    //     sauvegarderButton.style.display = 'none';
+    // } else {
+    //     toolsPanel.style.display = 'none';
+    //     continuerButton.style.display = '';
+    //     lancerButton.style.display = 'none';
+    //     sauvegarderButton.style.display = '';
+    // }
 }
 
 async function sideBarButtons() {
@@ -132,7 +157,11 @@ async function sideBarButtons() {
                 });
     
                 if (response.ok) {
-                    window.location.reload();
+                    updateButtonsState();
+                    renderGrille();
+                    infoBarCards();
+
+                    // window.location.reload();
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -190,17 +219,9 @@ async function sideBarButtons() {
                     document.querySelector('.infoBar .joue').innerText = joue;
                     document.querySelector('.infoBar .score').innerText = score;
 
-                    if (fini){
-                        continuerButton.style.display = 'none';
-                        
-                        const vague = document.querySelector(".vague-terminée");
-                        vague.style.display = '';
-                        
-                    }
-                    else {
-                    }
                     await renderGrille();                    
                     await infoBarCards();
+                    await updateButtonsState();
                     
                 } else {
                     console.error("Server error:", response.status);

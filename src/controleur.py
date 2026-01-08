@@ -67,6 +67,8 @@ class Controleur(MethodView):
     
     def get_partie(self):
         return self.partie
+    def set_partie(self, pt):
+        self.partie = pt
     
     def get_score_final(self):
         return self.score_final
@@ -230,9 +232,16 @@ class Controleur(MethodView):
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
         elif attribute == 'vague':
-            return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
+            vague = str(self.get_vague())
+            
+            if not(self.get_partie()):
+                vague += " (terminée)"
+            
+            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
         elif attribute == 'boucle':
             return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
+        elif attribute == 'partie':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -261,7 +270,7 @@ class Controleur(MethodView):
                     self.set_score()
                     self.set_score_final(self.get_score())
                     self.enleve_heros()
-                    self.set_boucle(False)
+                    # self.set_boucle(False)
                     
                     fini = True
                     
@@ -326,9 +335,9 @@ def boucle_jeu(controleur):
             if controleur.get_tour() == 0:
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
-                    controleur.partie = False
+                    controleur.set_partie(False)
                 if controleur.check_treso():
-                    controleur.partie = False
+                    controleur.set_partie(False)
                     controleur.set_score()
                     controleur.set_score_final(controleur.get_score())
                     controleur.enleve_heros()
@@ -343,7 +352,7 @@ def boucle_jeu(controleur):
             score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
         elif action == 'Q' :
-                controleur.partie = False
+                controleur.set_partie(False)
                 controleur.set_score()
                 controleur.set_score_final(controleur.get_score())
                 controleur.enleve_heros()
