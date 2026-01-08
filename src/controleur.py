@@ -484,7 +484,7 @@ def boucle_jeu(controleur):
                 return("Q")
         elif action == 'S':
             file_name = controleur.save_current_game()
-            print(f"Partie sauvegardée : {file_name}.json")
+            print(f"Partie sauvegardée : {file_name}")
             time.sleep(2)
             controleur.enleve_heros()
             return("S")
@@ -503,24 +503,25 @@ def lancer_vagues(controleur, sauvegarde=False):
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
         if not sauvegarde :
             controleur.vague_jeu()
-        else :
-            sauvegarde = False
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
-        while(ia):
-            print(f"Choix de l'IA")
-            print(f"C         :   Chemin le plus court")
-            print(f"S         :   Chemin le plus sûr")
-            action = input("\nCommande >").strip().upper()
-            if action == "C":
-                controleur.set_strategie(BFS())
-                ia = False
-            elif action == "S":
-                controleur.set_strategie(Dijkstra())
-                ia = False
-            else:
-                print(f"Pas d'action pour cette touche.")
-                time.sleep(3)
+        if not sauvegarde :
+            while(ia):
+                print(f"Choix de l'IA")
+                print(f"C         :   Chemin le plus court")
+                print(f"S         :   Chemin le plus sûr")
+                action = input("\nCommande >").strip().upper()
+                if action == "C":
+                    controleur.set_strategie(BFS())
+                    ia = False
+                elif action == "S":
+                    controleur.set_strategie(Dijkstra())
+                    ia = False
+                else:
+                    print(f"Pas d'action pour cette touche.")
+                    time.sleep(3)
+        else :
+            sauvegarde = False
         arrivee = boucle_jeu(controleur)
         recap(controleur)
         if(arrivee == "F"):

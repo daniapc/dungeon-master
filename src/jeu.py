@@ -73,7 +73,7 @@ class Jeu(MethodView, object):
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
-            print(f"S         :   Sauvegarder donjon") # récupérer le nom
+            print(f"S         :   Sauvegarder donjon") 
             print(f"C         :   Charger une sauvegarde")
             print(f"Q         :   Quitter")
 
@@ -103,6 +103,9 @@ class Jeu(MethodView, object):
                         if succes :
                             lancer_vagues(controleur, sauvegarde=True)
                             message = "Partie chargée"
+                            self.grille.vide()
+                            self.constructeur.set_budget(BUDGET_INITIAL)
+                            
                         else :
                             message = f"Erreur : {msg}"
                     else :
