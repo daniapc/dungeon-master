@@ -25,7 +25,7 @@ async function infoBarCards () {
                 heroDiv.className = 'panel mb-3';
 
                 heroDiv.innerHTML = `
-                        <i class="fa-solid fa-${hero['index'] + 1} me-2 text-accent"></i>
+                        <i class="fa-solid fa-${hero['index'] + 1} me-2 text-accent icon-hero"></i>
                         <span>(${hero['x']}, ${hero['y']})</span>
                     `;
 

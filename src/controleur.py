@@ -24,6 +24,8 @@ class Controleur(MethodView):
         self.compteur = 0
         self.fab = Fabrique_Heros()
         self.instance = instance
+        
+        self.boucle = False
 
     def get_liste(self):
         return self.l_heros
@@ -48,6 +50,11 @@ class Controleur(MethodView):
 
         self.depl_tour_all(l_depl, self.compteur)
 
+    def get_boucle(self):
+        return self.boucle
+    
+    def set_boucle(self, bc):
+        self.boucle = bc
     
     def get_vague(self):
         return self.vague
@@ -206,7 +213,7 @@ class Controleur(MethodView):
     
     # FLASK METHOD: N'EST PAS RETIRER OU REBAPTISER CE METHOD!
     def get(self):
-        self = self.instance
+        self = (Controleur)(self.instance)
                 
         attribute = request.args.get('attribute')
         
@@ -224,6 +231,8 @@ class Controleur(MethodView):
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
         elif attribute == 'vague':
             return {"status": "success", "message": "Vague value enviée", 'vague': self.get_vague()}
+        elif attribute == 'boucle':
+            return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -311,9 +320,10 @@ def boucle_jeu(controleur):
 
 
 
-def lancer_vagues(controleur):
-    boucle = True
-    while(boucle and controleur.get_vague() <= 3):
+def lancer_vagues(controleur: Controleur):
+    controleur.set_boucle(True)
+
+    while(controleur.get_boucle() and controleur.get_vague() <= 3):
         controleur.vague_jeu()
         arrivee = boucle_jeu(controleur)
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -333,11 +343,11 @@ def lancer_vagues(controleur):
         elif action == "S" and arrivee != "S":
             print("Partie sauvegardée.")
             time.sleep(3)
-            boucle = False
+            controleur.set_boucle(False)
             #sauvegarder
             pass
         elif action == "Q":
-            boucle = False
+            controleur.set_boucle(False)
         else:
             print(f"Pas d'action pour cette touche.")
             time.sleep(3)

@@ -133,7 +133,7 @@ class Jeu(MethodView, object):
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
             grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
         app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
-            grille=grille, instance=controleur))
+            grille=grille, instance=controleur, budget=self.constructeur.get_budget()))
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
@@ -153,7 +153,7 @@ class Jeu(MethodView, object):
             self.constructeur.set_budget(BUDGET_INITIAL)
             
             return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
-        elif action == 'lancer':
+        elif action == 'continuer':
             controleur = self.controleur
             
             if controleur.get_tour() == 0:

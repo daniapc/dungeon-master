@@ -105,11 +105,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const continuerButton = document.querySelector('[data-type="lancer"]');
+    const continuerButton = document.querySelector('[data-type="continuer"]');
     if (continuerButton) {
         continuerButton.addEventListener("click", async () => {
             
-            const payload = { action: "lancer" };
+            const payload = { action: "continuer" };
             
             try {
                 const response = await fetch(`/`, {
@@ -136,6 +136,35 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.error("Network error:", e);
             }
         });
+    }
+
+    /** ==============================
+     * GETTING STATE OF THE GAME
+     ======================================*/
+    let boulon = false;
+
+    try {
+        const response = await fetch(`/controleur?attribute=boulon`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        console.log(data);
+        if (data.status === "success")
+            boulon = data['boulon'];
+    } catch (e) {
+        console.error("Error fetching boulon:", e);
+    }
+
+    const toolsPanel = document.querySelector('.tools-panel');
+    
+    if (!boulon){
+
+        continuerButton.style.display = 'none';
+    } else {
+        continuerButton.style.display = '';
+        
     }
 
 });
