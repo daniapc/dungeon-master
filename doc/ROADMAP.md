@@ -1,17 +1,13 @@
 # ROADMAP – Projet Dungeon Manager
 
 > Ce document décrit la vision globale du projet et le découpage en sprints (1 jour = 1 sprint).
-> Il doit rester à jour tout au long de la semaine.
 
 ## 1. Vision du projet
 
 - Objectif général :
-_Ex : Concevoir un jeu de gestion de donjon jouable en TUI/Web, mettant en œuvre POO, patterns et
-simulation._
+Concevoir un jeu de gestion de donjon jouable en TUI/Web.
 - Public cible / utilisateur :
-_Ex : Joueur qui veut concevoir, tester et optimiser un donjon contre des vagues de héros._
-- Résultat attendu en fin de semaine :
-_Ex : Application jouable + vidéo de démo scénarisée + tests unitaires de base.
+Joueur qui veut concevoir, tester et optimiser un donjon contre des vagues de héros.
 
 ## 2. Conventions
 
@@ -26,43 +22,75 @@ _Ex : Application jouable + vidéo de démo scénarisée + tests unitaires de ba
 
 ## 3. Backlog global
 
-> Liste des fonctionnalités et tâches importantes, avec une cible de sprint.
-> À mettre à jour au fur et à mesure.
+> Liste des fonctionnalités et tâches importantes
 
-| ID | User story / tâche | Sprint cible | Priorité | Etat |
-|----|------------------------------|-------|-----|---|
-| US1 | En tant que joueur, je paux afficher une grille de donjon |  |  | DONE |
-| US2 | En tant que joueur, je peux ajouter des objets (murs, ennemis) sur la grille |  |  | DONE |
-| US3 | Ajouter un héro (qui se déplace aléatoirement) |  |  | DOING |
-| US4 | Ajouter un menu pour pouvoir ajouter des objets / lancer une partie / avancer la partie |  |  | DONE |
-| US5 | Pouvoir visualiser le jeu tel quel dans le terminal / sur HTML |  |  | DONE |
-| US6 | Flask setup |  | | DOING |
-| US7 | Implémenter la stratégie d'IA "plus court chemin" |  |  | DOING |
-| US8 | Implémenter le score à la fin de la partie et l'argent récolté |  |  | DONE |
-| US9 | Pouvoir jouer sur plusieurs vagues |  |  | TODO |
-| US10 | Implémenter la stratégie d'IA "chemin le plus sûr" |  |  | TODO |
-| US11 | Pouvoir visualiser le jeu en HTML et terminal |  |  | DOING |
-| US12 | En tant que joueur, je dois pouvoir sauvegarder une partie à n'importe quel instant |  |  | TODO |
-| US13 | Retravailler les visuels HTML (si nécessaire) |  |  | TODO |
-| US14 | Préparer la vidéo de démonstration |  |  | TODO |
-| US15 | Tourner la vidéo de démonstration |  |  | TODO |
-| US16 | Monter la vidéo de démonstration |  |  | TODO |
-| US17 | fin |  |  | TODO |
-
+| ID | Tâche | Priorité | Etat |
+|----|------------------------------|-----|---|
+| 1 | Faire une structure de grille et de cases | Haute | DONE |
+| 2 | Pouvoir afficher une grille Terminal / Web | Haute | DONE |
+| 3 | Faire une structure de Héros et Objets (Murs, Pièges) | Haute | DONE |
+| 4 | Implémenter une Factory pour chaque élément | Moyenne | DONE |
+| 5 | Faire un diagramme UML et le tenir à jour | Moyenne | DOING |
+| 6 | Pouvoir placer des objets sur le grille de donjon | Haute | DONE |
+| 7 | Lancer une vague | Haute | DONE |
+| 8 | Faire une boucle de jeu (placement & vagues) | Haute | DONE |
+| 9 | Calcul de budjet selon placements faits | Haute | DONE |
+| 10 | Calcul de score | Haute | DONE |
+| 11 | Faire un système de sauvegarde/chargement de partie | Haute | DOING |
+| 12 | Développer les interfaces | Moyenne | DOING |
+| 13 | Implémenter une stratégie "plus court chemin " pour le déplacement des héros | Haute | DONE |
+| 14 | Implémenter une stratégie "chemin le plus sûr" | Haute | DONE |
+| 15 | Pouvoir choisir la stratégie à appliquer | Moyenne | TODO |
+| 16 | Configuration de serveur | Faible | DONE |
+| 17 | Configuration de l'application Flask | Haute | DONE |
+| 18 | Intégration de menus de contrôle sur interfaces | Moyenne | DONE |
+| 19 | Faire un menu de lancement | Moyenne | TODO |
+| 20 | Avoir un récapitulatif en fin de partie | Moyenne | TODO |
+| 21 | Faire des tests unitaires sur le code | Moyenne | DOING |
+| 22 | Avoir un README | Haute | DOING |
+| 23 | Implémenter des monstres | Faible | TODO |
+| 24 | Amélioration de l'UX | Faible | TODO |
+| 25 | Préparer la vidéo de démonstration | Haute | TODO |
+| 26 | Tourner la vidéo de démonstration | Haute  | TODO |
+| 27 | Monter la vidéo de démonstration |  Moyenne | TODO |
 
 ## 4. Vue par sprint (résumé)
 
-> À maintenir en cohérence avec les fichiers de planning/retrospective.
+### Sprint DAY_1 – [05/01/2026]
+Objectif : Mise en place de l'architecture et de l'environnement.
 
-### Sprint DAY_1 – [date]
+    - Implémentation de la structure de données de base (Grille, Case).
+
+    - Configuration de l'environnement serveur (Flask) et choix d'architecture (Web vs Terminal).
+
+    - Début de la logique de déplacement des héros.
+
+    - Définition des classes principales du projet.
+### Sprint DAY_2 – [06/01/2026]
+Objectif : Patterns de conception et cœur du gameplay.
+
+    - Implémentation des Design Patterns : Factory (pour la création d'objets) et Observer (pour le suivi des Héros/Budget).
+
+    - Création de la boucle de jeu principale et calcul du score.
+
+    - Affichage dynamique de la grille sur l'interface Web et Terminal.
+
+    - Communication fonctionnelle entre le Backend (Flask) et le Frontend.
+### Sprint DAY_3 – [07/01/2026]
+Objectif : Intelligence Artificielle et Intégration.
+
+    - Finalisation et intégration de l'algorithme BFS (Plus court chemin).
+
+    - Implémentation de l'algorithme Dijkstra (Chemin le moins dangereux/coûteux).
+
+    - Fusion des phases de jeu : Construction du donjon ↔ Simulation des vagues.
+
+    - Ajout de contrôles interface (Sidebar, boutons) et Tests Unitaires (Constructeur).
+
+    - Réalisation du Diagramme UML et documentation technique.
+### Sprint DAY_4 – [08/01/2026]
 - ...
-### Sprint DAY_2 – [date]
-- ...
-### Sprint DAY_3 – [date]
-- ...
-### Sprint DAY_4 – [date]
-- ...
-### Sprint DAY_5 – [date]
+### Sprint DAY_5 – [09/01/2026]
 - ...
 
 ## 5. Dette technique et améliorations futures
