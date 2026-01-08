@@ -1,0 +1,40 @@
+{
+    "grille": {
+        "entree": [
+            12,
+            15
+        ],
+        "tresor": [
+            5,
+            7
+        ],
+        "objets": [
+            {
+                "x": 0,
+                "y": 0,
+                "type": "Mur"
+            },
+            {
+                "x": 4,
+                "y": 8,
+                "type": "Heros"
+            },
+            {
+                "x": 5,
+                "y": 5,
+                "type": "Piege_1"
+            }
+        ]
+    },
+    "heros": [
+        {
+            "x": 4,
+            "y": 8,
+            "pv": 100
+        }
+    ],
+    "vague": 1,
+    "score": 497,
+    "compteur": 13,
+    "strategie": "BFS"
+}
