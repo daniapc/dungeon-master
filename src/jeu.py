@@ -181,7 +181,12 @@ class Jeu(MethodView, object):
         action = data['action']
         controleur = self.controleur
 
-        if action == 'quitter':
+        if action == 'jouer':
+            self.state = State.JEU
+            
+            return {"status": "success", "message": "Le joue a ete initialisé"}, 200 
+            
+        elif action == 'quitter':
             boucle = controleur.get_boucle()
             
             if boucle:
@@ -224,6 +229,7 @@ if __name__ == "__main__":
 
     jeu = Jeu()
     jeu.set_mode(Mode(int(mode)))
+    jeu.set_state(State.MEN) # menu state
     jeu.setup()
     
     # GEMINI { # (day_1)
