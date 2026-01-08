@@ -55,6 +55,14 @@ def preparer_grille_ponderee(mocker):
     return _constructeur
 
 def test_lancer_vagues_pas_de_chemin(preparer_grille_ponderee):
+    '''
+    SCÉNARIO :
+    E M .
+    M T M
+    . M .
+
+    Il n'y a pas de chemin pour atteindre le trésor
+    '''
     murs = [(0,1),(1,0),(1,2),(2,1)]
 
     grille = preparer_grille_ponderee(start=(0,0), end=(1,1), murs=murs, pieges=[])
