@@ -370,7 +370,13 @@ def boucle_jeu(controleur):
 
 
 def lancer_vagues(controleur):
-    boucle = True
+    tester = BFS()
+    chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree())
+    if chem_possible is not None:
+        boucle = True
+    else:
+        print(f"Pas de chemin laissé de l'entrée au trésor.")
+    
     while(boucle and controleur.get_vague() <= 3):
         controleur.vague_jeu()
         os.system('cls' if os.name == 'nt' else 'clear')
