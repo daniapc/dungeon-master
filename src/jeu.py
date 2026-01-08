@@ -82,6 +82,8 @@ class Jeu(MethodView, object):
                 time.sleep(1)
                 controleur = Controleur(self.grille, self.constructeur.get_budget())
                 lancer_vagues(controleur)
+                self.grille.vide()
+                self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             else :
                 try :

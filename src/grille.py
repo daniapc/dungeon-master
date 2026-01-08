@@ -24,6 +24,13 @@ class Grille(MethodView):
             self.pos_entree.append(rd.choice([0, SIZE_GRILLE -1]))
         self.terrain[self.pos_entree[0]][self.pos_entree[1]].set_entree() 
 
+    def vide(self):
+        pos_entree = self.get_entree()
+        pos_tresor = self.get_tresor()
+        self.reset()
+        self.terrain[self.pos_entree[0]][self.pos_entree[1]].set_entree()
+        self.terrain[self.pos_tresor[0]][self.pos_tresor[1]].set_tresor()
+
     def put_tresor(self) :
         self.pos_tresor = [rd.randint(0, 15), rd.randint(0, 15)]
         ecart_ligne = abs(self.pos_entree[0] - self.pos_tresor[0])
