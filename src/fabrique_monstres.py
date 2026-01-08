@@ -1,6 +1,5 @@
 from src.monstre import *
 
 class Fabrique_Monstre():
-    def fabrique_Heros(self, x, y, obs):
-        # heros est crée à la position d'entrée du donjon
+    def fabrique_Monstre(self, x, y):
         return Monstre(x,y)
