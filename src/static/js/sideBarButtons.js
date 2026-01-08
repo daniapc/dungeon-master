@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+async function sideBarButtons() {
 
     /* ===============================
      BUDGET
@@ -105,6 +105,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    const lancerButton = document.querySelector('[data-type="lancer"]');
+    if (lancerButton){
+        lancerButton.addEventListener("click", async () => {
+            
+            const payload = { action: "lancer" };
+            
+            try {
+                const response = await fetch(`/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+    
+                if (response.ok) {
+                    sideBarButtons();                 
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
+
     const continuerButton = document.querySelector('[data-type="continuer"]');
     if (continuerButton) {
         continuerButton.addEventListener("click", async () => {
@@ -141,30 +166,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     /** ==============================
      * GETTING STATE OF THE GAME
      ======================================*/
-    let boulon = false;
+    let boucle = false;
 
     try {
-        const response = await fetch(`/controleur?attribute=boulon`, {
+        const response = await fetch(`/controleur?attribute=boucle`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
 
         const data = await response.json();
-        console.log(data);
         if (data.status === "success")
-            boulon = data['boulon'];
+            boucle = data['boucle'];
     } catch (e) {
-        console.error("Error fetching boulon:", e);
+        console.error("Error fetching boucle:", e);
     }
 
     const toolsPanel = document.querySelector('.tools-panel');
+    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
     
-    if (!boulon){
-
+    if (!boucle){
+        toolsPanel.style.display = '';
         continuerButton.style.display = 'none';
+        lancerButton.style.display = '';
+        sauvegarderButton.style.display = 'none';
     } else {
+        toolsPanel.style.display = 'none';
         continuerButton.style.display = '';
-        
+        lancerButton.style.display = 'none';
+        sauvegarderButton.style.display = '';
     }
 
-});
+};
+
+document.addEventListener("DOMContentLoaded", sideBarButtons);

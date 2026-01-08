@@ -213,7 +213,7 @@ class Controleur(MethodView):
     
     # FLASK METHOD: N'EST PAS RETIRER OU REBAPTISER CE METHOD!
     def get(self):
-        self = (Controleur)(self.instance)
+        self = self.instance
                 
         attribute = request.args.get('attribute')
         

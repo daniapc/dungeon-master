@@ -144,7 +144,8 @@ class Jeu(MethodView, object):
         data = request.json
         
         action = data['action']
-        
+        controleur = self.controleur
+
         if action == 'quitter':
             self.grille.reset()
             self.grille.put_entree()
@@ -153,8 +154,11 @@ class Jeu(MethodView, object):
             self.constructeur.set_budget(BUDGET_INITIAL)
             
             return {"status": "success", "message": "Le jeu a ete reseté"}, 200 
+        elif action == 'lancer':
+            controleur.set_boucle(True)
+            
+            return {"status": "success", "message": "La vague a eté lancée"}, 200 
         elif action == 'continuer':
-            controleur = self.controleur
             
             if controleur.get_tour() == 0:
                 controleur.check_collisions()

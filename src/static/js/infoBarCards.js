@@ -49,7 +49,6 @@ async function infoBarCards () {
         });
 
         const data = await response.json();
-        console.log(data);
         if (data.status === "success")
             vague.innerText = data['vague'];
     } catch (e) {
