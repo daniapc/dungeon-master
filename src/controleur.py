@@ -286,7 +286,8 @@ class Controleur(MethodView):
                     {
                         'index': i,
                         'x': liste[i].get_pos()[1],
-                        'y': liste[i].get_pos()[0]
+                        'y': liste[i].get_pos()[0],
+                        'pv': liste[i].get_pv()
                     }
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
@@ -312,9 +313,17 @@ class Controleur(MethodView):
         
         action = data['action']
 
-        if action == 'lancer':
+        if action == 'strategie':
+            choix = data['strategie']
+            
+            self.set_strategie(BFS() if choix == 'C' else Dijkstra())
+            
+            return {"status": "success", "message": "La strategie a ete changée"}, 200 
+        elif action == 'lancer':
             self.set_boucle(True)
-            self.set_strategie(BFS())
+            
+            if self.strategie == None:
+                self.set_strategie(BFS())
             
             return {"status": "success", "message": "La vague a eté lancée"}, 200 
         elif action == 'continuer':

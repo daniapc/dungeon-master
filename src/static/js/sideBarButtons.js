@@ -32,32 +32,25 @@ async function updateButtonsState(){
         console.error("Error fetching partie:", e);
     }
     
+    const budgetPanel = document.querySelector('.budget-panel');
     const toolsPanel = document.querySelector('.tools-panel');
+    const strategiePanel = document.querySelector('.strategiePanel');
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
     const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
     
-    console.log(partie);
-
+    budgetPanel.style.display = !boucle ? '' : 'none';
     toolsPanel.style.display = !boucle ? '' : 'none';
+    strategiePanel.style.setProperty('display', boucle ? 'none' : 'grid', 'important');
     continuerButton.style.display = (boucle && partie)  ? '' : 'none';
     lancerButton.style.display = !boucle ? '' : 'none';
     sauvegarderButton.style.display = !boucle ? 'none' : '';
 
-    // if (boucle)
-    //     continuerButton.style.display = !partie  ? 'none' : '';
+}
 
-    // if (!boucle){
-    //     toolsPanel.style.display = '';
-    //     continuerButton.style.display = 'none';
-    //     lancerButton.style.display = '';
-    //     sauvegarderButton.style.display = 'none';
-    // } else {
-    //     toolsPanel.style.display = 'none';
-    //     continuerButton.style.display = '';
-    //     lancerButton.style.display = 'none';
-    //     sauvegarderButton.style.display = '';
-    // }
+async function setStrategie(choix) {
+  
+
 }
 
 async function sideBarButtons() {
@@ -137,6 +130,44 @@ async function sideBarButtons() {
             });
         }
     });
+
+    /** ===========================
+     * STRATEGIE
+     ==================== */
+    const checkSwitch = document.getElementById('switchCheckDefault');
+
+    if (checkSwitch) {
+        
+        checkSwitch.addEventListener("change", async () => {
+            const state = checkSwitch.checked;
+        
+            const choix = !state ? 'C' : 'S';
+
+            const switchLabel = document.querySelector('.form-switch .form-check-label');
+            if (switchLabel) 
+                switchLabel.innerText = !state
+                 ? 'Chemin le plus court'
+                 : 'Chemin le plus sûr';
+
+            const payload = { action: "strategie", strategie: choix };
+    
+            try {
+                const response = await fetch(`/controleur`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
 
 
     /* ===============================

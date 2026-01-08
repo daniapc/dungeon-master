@@ -185,7 +185,8 @@ class Jeu(MethodView, object):
             self.state = State.JEU
             
             return {"status": "success", "message": "Le joue a ete initialisé"}, 200 
-            
+
+        # TODO: deplacer pour le controler
         elif action == 'quitter':
             boucle = controleur.get_boucle()
             
@@ -246,7 +247,7 @@ if __name__ == "__main__":
     
     app.run(
         host='0.0.0.0', 
-        port=5000,
+        port=5000 if jeu.mode == Mode.WEB else 5001,
         debug=not is_prod,  # prod
         use_reloader=False)
 
