@@ -1,0 +1,97 @@
+/* =========================================
+   VARIABLES & GLOBAL
+   ========================================= */
+:root {
+    --bg-dark: #0f0c29;
+    --panel-bg: #1f1c3a;
+    --text-main: #ffffff;
+    --accent-primary: #6c5ce7;
+    --accent-hover: #a29bfe;
+    --accent-danger: #e74c3c;
+    --accent-success: #00b894;
+    --accent-sauvegarder: #0084b8;
+    --grid-border: #2d3436;
+    --gold: #fdcb6e;
+}
+
+body {
+    zoom: 0.8;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.game-logo {
+    max-height: 80px;
+    filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+}
+
+/* =========================================
+   SIDEBAR & PANELS
+   ========================================= */
+
+.main-layout {
+    padding-top: 30px;
+    padding-bottom: 30px;
+
+    justify-content: center;
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+    max-width: 30%;
+
+    display: flex;
+    flex-direction: column; /* Alinha um abaixo do outro */
+    gap: 10px;              /* Cria o espaço entre os botões */
+    padding: 15px;
+}
+
+.panel-header {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b2bec3;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+    text-align: center;
+
+    font-weight: bold;
+}
+
+.separator {
+    border-color: rgba(255,255,255,0.1);
+    margin: 10px 0;
+}
+
+
+/* =========================================
+   BUTTONS (Game Style)
+   ========================================= */
+
+.btn-action {
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    width: 100%;            /* Garante que preencham todo o espaço lateral */
+    display: flex;
+    align-items: center;    /* Alinha ícone e texto verticalmente */
+    justify-content: center;
+
+}
+.btn-action.success { background-color: var(--accent-success); color: white; }
+.btn-action.sauvegarder { background-color: var(--accent-sauvegarder); color: white; }
+.btn-action.danger { background-color: var(--accent-danger); color: white; }
+.btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+
+.btn-action i{
+     margin-right: 8px;
+}
