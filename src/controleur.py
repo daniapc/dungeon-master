@@ -493,7 +493,7 @@ def boucle_jeu(controleur):
 
 def verifier_chem_possible(controleur):
     tester = BFS()
-    chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree())
+    chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree(), controleur.get_grille().get_tresor())
     if chem_possible is not None:
         boucle = True
     else:
