@@ -101,6 +101,9 @@ class Controleur(MethodView):
     
     def get_recap(self):
         return self.recap
+
+    def get_liste_monstres(self):
+        return self.monstres
     
     def set_recap(self, key):
         if key == "tresor_trouve" : 

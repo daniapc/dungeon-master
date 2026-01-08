@@ -21,7 +21,7 @@ class Monstre():
         self.target = i
 
     def get_tresor(self):
-        return self.target.get_pos()
+        return self.target.get_pos()[0], self.target.get_pos()[0]
     
     def get_cout(self) :
         return PRIX_MONSTRE
