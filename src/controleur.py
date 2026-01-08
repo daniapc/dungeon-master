@@ -14,7 +14,7 @@ from flask.views import MethodView
 from flask import request
 
 class Controleur(MethodView):
-    def __init__(self, grille, budget, instance = None):
+    def __init__(self, grille, budget, monstres, instance = None):
         self.l_heros = []
         self.grille = grille
         self.vague = 1
@@ -39,6 +39,7 @@ class Controleur(MethodView):
                        "tresor_trouve" : False}
         
         self.boucle = False
+        self.monstres = monstres
 
     def get_liste(self):
         return self.l_heros
@@ -262,6 +263,33 @@ class Controleur(MethodView):
         for i in range(len(self.l_heros)):
             self.depl_tour(i, l_depl, tour)
 
+    def execute_strategie_monstre(self):
+        for m in self.get_liste_monstres():
+            l_depl = BFS().applique_strategie(self.grille, m)
+
+            pos = m.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
+
+            m.deplace(l_depl[0][0], l_depl[0][1])
+            
+            pos = m.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_objet(m)
+    
+    def init_monstre(self):
+        for i in range(len(self.monstres)):
+            n = randint(0,len(self.l_heros)-1)
+            self.monstres[i].set_target(n)
+
+    def change_target(self, j):
+        boucle = True
+        while(boucle):
+            for i in range(len(self.monstres)):
+                n = randint(0,len(self.l_heros)-1)
+                if n != j:
+                    self.monstres[i].set_target(n)
+                    boucle = False
+
+
     def check_treso(self):
         heros = self.l_heros
         tresor = self.grille.get_tresor()
@@ -456,6 +484,7 @@ def boucle_jeu(controleur):
         partie = controleur.get_partie()
         if action == 'C':
             if controleur.get_tour() == 0:
+                controleur.execute_strategie_monstre()
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)
