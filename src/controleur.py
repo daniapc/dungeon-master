@@ -24,6 +24,17 @@ class Controleur(MethodView):
         self.compteur = 0
         self.fab = Fabrique_Heros()
         self.instance = instance
+        self.recap = { "nb_heros" : 0,
+                       "nb_heros_total" : 0,
+                       "nb_heros_morts": 0,
+                       "nb_heros_morts_total" : 0,
+                       "nb_piege_faible_active" : 0,
+                       "nb_piege_faible_active_total" : 0,
+                       "nb_piege_moyen_active" : 0,
+                       "nb_piege_moyen_active_total" : 0,
+                       "nb_piege_puissant_active" : 0,
+                       "nb_piege_puissant_active_total" : 0,
+                       "tresor_trouve" : False}
 
     def get_liste(self):
         return self.l_heros
@@ -64,6 +75,17 @@ class Controleur(MethodView):
     def get_score_final(self):
         return self.score_final
     
+    def get_recap(self):
+        return self.recap
+    
+    def set_recap(self, key):
+        if key == "tresor_trouve" : 
+            self.recap["tresor_trouve"] = True
+        else:
+            self.recap[key] += 1
+            txt = key + "_total"
+            self.recap[txt] += 1
+    
     def peut_deplacer(self, i, j, indice):
         global SIZE_GRILLE
         k = self.l_heros[indice].pos[0]
@@ -103,6 +125,12 @@ class Controleur(MethodView):
             self.ajouter_heros(self.get_fab().fabrique_Heros(entree[0],entree[1],[DeathObserver(), TreasureObserver()]))
         self.partie = True
         self.compteur = 0
+        self.recap["nb_heros"] = self.vague
+        self.recap["nb_heros_total"] += self.vague
+        self.recap["nb_heros_morts"] = 0
+        self.recap["nb_piege_faible_active"] = 0
+        self.recap["nb_piege_moyen_active"] = 0
+        self.recap["nb_piege_puissant_active"] = 0
 
     def set_score(self):
         heros = self.get_liste()
@@ -117,6 +145,19 @@ class Controleur(MethodView):
         # self.score += self.score_final
         #ATTENTION IL FAUDRA AUSSI LE BUDGET
 
+    def reset_recap(self):
+        self.recap = { "nb_heros" : 0,
+                       "nb_heros_total" : 0,
+                       "nb_heros_morts": 0,
+                       "nb_heros_morts_total" : 0,
+                       "nb_piege_faible_active" : 0,
+                       "nb_piege_faible_active_total" : 0,
+                       "nb_piege_moyen_active" : 0,
+                       "nb_piege_moyen_active_total" : 0,
+                       "nb_piege_puissant_active" : 0,
+                       "nb_piege_puissant_active_total" : 0,
+                       "tresor_trouve" : False}
+
     def check_collisions(self):
         l_heros = self.get_liste()
         grille = self.get_grille()
@@ -129,12 +170,22 @@ class Controleur(MethodView):
             for j in range(len(L)):
                 if isinstance(L[j], Piege):
                     L[j].degat()
-                    heros.degat(20)
+                    if isinstance(L[j], Piege_1):
+                         self.set_recap("nb_piege_faible_active")
+                    if isinstance(L[j], Piege_2):
+                        self.set_recap("nb_piege_moyen_active")
+                    if isinstance(L[j], Piege_3):
+                        self.set_recap("nb_piege_puissant_active")
+                    if(L[j].get_cout() != 4):
+                        heros.degat(DEGATS_1)
+                    else:
+                        heros.degat(DEGATS_2)
                     if(not(L[i].is_active())):
-                        indices_objets.append(i)
+                        indices_objets.append(j)
                     if heros.isdead():
                         if j not in indices_morts:
                             self.score_final += heros.get_score()
+                            self.set_recap("nb_heros_morts")
                             indices_morts.append(j)
             for k in range(len(indices_objets)):
                 grille.get_case(x,y).remove_objet(L[indices_objets[k]])
@@ -195,6 +246,7 @@ class Controleur(MethodView):
         tresor = self.grille.get_tresor()
         for i in range(len(heros)):
             if heros[i].at_treasure(tresor[0],tresor[1]):
+                self.set_recap("tresor_trouve")
                 return True
     
     def enleve_heros(self):
@@ -251,18 +303,17 @@ def convertit_depl(n):
 def boucle_jeu(controleur):
     partie = True
     joue = "Héros"
-    controleur.set_strategie(BFS())
     while(partie):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"         === Vague : {controleur.get_vague()} ===")
-        controleur.get_grille().affichage()
+        controleur.get_grille().affichage() 
         controleur.set_score()
         score = controleur.get_score() + controleur.get_score_final()
         print(f"Tour de {joue}")
         print(f"Score : {score}")
         positions = ""
         for i in range(len(controleur.get_liste())):
-            positions += "Position héros " + str(i+1) + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
+            positions += "Position héros " + str(i+1) + " (PV = " + str(controleur.get_liste()[i].get_pv()) + " ) " + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
         print(f""+positions)
         print()
         print("\nCommandes :")
@@ -315,11 +366,24 @@ def lancer_vagues(controleur):
     boucle = True
     while(boucle and controleur.get_vague() <= 3):
         controleur.vague_jeu()
-        arrivee = boucle_jeu(controleur)
         os.system('cls' if os.name == 'nt' else 'clear')
-        score = controleur.get_score_final()
-        print(f"Vague {controleur.get_vague()} terminée")
-        print(f"                            Score : {score}")
+        ia = True
+        while(ia):
+            print(f"Choix de l'IA")
+            print(f"C         :   Chemin le plus court")
+            print(f"S         :   Chemin le plus sûr")
+            action = input("\nCommande >").strip().upper()
+            if action == "C":
+                controleur.set_strategie(BFS())
+                ia = False
+            elif action == "S":
+                controleur.set_strategie(Dijkstra())
+                ia = False
+            else:
+                print(f"Pas d'action pour cette touche.")
+                time.sleep(3)
+        arrivee = boucle_jeu(controleur)
+        recap(controleur)
         if(arrivee == "F"):
             print(f"P         :   Prochaine vague")
         if(arrivee != "S"):
@@ -337,10 +401,35 @@ def lancer_vagues(controleur):
             #sauvegarder
             pass
         elif action == "Q":
+            controleur.reset_recap()
             boucle = False
         else:
             print(f"Pas d'action pour cette touche.")
             time.sleep(3)
+
+
+def recap(controleur):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    score = controleur.get_score_final()
+    dico = controleur.get_recap()
+    txt = ""
+    print(f"Vague {controleur.get_vague()} terminée")
+    txt = "Nombre de héros engagés : " + str(dico["nb_heros"]) + " ( " + str(dico["nb_heros_total"]) + " )"
+    print(f"" + txt)
+    txt = "Nombre de héros morts : " + str(dico["nb_heros_morts"]) + " ( " + str(dico["nb_heros_morts_total"]) + " )"
+    print(f"" + txt)
+    txt = "Nombre de pièges faibles activés : " + str(dico["nb_piege_faible_active"]) + " ( " + str(dico["nb_piege_faible_active_total"]) + " )"
+    print(f"" + txt)
+    txt = "Nombre de pièges moyens activés : " + str(dico["nb_piege_moyen_active"]) + " ( " + str(dico["nb_piege_moyen_active_total"]) + " )"
+    print(f"" + txt)
+    txt = "Nombre de pièges puissants activés : " + str(dico["nb_piege_puissant_active"]) + " ( " + str(dico["nb_piege_puissant_active_total"]) + " )"
+    print(f"" + txt)
+    if dico["tresor_trouve"]:
+        print(f"Trésor trouvé : oui")
+    else:
+        print(f"Trésor trouvé : non")
+    print()
+    print(f"                            Score : {score}")
 
 
 if __name__ == "__main__":
