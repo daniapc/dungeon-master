@@ -14,7 +14,7 @@ from flask.views import MethodView
 from flask import request
 
 class Controleur(MethodView):
-    def __init__(self, grille, budget, instance = None):
+    def __init__(self, grille, budget, monstres, instance = None):
         self.l_heros = []
         self.grille = grille
         self.vague = 1
@@ -39,6 +39,7 @@ class Controleur(MethodView):
                        "tresor_trouve" : False}
         
         self.boucle = False
+        self.monstres = monstres
 
     def get_liste(self):
         return self.l_heros
@@ -262,6 +263,33 @@ class Controleur(MethodView):
         for i in range(len(self.l_heros)):
             self.depl_tour(i, l_depl, tour)
 
+    def execute_strategie_monstre(self):
+        for m in self.get_liste_monstres():
+            l_depl = BFS().applique_strategie(self.grille, m)
+
+            pos = m.get_pos()
+            self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
+
+            m.deplace(l_depl[0][0], l_depl[0][1])
+            
+            pos = m.get_pos()
+            self.grille.get_case(pos[0], pos[1]).add_objet(m)
+    
+    def init_monstre(self):
+        for i in range(len(self.monstres)):
+            n = randint(0,len(self.l_heros)-1)
+            self.monstres[i].set_target(n)
+
+    def change_target(self, j):
+        boucle = True
+        while(boucle):
+            for i in range(len(self.monstres)):
+                n = randint(0,len(self.l_heros)-1)
+                if n != j:
+                    self.monstres[i].set_target(n)
+                    boucle = False
+
+
     def check_treso(self):
         heros = self.l_heros
         tresor = self.grille.get_tresor()
@@ -377,7 +405,8 @@ class Controleur(MethodView):
             "score" : self.score_final,
             "tour" : self.tour,
             "compteur" : self.compteur,
-            "strategie" : strategie
+            "strategie" : strategie,
+            "recap" : self.recap
         }
         file_name = input("Nom de la sauvegarde : ")
         if not file_name :
@@ -393,6 +422,8 @@ class Controleur(MethodView):
             self.vague = data_game.get("vague", 1)
             self.score_final = data_game.get("score", 0)
             self.compteur = data_game.get("compteur", 0)
+            self.tour = data_game.get("tour", 0)
+            self.recap = data_game.get("recap", self.recap)
             strategie = data_game["strategie"]
             if strategie == "BFS" :
                 self.set_strategie(BFS())
@@ -402,6 +433,8 @@ class Controleur(MethodView):
                 #self.set_strategie(A())
             fabrique_Mur = Fabrique_Mur()
             fabriques_pieges = [Fabrique_Piege_1(), Fabrique_Piege_2(), Fabrique_Piege_3()]
+            if "grille" in data_game :
+                self.grille.from_dict(data_game["grille"], fabrique_Mur, fabriques_pieges)
             self.l_heros = []
             data_heros = data_game.get("heros", [])
             for data_hero in data_heros :
@@ -456,6 +489,7 @@ def boucle_jeu(controleur):
         partie = controleur.get_partie()
         if action == 'C':
             if controleur.get_tour() == 0:
+                controleur.execute_strategie_monstre()
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)
@@ -482,7 +516,7 @@ def boucle_jeu(controleur):
                 return("Q")
         elif action == 'S':
             file_name = controleur.save_current_game()
-            print(f"Partie sauvegardée : {file_name}.json")
+            print(f"Partie sauvegardée : {file_name}")
             time.sleep(2)
             controleur.enleve_heros()
             return("S")
@@ -512,27 +546,27 @@ def lancer_vagues(controleur, sauvegarde=False):
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
         if not sauvegarde :
             controleur.vague_jeu()
-        else :
-            sauvegarde = False
         os.system('cls' if os.name == 'nt' else 'clear')
         ia = True
-        while(ia):
-            print(f"Choix de l'IA")
-            print(f"C         :   Chemin le plus court")
-            print(f"S         :   Chemin le plus sûr")
-            print(f"I         :   Chemin le plus sûr et court")
-            action = input("\nCommande >").strip().upper()
-            if action == "C":
-                controleur.set_strategie(BFS())
-                ia = False
-            elif action == "S":
-                controleur.set_strategie(Dijkstra())
-                ia = False
-            elif action == "I":
-                controleur.set_strategie(A())
-            else:
-                print(f"Pas d'action pour cette touche.")
-                time.sleep(3)
+        if not sauvegarde :
+            while(ia):
+                print(f"Choix de l'IA")
+                print(f"C         :   Chemin le plus court")
+                print(f"S         :   Chemin le plus sûr")
+                action = input("\nCommande >").strip().upper()
+                if action == "C":
+                    controleur.set_strategie(BFS())
+                    ia = False
+                elif action == "S":
+                    controleur.set_strategie(Dijkstra())
+                    ia = False
+                elif action == "I":
+                    controleur.set_strategie(A())
+                else:
+                    print(f"Pas d'action pour cette touche.")
+                    time.sleep(3)
+        else :
+            sauvegarde = False
         arrivee = boucle_jeu(controleur)
         boucle = True
         while(boucle):
