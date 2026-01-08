@@ -6,8 +6,9 @@ def test_deplacement():
     grille = Grille()
     mur = Mur(0,1)
     grille.get_grille()[0][1].add_objet(mur)
-    L = [heros]
-    controleur = Controleur(L,grille)
+    controleur = Controleur(grille, 100)
+    controleur.ajouter_heros(heros)
+    
     depl = convertit_depl(0)
     assert(controleur.peut_deplacer(depl[0], depl[1],0) == False)
     depl = convertit_depl(1)
