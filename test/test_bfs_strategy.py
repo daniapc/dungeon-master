@@ -36,7 +36,7 @@ def test_bfs_chemin_direct(preparer_grille):
     grille = preparer_grille(end=(0,2), murs=[])
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     assert chemin == [(0,0), (0,1), (0,2)]
 
@@ -47,7 +47,7 @@ def test_bfs_contournement_mur(preparer_grille):
     grille = preparer_grille(end=(0,2), murs=murs)
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     # Assertions simples et lisibles
     assert chemin is not None
@@ -63,7 +63,7 @@ def test_bfs_impossible(preparer_grille):
     grille = preparer_grille(end=(5,5), murs=murs_bloquants)
     
     algo = BFS()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
     
     assert chemin is None or chemin == []
 
@@ -76,7 +76,7 @@ def test_deplacer_heros(preparer_grille):
     ctr.update_compteur()
 
     algo = BFS()
-    chemin = algo.cherche_chemin(grille, (0,0))
+    chemin = algo.cherche_chemin(grille, (0,0), (0,2))
 
     ctr.set_strategie(algo)
 
