@@ -297,11 +297,13 @@ class Controleur(MethodView):
             if not(self.get_partie()):
                 vague += " (terminée)"
             
-            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
+            return {"status": "success", "message": "Vague value enviée", 'vague': vague}
         elif attribute == 'boucle':
             return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
         elif attribute == 'partie':
             return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
+        elif attribute == 'recap':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_recap()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
