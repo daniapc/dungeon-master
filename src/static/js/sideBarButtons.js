@@ -166,6 +166,7 @@ async function sideBarButtons() {
 
                     if (response.ok) {
                         renderGrille();
+                        infoBarCards();
                     } else {
                         console.error("Server error:", response.status);
                     }

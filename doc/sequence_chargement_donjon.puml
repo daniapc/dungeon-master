@@ -1,0 +1,82 @@
+@startuml
+title Diagramme de Séquence : Chargement d'un Donjon
+autonumber
+skinparam style strictuml
+skinparam responseMessageBelowArrow true
+
+' --- Participants ---
+actor "Joueur" as User
+participant "Jeu" as Game
+participant "ConstructeurDonjon" as Builder
+participant "GestionSauvegarde" as SaveManager
+participant "Grille" as Grid
+participant "Fabrique_Objet" as Factory
+participant "Objet" as Obj
+
+' --- Scénario ---
+User -> Game :nom_fichier
+activate Game
+
+    ' 1. Appel au constructeur pour gérer le chargement
+    Game -> Builder : load_donjon(nom_fichier)
+    activate Builder
+
+        ' 2. Lecture du fichier physique
+        Builder -> SaveManager : charger_donjon(nom_fichier)
+        activate SaveManager
+            SaveManager -> SaveManager : open(nom_fichier.json)
+            note right: Lecture et parsing JSON
+        SaveManager --> Builder : Données (Dictionnaire)
+        deactivate SaveManager
+
+        alt Fichier trouvé et valide
+
+            ' 3. Restauration des attributs simples
+            Builder -> Builder : set_budget(data["budget"])
+
+            ' 4. Délégation de la reconstruction à la Grille
+            ' Le constructeur passe ses instances de fabriques à la grille
+            Builder -> Grid : from_dict(data, fabriques...)
+            activate Grid
+
+                Grid -> Grid : reset()
+                note right: Vide le terrain actuel
+
+                Grid -> Grid : Restaurer positions (Entrée/Trésor)
+
+                ' 5. Boucle de reconstruction des objets
+                loop Pour chaque objet dans la liste "objets"
+
+                    Grid -> Grid : Identifier type (Mur, Piege, etc.)
+
+                    ' Appel de la fabrique correspondante
+                    Grid -> Factory : fabrique_Objet(x, y)
+                    activate Factory
+                        create Obj
+                        Factory -->> Obj : <<create>>
+                        activate Obj
+                        Obj --> Factory : o
+                        deactivate Obj
+
+                    Factory --> Grid : o (instance de Objet)
+                    deactivate Factory
+
+                    ' Ajout sur le terrain
+                    Grid -> Grid : case[x][y].add_objet(o)
+                end
+
+            Grid --> Builder : Terminé
+            deactivate Grid
+
+            Builder --> Game : Succès (True, "Chargé")
+
+        else Erreur (Fichier introuvable / Corrompu)
+            Builder --> Game : Échec (False, "Erreur")
+        end
+
+    deactivate Builder
+
+Game --> User : Affiche résultat
+deactivate Game
+
+@enduml
