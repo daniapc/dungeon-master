@@ -77,11 +77,6 @@ async function updateButtonsState(){
 
 }
 
-async function setStrategie(choix) {
-  
-
-}
-
 async function sideBarButtons() {
 
 
@@ -146,22 +141,22 @@ async function sideBarButtons() {
     /** ===========================
      * STRATEGIE
      ==================== */
-    const checkSwitch = document.getElementById('switchCheckDefault');
+    const strategieSwitch = document.querySelector('#iaStrategyRange');
 
-    if (checkSwitch) {
+    if (strategieSwitch) {
         
-        checkSwitch.addEventListener("change", async () => {
-            const state = checkSwitch.checked;
+        strategieSwitch.addEventListener("input", async () => {
+            const state = strategieSwitch.value; 
         
-            const choix = !state ? 'C' : 'S';
+            const strategies = {
+                "0": "BFS",
+                "1": "Dijkstra",
+                "2": "A*"
+            };
 
-            const switchLabel = document.querySelector('.form-switch .form-check-label');
-            if (switchLabel) 
-                switchLabel.innerText = !state
-                 ? 'Chemin le plus court'
-                 : 'Chemin le plus sûr';
+            console.log(strategies[state]);
 
-            const payload = { action: "strategie", strategie: choix };
+            const payload = { action: "strategie", 'strategie': strategies[state] };
     
             try {
                 const response = await fetch(`/controleur`, {

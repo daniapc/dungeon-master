@@ -383,7 +383,13 @@ class Controleur(MethodView):
         if action == 'strategie':
             choix = data['strategie']
             
-            self.set_strategie(BFS() if choix == 'C' else Dijkstra())
+            match choix:
+                case "BFS":
+                    self.set_strategie(BFS())  
+                case "Dijkstra":
+                    self.set_strategie(Dijkstra())
+                case "A*":
+                    self.set_strategie(A())
             
             return {"status": "success", "message": "La strategie a ete changée"}, 200 
         elif action == 'lancer':
