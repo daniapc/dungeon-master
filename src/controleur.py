@@ -7,6 +7,7 @@ import time
 import os
 import json
 import io
+import copy
 
 from src.ia_strategy import *
 from src.fabrique_heros import *
@@ -201,11 +202,14 @@ class Controleur(MethodView):
         indices_morts = []
         indices_objets = []
         indices_monstres = []
+        indices_depl = []
         for i in range(len(l_heros)):
             heros = l_heros[i]
             (x,y) = heros.get_pos()
             L = grille.get_case(x,y).get_objets()
             for j in range(len(L)):
+                # print(len(L))
+                # print(L, j)
                 if isinstance(L[j], Piege):
                     L[j].degat()
                     if isinstance(L[j], Piege_1):
@@ -228,30 +232,37 @@ class Controleur(MethodView):
                             self.set_recap("nb_heros_morts")
                             indices_morts.append(i)
                 elif isinstance(L[j], Monstre):
+                    # print(L ,"on entre dans le monstre")
                     if heros == L[j].get_target() and not(L[j].get_tour()):
                         m = L[j]
                         heros.degat(DEGATS_3)
                         m.degat(DEGATS_4)
                         m.update_tour()
-                        self.recule_monstre(m)
-                        self.recule_monstre(m)
+                        indices_depl.append(L[j])
+                        # print(L ,"on fait les dégâts et il recule")
                         if(m.isdead()):
                             if not j in indices_monstres:
                                 indices_monstres.append(j)
                                 self.set_recap("nb_monstres_morts")
+                        # print(L ,"si le monstre meurt")
                         if heros.isdead():
                             if i not in indices_morts:
                                 self.score_final += heros.get_score()
                                 self.set_recap("nb_heros_morts")
-                                indices_morts.append(i)   
+                                indices_morts.append(i)
+                        # print(L ,"si le héros meurt") 
+                # print(L)  
+                # print(" fin boucle ", i)
+            # time.sleep(2)
+            # C = L
             for k in range(len(indices_objets)):
                 grille.get_case(x,y).remove_objet(L[indices_objets[k]])
-            for k in range(len(indices_monstres)):
-                for j in range(len(self.monstres)):
-                    if self.monstres[j] == L[indices_monstres[k]]:
-                        indices_monstres[k] = j
-                grille.get_case(x,y).remove_monstre(L[indices_monstres[k]])
-            L = [] 
+            L = []
+        for k in range(len(indices_depl)):
+            for j in range(len(self.monstres)):
+                if self.monstres[j] == indices_depl[k]:
+                    self.recule_monstre(indices_depl[k])
+                    self.recule_monstre(indices_depl[k]) 
         n = 0
         for i in range(len(indices_morts)):
             heros = l_heros[indices_morts[i-n]]
@@ -262,7 +273,9 @@ class Controleur(MethodView):
             n+= 1
         n = 0
         for i in range(len(indices_monstres)):
-            self.monstres.pop(indices_monstres[i-n])
+            monstre = indices_monstres[i-n]
+            grille.get_case(x,y).remove_monstre(monstre)
+            self.monstres.pop(monstre)
             n += 1
 
     def set_score_final(self, n):
