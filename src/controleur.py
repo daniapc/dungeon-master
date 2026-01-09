@@ -627,44 +627,34 @@ def boucle_jeu(controleur):
     else:
         joue = "Héros"
     while(partie):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(f"         === Vague : {controleur.get_vague()} ===")
-        controleur.get_grille().affichage() 
-        controleur.set_score()
-        score = controleur.get_score() + controleur.get_score_final()
-        print(f"Tour de {joue}")
-        print(f"Score : {score}")
-        positions = ""
-        for i in range(len(controleur.get_liste())):
-            positions += "Position héros " + str(i+1) + " (PV = " + str(controleur.get_liste()[i].get_pv()) + " ) " + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
-        print(f""+positions)
-        print()
-        print("\nCommandes :")
-        print(f"C         :   Continuer la vague")
-        print(f"S         :   Sauvegarder")
+        print_jeu(controleur,joue)
         print(f"Q         :   Quitter")
         action = input("\nCommande >").strip().upper()
         partie = controleur.get_partie()
         if action == 'C':
-            if controleur.get_tour() == 0:
-                controleur.check_collisions()
-                controleur.execute_strategie_monstre()
-                controleur.check_collisions()
-                controleur.reset_tour_monstres()
-                if controleur.get_liste() == []:
-                    controleur.set_partie(False)
-                if controleur.check_treso():
-                    controleur.set_partie(False)
-                    controleur.set_score()
-                    controleur.set_score_final(controleur.get_score())
-                    controleur.enleve_heros()
-                    return("Q")
-                controleur.update_compteur()
-                joue = "Héros"
-            else:
-                # controleur.depl_alea()
+            if joue == "Héros":
                 controleur.execute_strategie()
                 joue = "Donjon"
+                print_jeu(controleur,joue)
+                time.sleep(1)
+
+            controleur.check_collisions()
+            controleur.execute_strategie_monstre()
+            controleur.check_collisions()
+            controleur.reset_tour_monstres()
+            if controleur.get_liste() == []:
+                controleur.set_partie(False)
+            if controleur.check_treso():
+                controleur.set_partie(False)
+                controleur.set_score()
+                controleur.set_score_final(controleur.get_score())
+                controleur.enleve_heros()
+                return("Q")
+            controleur.update_compteur()
+            joue = "Héros"
+            
+            # controleur.depl_alea()
+        
             controleur.set_score()
             score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
@@ -688,6 +678,25 @@ def boucle_jeu(controleur):
     controleur.set_score_final(controleur.get_score())
     controleur.enleve_heros()
     return("F")
+
+
+def print_jeu(controleur,joue):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f"         === Vague : {controleur.get_vague()} ===")
+    controleur.get_grille().affichage() 
+    controleur.set_score()
+    score = controleur.get_score() + controleur.get_score_final()
+    print(f"Tour de {joue}")
+    print(f"Score : {score}")
+    positions = ""
+    for i in range(len(controleur.get_liste())):
+        positions += "Position héros " + str(i+1) + " (PV = " + str(controleur.get_liste()[i].get_pv()) + " ) " + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
+    print(f""+positions)
+    print()
+    print("\nCommandes :")
+    print(f"C         :   Continuer la vague")
+    print(f"S         :   Sauvegarder")
+    print(f"Q         :   Quitter")
 
 def lancer_vagues(controleur, sauvegarde=False):
     controleur.set_boucle(True)
