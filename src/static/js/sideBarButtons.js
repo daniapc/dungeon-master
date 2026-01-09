@@ -31,6 +31,27 @@ async function updateButtonsState(){
     } catch (e) {
         console.error("Error fetching partie:", e);
     }
+
+    let win = false;
+    try {
+        response = await fetch(`/controleur?attribute=recap`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        
+        if (data.status === "success"){
+            const result = data['partie'];
+
+            const nb_heros = result['nb_heros'];
+            const nb_morts = result['nb_heros_morts'];
+
+            win = nb_heros === nb_morts;
+        }
+    } catch (e) {
+        console.error("Error fetching recap:", e);
+    }
     
     const budgetPanel = document.querySelector('.budget-panel');
     const toolsPanel = document.querySelector('.tools-panel');
@@ -38,14 +59,16 @@ async function updateButtonsState(){
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
     const chargerButton = document.querySelector('[data-type="charger"]');
+    const prochainButton = document.querySelector('[data-type="prochain"]');
 
     const grille = document.querySelector('#grid-board');
     const recap = document.querySelector('#recap-board');
     
     budgetPanel.style.display = !boucle ? '' : 'none';
     toolsPanel.style.display = !boucle ? '' : 'none';
-    strategiePanel.style.setProperty('display', boucle ? 'none' : 'grid', 'important');
+    strategiePanel.style.setProperty('display', boucle && !win ? 'none' : 'grid', 'important');
     continuerButton.style.display = (boucle && partie)  ? '' : 'none';
+    prochainButton.style.display = (boucle && !partie && win)  ? '' : 'none';
     lancerButton.style.display = !boucle ? '' : 'none';
     chargerButton.style.display = boucle ? 'none' : '';
 
@@ -207,10 +230,39 @@ async function sideBarButtons() {
                     
                     joue = result['joue'];
                     score = result['score'];
-                    fini = result['fini'];
+                    fini = result['fini']; // TODO: deprecated
                                 
                     document.querySelector('.infoBar .joue').innerText = joue;
                     document.querySelector('.infoBar .score').innerText = score;
+
+                    await renderGrille();                    
+                    await infoBarCards();
+                    await updateButtonsState();
+                    
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
+    const prochainButton = document.querySelector('[data-type="prochain"]');
+    if (prochainButton) {
+        prochainButton.addEventListener("click", async () => {
+            
+            const payload = { action: "prochain" };
+            
+            try {
+                const response = await fetch(`/controleur`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+    
+                if (response.ok) {
+                        
 
                     await renderGrille();                    
                     await infoBarCards();
@@ -261,12 +313,9 @@ async function sideBarButtons() {
 
     if (chargerButton) {
         chargerButton.addEventListener("click", async () => {
-
             fileInput.click();
-
         });
     }
-
     fileInput.addEventListener('change', async () => {
         const file = fileInput.files[0];
 

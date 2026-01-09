@@ -425,6 +425,12 @@ class Controleur(MethodView):
                     "score": self.score,
                     "fini": fini
                     }, 200 
+        elif action == 'prochain':
+            self.aug_vague()
+            self.partie = True
+            self.vague_jeu()
+            self.init_monstre()
+        
         elif action == 'sauvegarder':
             file_name = data['file_name']
             if not file_name :
