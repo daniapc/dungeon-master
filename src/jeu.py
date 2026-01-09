@@ -78,7 +78,7 @@ class Jeu(MethodView, object):
             print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
             print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
-            print(f"O x,y    :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
+            print(f"O x,y     :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
             print(f"S         :   Sauvegarder donjon") 
@@ -102,6 +102,12 @@ class Jeu(MethodView, object):
                 msg = self.constructeur.save_donjon(file_name)
                 message = msg
             elif user_input == 'C' :
+                name_saves = GestionSauvegarde.name_saves()
+                names = ""
+                for name in name_saves :
+                    names += name
+                    names += "  "
+                print(f"Sauvegardes disponibles : {names}")
                 file_name = input("Nom du fichier à charger : ")
                 data_donjon = GestionSauvegarde.charger_donjon(file_name)
                 if data_donjon :
@@ -178,6 +184,12 @@ class Jeu(MethodView, object):
             if user_input == "J":
                 self.terminal_loop()
             elif user_input == "C":
+                name_saves = GestionSauvegarde.name_saves()
+                names = ""
+                for name in name_saves :
+                    names += name
+                    names += "  "
+                print(f"Sauvegardes disponibles : {names}")
                 file_name = input("Nom du fichier à charger : ")
                 data_donjon = GestionSauvegarde.charger_donjon(file_name)
                 if data_donjon :

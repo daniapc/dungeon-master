@@ -39,3 +39,14 @@ class GestionSauvegarde :
         except Exception as e :
             print(f"Erreur chargement : {e}")
             return None
+        
+    @staticmethod
+    def name_saves() :
+        GestionSauvegarde.verifier_dossier()
+        try :
+            fichiers = os.listdir(GestionSauvegarde.DOSSIER_SAUVEGARDE)
+            saves = [f for f in fichiers if f.endswith('.json')]
+            return saves
+        except Exception as e :
+            print(f"Erreur durant la lecture du dossier saves : {e}")
+            return []
