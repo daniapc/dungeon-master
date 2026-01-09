@@ -9,7 +9,7 @@
 - équilibrage jeu (adaptation coûts, dégats)
 
 - Readme (installation, lancement, utilisation)
-- diagramme classes
+- UML
 - Roadmap
 - ia usage
 - diagramme de séquence
