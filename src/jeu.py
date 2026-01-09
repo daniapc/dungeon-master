@@ -273,15 +273,13 @@ class Jeu(MethodView, object):
                     # controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
                     self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
                     
-                    succes, msg = controleur.load_game(file_name)
+                    succes, msg = self.controleur.load_game(file_name)
                     if succes :
                         # lancer_vagues(controleur, sauvegarde=True)
                         controleur.set_boucle(True)
                         # self.controleur.vague_jeu()
                         
                         message = "Partie chargée"
-                        self.grille.vide()
-                        self.constructeur.set_budget(BUDGET_INITIAL)
                     else :
                         message = f"Erreur : {msg}"
                 else :
