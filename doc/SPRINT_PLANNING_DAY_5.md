@@ -6,6 +6,8 @@
 - recherche bugs
 - revue de code
 
+- équilibrage jeu (adaptation coûts, dégats)
+
 - Readme (installation, lancement, utilisation)
 - UML
 - Roadmap
