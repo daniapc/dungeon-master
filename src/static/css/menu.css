@@ -47,8 +47,8 @@ body {
     max-width: 30%;
 
     display: flex;
-    flex-direction: column; /* Alinha um abaixo do outro */
-    gap: 10px;              /* Cria o espaço entre os botões */
+    flex-direction: column; 
+    gap: 10px;              
     padding: 15px;
 }
 
@@ -80,10 +80,8 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-
-    width: 100%;            /* Garante que preencham todo o espaço lateral */
-    display: flex;
-    align-items: center;    /* Alinha ícone e texto verticalmente */
+    width: 100%;            
+    align-items: center;    
     justify-content: center;
 
 }

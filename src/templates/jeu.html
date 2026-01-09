@@ -19,13 +19,6 @@
 
   <div class="row main-layout">
     <div class="col-md-3 col-lg-2 sideBar">
-      <div class="panel budget-panel mb-3">
-        <div class="panel-header"><i class="fa-solid fa-coins"></i> Budget</div>
-        <div class="budget-value budget">
-          <span class="value">--</span> <small>gold</small>
-        </div>
-      </div>
-
       <div class="panel tools-panel mb-3" style="display: none">
         <div class="panel-header">
           <i class="fa-solid fa-hammer"></i> Build Tools
@@ -56,6 +49,12 @@
           <button type="button" class="btn btn-game" data-type="piege 3">
             <div class="d-flex justify-content-between align-items-center">
               <span><i class="fa-solid fa-bomb"></i> Piège ¤</span>
+              <span class="badge-cost"><span class="cout">--</span></span>
+            </div>
+          </button>
+          <button type="button" class="btn btn-game" data-type="monster">
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fa-solid fa-ghost"></i> Monster </span>
               <span class="badge-cost"><span class="cout">--</span></span>
             </div>
           </button>
@@ -94,7 +93,7 @@
           type="button"
           class="btn btn-action success"
           data-type="lancer"
-          style="display: none"
+          style="display: none; font-size: 0.75em"
         >
           <i class="fa-solid fa-play"></i> Lancer la vague
         </button>
@@ -110,9 +109,23 @@
           type="button"
           class="btn btn-action sauvegarder"
           data-type="sauvegarder"
-          style="display: none"
+          style="font-size: 0.8em"
         >
           <i class="fa-solid fa-floppy-disk"></i> Sauvegarder
+        </button>
+        <input
+          type="file"
+          id="jsonInput"
+          accept=".json"
+          style="display: none"
+        />
+        <button
+          type="button"
+          class="btn btn-action charger"
+          data-type="charger"
+          style="font-size: 0.8em"
+        >
+          <i class="fa-solid fa-floppy-disk"></i> Charger
         </button>
         <button type="button" class="btn btn-action danger" data-type="quitter">
           <i class="fa-solid fa-door-open"></i> Quitter
@@ -184,6 +197,13 @@
     </div>
 
     <div class="col-md-3 col-lg-2 infoBar">
+      <div class="panel budget-panel mb-3">
+        <div class="panel-header"><i class="fa-solid fa-coins"></i> Budget</div>
+        <div class="budget-value budget">
+          <span class="value">--</span> <small>gold</small>
+        </div>
+      </div>
+
       <div class="panel mb-3">
         <div class="panel-header">
           <i class="fa-solid fa-arrows-rotate"></i> Turn

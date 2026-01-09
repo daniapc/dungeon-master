@@ -97,7 +97,8 @@ class Jeu(MethodView, object):
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             elif user_input == 'S' :
-                msg = self.constructeur.save_donjon()
+                file_name = input("Nom de la sauvegarde : ")
+                msg = self.constructeur.save_donjon(file_name)
                 message = msg
             elif user_input == 'C' :
                 file_name = input("Nom du fichier à charger : ")
@@ -106,7 +107,7 @@ class Jeu(MethodView, object):
                     if "heros" in data_donjon :
                         print("Sauvegarde de partie en cours détectée, lancement...")
                         time.sleep(2)
-                        controleur = Controleur(self.grille, self.constructeur.get_budget())
+                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
                         succes, msg = controleur.load_game(file_name)
                         if succes :
                             lancer_vagues(controleur, sauvegarde=True)
@@ -149,6 +150,8 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
                         msg = "Commande inconnue"
+                        
+                    
                     message = msg
 
                 except ValueError :
