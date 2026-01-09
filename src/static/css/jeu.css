@@ -59,11 +59,11 @@ body {
 }
 
 .icon-game {
-  width: 20px;       /* Ajuste conforme o tamanho do seu texto */
+  width: 20px;      
   height: 20px;
   object-fit: contain;
-  margin-right: 8px; /* Espaço entre a imagem e o texto */
-  vertical-align: middle; /* Alinhamento vertical com o texto */
+  margin-right: 1px; 
+  vertical-align: middle; 
 }
 
 /* =========================================
