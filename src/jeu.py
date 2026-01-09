@@ -302,9 +302,11 @@ class Jeu(MethodView, object):
                     self.controleur.reset_monstres()
                     self.grille.vide()
                     
+                    self.constructeur.set_budget(BUDGET_INITIAL)
+                    
                     self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                     self.controleur.vague_jeu()
-                    return {"status": "success", "message": "Quitée le boucle"}, 200 
+                    return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
             else:
                 self.grille.reset()
                 self.grille.put_entree()
