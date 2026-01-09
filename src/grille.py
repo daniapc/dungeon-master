@@ -160,7 +160,7 @@ class Grille(MethodView):
             "objets" : data_cases
         }
     
-    def from_dict(self, data, fabrique_mur, fabrique_pieges) :
+    def from_dict(self, data, fabrique_mur, fabrique_pieges, fabrique_monstre) :
         self.reset()
         self.pos_entree = data["entree"]
         self.pos_tresor = data["tresor"]
@@ -177,4 +177,6 @@ class Grille(MethodView):
                 objet = fabrique_pieges[1].fabrique_Objet(x, y)
             elif type_obj == "Piege_3" :
                 objet = fabrique_pieges[2].fabrique_Objet(x, y)
+            elif type_obj == "Monstre" :
+                objet = fabrique_monstre.fabrique_Monstre(x, y)
             self.terrain[x][y].add_objet(objet)
