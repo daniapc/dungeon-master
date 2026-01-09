@@ -24,8 +24,12 @@ class ConstructeurDonjon(MethodView):
     
     def get_budget(self) :
         return self.budget
+    
     def set_budget(self, bg):
         self.budget = bg
+    
+    def get_grille(self):
+        return self.grille
     
     def get_l_monstres(self) :
         return self.l_monstres
@@ -104,6 +108,11 @@ class ConstructeurDonjon(MethodView):
         self.grille.get_case(i ,j).remove_objet(objet_to_remove)
         return True, "Case vidée"
     
+    def clear_grille(self):
+        self.grille = self.get_grille().vide()
+        self.set_budget(BUDGET_INITIAL)
+        return "Donjon réinitialisé"
+
     def save_donjon(self, file_name) :
         data_donjon = self.grille.to_dict()
         data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.budget

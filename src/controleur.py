@@ -51,9 +51,6 @@ class Controleur(MethodView):
     def get_liste(self):
         return self.l_heros
     
-    def get_grille(self):
-        return self.grille
-    
     def get_fab(self): 
         return self.fab
     
