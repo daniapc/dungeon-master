@@ -218,7 +218,7 @@ class Controleur(MethodView):
                         self.set_recap("nb_piege_moyen_active")
                     if isinstance(L[j], Piege_3):
                         self.set_recap("nb_piege_puissant_active")
-                    if(L[j].get_cout() != 4):
+                    if(L[j].get_cout() != PRIX_P3):
                         heros.degat(DEGATS_1)
                     else:
                         heros.degat(DEGATS_2)
@@ -628,7 +628,6 @@ def boucle_jeu(controleur):
         joue = "Héros"
     while(partie):
         print_jeu(controleur,joue)
-        print(f"Q         :   Quitter")
         action = input("\nCommande >").strip().upper()
         partie = controleur.get_partie()
         if action == 'C':
