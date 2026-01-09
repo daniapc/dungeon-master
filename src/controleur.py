@@ -189,7 +189,10 @@ class Controleur(MethodView):
                        "tresor_trouve" : False,
                        "nb_monstres_morts" : 0,
                        "nb_monstres_morts_total" : 0,}
-
+        
+    def reset_monstres(self):
+        self.monstres = []
+    
     def check_collisions(self):
         l_heros = self.get_liste()
         grille = self.get_grille()
@@ -213,36 +216,48 @@ class Controleur(MethodView):
                         heros.degat(DEGATS_1)
                     else:
                         heros.degat(DEGATS_2)
-                    if(not(L[i].is_active())):
-                        indices_objets.append(j)
+                    if(not(L[j].is_active())):
+                        if not j in indices_objets:
+                            indices_objets.append(j)
                     if heros.isdead():
-                        if j not in indices_morts:
+                        if i not in indices_morts:
                             self.verif_target_monstre(heros)
                             self.score_final += heros.get_score()
                             self.set_recap("nb_heros_morts")
-                            indices_morts.append(j)
-                if isinstance(L[j], Monstre):
-                    heros.degat(DEGATS_3)
-                    L[j].degat(DEGATS_4)
-                    if(L[j].isdead()):
-                        indices_monstres.append(j)
-                        self.set_recap("nb_monstres_morts")
-                    if heros.isdead():
-                        if j not in indices_morts:
-                            self.verif_target_monstre(heros)
-                            self.score_final += heros.get_score()
-                            self.set_recap("nb_heros_morts")
-                            indices_morts.append(j)
-                
+                            indices_morts.append(i)
+                elif isinstance(L[j], Monstre):
+                    if heros == L[j].get_target():
+                        heros.degat(DEGATS_3)
+                        L[j].degat(DEGATS_4)
+                        if(L[j].isdead()):
+                            if not j in indices_monstres:
+                                indices_monstres.append(j)
+                                self.set_recap("nb_monstres_morts")
+                        if heros.isdead():
+                            if i not in indices_morts:
+                                self.score_final += heros.get_score()
+                                self.set_recap("nb_heros_morts")
+                                indices_morts.append(i)   
             for k in range(len(indices_objets)):
                 grille.get_case(x,y).remove_objet(L[indices_objets[k]])
+            for k in range(len(indices_monstres)):
+                for j in range(len(self.monstres)):
+                    if self.monstres[j] == L[indices_monstres[k]]:
+                        indices_monstres[k] = j
+                grille.get_case(x,y).remove_monstre(L[indices_monstres[k]])
             L = [] 
+        n = 0
         for i in range(len(indices_morts)):
-            grille.get_case(x,y).remove_heros(self.l_heros[indices_morts[i]])
-            self.l_heros.pop(indices_morts[i])
+            heros = l_heros[indices_morts[i-n]]
+            (x,y) = heros.get_pos()
+            grille.get_case(x,y).remove_heros(heros)
+            self.verif_target_monstre(heros)
+            self.l_heros.pop(indices_morts[i-n])
+            n+= 1
+        n = 0
         for i in range(len(indices_monstres)):
-            grille.get_case(x,y).remove_monstre(self.l_heros[indices_monstres[i]])
-            self.monstres.pop(indices_monstres[i])
+            self.monstres.pop(indices_monstres[i-n])
+            n += 1
 
     def set_score_final(self, n):
         self.score_final += n
@@ -293,15 +308,17 @@ class Controleur(MethodView):
 
     def execute_strategie_monstre(self):
         for m in self.get_liste_monstres():
-            l_depl = BFS().applique_strategie(m, m)
+            pos = m.get_pos_target()
+            if m.get_pos() != pos:
+                l_depl = BFS().applique_strategie_monstre(self.grille, m, pos[0], pos[1])
 
-            pos = m.get_pos()
-            self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
+                pos = m.get_pos()
+                self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
 
-            m.deplace(l_depl[0][0], l_depl[0][1])
-            
-            pos = m.get_pos()
-            self.grille.get_case(pos[0], pos[1]).add_objet(m)
+                m.deplace(l_depl[0][0], l_depl[0][1])
+                
+                pos = m.get_pos()
+                self.grille.get_case(pos[0], pos[1]).add_objet(m)
     
     def init_monstre(self):
         for i in range(len(self.monstres)):
@@ -310,6 +327,9 @@ class Controleur(MethodView):
 
     def change_target(self, j, monstre):
         boucle = True
+        if len(self.l_heros) <=1 :
+            monstre.set_target(None)
+            boucle = False
         while(boucle):
             n = randint(0,len(self.l_heros)-1)
             if self.l_heros[n] != j:
@@ -559,7 +579,8 @@ def boucle_jeu(controleur):
         partie = controleur.get_partie()
         if action == 'C':
             if controleur.get_tour() == 0:
-                # controleur.execute_strategie_monstre()
+                controleur.check_collisions()
+                controleur.execute_strategie_monstre()
                 controleur.check_collisions()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)

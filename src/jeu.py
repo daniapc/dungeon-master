@@ -95,6 +95,8 @@ class Jeu(MethodView, object):
                 controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                 lancer_vagues(controleur)
                 self.grille.vide()
+                self.controleur.reset_monstres()
+                self.constructeur.reset_l_monstres()
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             elif user_input == 'S' :
