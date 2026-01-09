@@ -273,26 +273,30 @@ async function sideBarButtons() {
     const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
     if (sauvegarderButton) {
         sauvegarderButton.addEventListener("click", async () => {
+            const customName = prompt("Nom de la sauvegarde :", "donjon_defaut");
             
-            const file_name = 'donjon_defaut'
-            const payload = { action: "sauvegarder", file_name: file_name};
+            if (!customName) return;
+
+            const payload = { action: "sauvegarder", file_name: customName };
             
             try {
-                await fetch(`/controleur`, {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                }).then(response => response.blob()) 
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${file_name}.json`; 
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    });;
-    
+                });
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                a.download = customName.endsWith('.json') ? customName : `${customName}.json`;
+                
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
             } catch (e) {
                 console.error("Network error:", e);
             }
