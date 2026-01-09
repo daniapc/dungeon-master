@@ -53,7 +53,8 @@ Toutes les modifications suggérées par l'IA ont été intégrées dans le comm
 **Contexte :**
 Création d'une interface de confirmation interactive par-dessus la grille de jeu lors de l'activation de la fonction "Effacer tout".
 
-Prompt en portugais (original): "Eu quero que o aviso de confirmação se sobreponha à `grid-board`, deixando ela opaca ao fundo e eu possa clicar em qualquer lugar dentro dos limites dessa grid-board para confirmar."
+**Prompt :**
+En portugais (original): "Eu quero que o aviso de confirmação se sobreponha à `grid-board`, deixando ela opaca ao fundo e eu possa clicar em qualquer lugar dentro dos limites dessa grid-board para confirmar."
 
 Traduction: "Je souhaite que l'alerte de confirmation se superpose au `grid-board`, en rendant celui-ci opaque en arrière-plan, et que je puisse cliquer n'importe où dans les limites de cette grille pour confirmer l'action."
 
