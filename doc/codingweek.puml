@@ -111,7 +111,7 @@ Class Controleur{
 + get()
 + post()
 + get_data_heros()
-+ save_current_game()
++ save_current_game(String file_name)
 + load_game(String file_name)
 }
 
@@ -131,6 +131,7 @@ Class Grille{
 + get_entree()
 + get_tresor()
 + get_grille()
++ get_budget()
 + get_case(int i, int j)
 + print_terrain()
 + affichage()
@@ -209,6 +210,7 @@ Class ConstructeurDonjon{
 - Fabrique_Piege_3 fabrique_piege_3
 + get_budget()
 + set_budget(bg)
++ get_grille()
 + get_l_monstres()
 + is_in_grid(int i, int j)
 + is_empty(int i, int j)
@@ -216,7 +218,8 @@ Class ConstructeurDonjon{
 + put_piege(int i, int j, String type_piege)
 + put_monstre(int i, int j)
 + rm_objet(ini i, int j)
-+ save_donjon()
++ clear_grille()
++ save_donjon(String file_name)
 + load_donjon(String file_name) :
 + post()
 + get()

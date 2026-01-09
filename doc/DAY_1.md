@@ -3,11 +3,12 @@ Technologies: Web -  HTML/CSS, venv
 
 Rôles:
     - Git Manager : Daniel
-    - Secrétaire : Teresa/Arthur
+    - Manager : Teresa
 
 ## Rèlges de jeu
 ### Donjon
-    - Grille: taille(s) 16x16 option: autres tailles
+    - Grille: taille(s) 16x16 
+        option: autres tailles
 
     - Entrée: un bord
 
@@ -16,20 +17,22 @@ Rôles:
 
     - Pièges: Grand (ex: - 30), Moyen (ex: -10 utilisable 2 fois), Petit (ex: dégat 10)
 
-    - Monstres : à discuter 
-        se déplace
+    - Monstres
+        se déplace vers héros (target aléatoire)
+        si collision dégat appliqué à l'héros
+        peut mourir (perd des PV si combat avec héros)
 
 ### Héros
     - déplacement en 4 voisinages
     - 1 case de déplacement
     - 100 PV
     - mort si moins de 0 PV
-    - types de héros
+    - types de héros (option)
 
 ### Jeu
     - 2 vagues
     - plus de héros
-    - bonus d'argent (fixe idée: proportionnel à score)
+    - bonus d'argent (fixe, idée: proportionnel à score)
 
 ### Score
     - pénalité si atteinte trésor ex: -500
