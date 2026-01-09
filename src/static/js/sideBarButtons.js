@@ -78,6 +78,40 @@ async function updateButtonsState(){
 
 }
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function continuer() {
+    const payload = { action: "continuer" };
+            
+    try {
+        const response = await fetch(`/controleur`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            result = await response.json();
+            
+            joue = result['joue'];
+            score = result['score'];
+            fini = result['fini']; // TODO: deprecated
+                        
+            document.querySelector('.infoBar .joue').innerText = joue;
+            document.querySelector('.infoBar .score').innerText = score;
+
+            await renderGrille();                    
+            await infoBarCards();
+            await updateButtonsState();
+            
+        } else {
+            console.error("Server error:", response.status);
+        }
+    } catch (e) {
+        console.error("Network error:", e);
+    }
+}
+
 async function sideBarButtons() {
 
 
@@ -250,40 +284,16 @@ async function sideBarButtons() {
         });
     }
 
+    
 
     const continuerButton = document.querySelector('[data-type="continuer"]');
     if (continuerButton) {
         continuerButton.addEventListener("click", async () => {
-            
-            const payload = { action: "continuer" };
-            
-            try {
-                const response = await fetch(`/controleur`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-    
-                if (response.ok) {
-                    result = await response.json();
-                    
-                    joue = result['joue'];
-                    score = result['score'];
-                    fini = result['fini']; // TODO: deprecated
-                                
-                    document.querySelector('.infoBar .joue').innerText = joue;
-                    document.querySelector('.infoBar .score').innerText = score;
+            continuer();
 
-                    await renderGrille();                    
-                    await infoBarCards();
-                    await updateButtonsState();
-                    
-                } else {
-                    console.error("Server error:", response.status);
-                }
-            } catch (e) {
-                console.error("Network error:", e);
-            }
+            await sleep(1000); 
+
+            continuer();
         });
     }
 
@@ -415,6 +425,8 @@ async function sideBarButtons() {
 
                     if (result['reset']){
                         window.location.href = "/";
+                        document.querySelector('.infoBar .score').innerText = '-';
+
                     }
 
                 } else {
