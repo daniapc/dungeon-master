@@ -151,8 +151,6 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
                         msg = "Commande inconnue"
-                        
-                    
                     message = msg
 
                 except ValueError :
@@ -180,8 +178,33 @@ class Jeu(MethodView, object):
             if user_input == "J":
                 self.terminal_loop()
             elif user_input == "C":
-                #charger une partie
-                pass
+                file_name = input("Nom du fichier à charger : ")
+                data_donjon = GestionSauvegarde.charger_donjon(file_name)
+                if data_donjon :
+                    if "heros" in data_donjon :
+                        print("Sauvegarde de partie en cours détectée, lancement...")
+                        time.sleep(2)
+                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
+                        succes, msg = controleur.load_game(file_name)
+                        if succes :
+                            lancer_vagues(controleur, sauvegarde=True)
+                            self.grille.vide()
+                            self.constructeur.set_budget(BUDGET_INITIAL)
+                            self.terminal_loop()
+                        else :
+                            print(f"Erreur : {msg}")
+                            time.sleep(2)
+                    else :
+                        print("Sauvegarde de Donjon détectée, chargement...")
+                        time.sleep(2)
+                        succes, msg = self.constructeur.load_donjon(file_name)
+                        print(f"{msg}")
+                        time.sleep(1)
+                        if succes :
+                            self.terminal_loop()
+                else :
+                    print("Fichier introuvable")
+                    time.sleep(2)
             
         print(f"Fermeture du jeu.")
         os._exit(0)
