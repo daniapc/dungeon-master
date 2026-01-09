@@ -384,7 +384,13 @@ class Controleur(MethodView):
         if action == 'strategie':
             choix = data['strategie']
             
-            self.set_strategie(BFS() if choix == 'C' else Dijkstra())
+            match choix:
+                case "BFS":
+                    self.set_strategie(BFS())  
+                case "Dijkstra":
+                    self.set_strategie(Dijkstra())
+                case "A*":
+                    self.set_strategie(A())
             
             return {"status": "success", "message": "La strategie a ete changée"}, 200 
         elif action == 'lancer':
@@ -426,6 +432,12 @@ class Controleur(MethodView):
                     "score": self.score,
                     "fini": fini
                     }, 200 
+        elif action == 'prochain':
+            self.aug_vague()
+            self.partie = True
+            self.vague_jeu()
+            self.init_monstre()
+        
         elif action == 'sauvegarder':
             file_name = data['file_name']
             if not file_name :

@@ -78,7 +78,7 @@ class Jeu(MethodView, object):
             print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
             print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
             print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
-            print(f"O x,y    :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
+            print(f"O x,y     :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
             print(f"L         :   Lancer la vague")
             print(f"S         :   Sauvegarder donjon") 
@@ -102,6 +102,12 @@ class Jeu(MethodView, object):
                 msg = self.constructeur.save_donjon(file_name)
                 message = msg
             elif user_input == 'C' :
+                name_saves = GestionSauvegarde.name_saves()
+                names = ""
+                for name in name_saves :
+                    names += name
+                    names += "  "
+                print(f"Sauvegardes disponibles : {names}")
                 file_name = input("Nom du fichier à charger : ")
                 data_donjon = GestionSauvegarde.charger_donjon(file_name)
                 if data_donjon :
@@ -151,8 +157,6 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
                         msg = "Commande inconnue"
-                        
-                    
                     message = msg
 
                 except ValueError :
@@ -180,8 +184,39 @@ class Jeu(MethodView, object):
             if user_input == "J":
                 self.terminal_loop()
             elif user_input == "C":
-                #charger une partie
-                pass
+                name_saves = GestionSauvegarde.name_saves()
+                names = ""
+                for name in name_saves :
+                    names += name
+                    names += "  "
+                print(f"Sauvegardes disponibles : {names}")
+                file_name = input("Nom du fichier à charger : ")
+                data_donjon = GestionSauvegarde.charger_donjon(file_name)
+                if data_donjon :
+                    if "heros" in data_donjon :
+                        print("Sauvegarde de partie en cours détectée, lancement...")
+                        time.sleep(2)
+                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
+                        succes, msg = controleur.load_game(file_name)
+                        if succes :
+                            lancer_vagues(controleur, sauvegarde=True)
+                            self.grille.vide()
+                            self.constructeur.set_budget(BUDGET_INITIAL)
+                            self.terminal_loop()
+                        else :
+                            print(f"Erreur : {msg}")
+                            time.sleep(2)
+                    else :
+                        print("Sauvegarde de Donjon détectée, chargement...")
+                        time.sleep(2)
+                        succes, msg = self.constructeur.load_donjon(file_name)
+                        print(f"{msg}")
+                        time.sleep(1)
+                        if succes :
+                            self.terminal_loop()
+                else :
+                    print("Fichier introuvable")
+                    time.sleep(2)
             
         print(f"Fermeture du jeu.")
         os._exit(0)
@@ -260,6 +295,7 @@ class Jeu(MethodView, object):
             
             json_content = data['json']
             file_name = data['file_name']
+            from_menu = data['from_menu']
             
             chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
             
@@ -273,21 +309,22 @@ class Jeu(MethodView, object):
                     # controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
                     self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
                     
-                    succes, msg = controleur.load_game(file_name)
+                    succes, msg = self.controleur.load_game(file_name)
                     if succes :
                         # lancer_vagues(controleur, sauvegarde=True)
                         controleur.set_boucle(True)
                         # self.controleur.vague_jeu()
                         
                         message = "Partie chargée"
-                        self.grille.vide()
-                        self.constructeur.set_budget(BUDGET_INITIAL)
                     else :
                         message = f"Erreur : {msg}"
                 else :
                     succes, msg = self.constructeur.load_donjon(file_name)
                     self.controleur.vague_jeu()
                     message = msg 
+                    
+            if from_menu:
+                self.state = State.JEU
                     
             return {"status": "success", "message": message}, 200 
             
