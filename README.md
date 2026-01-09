@@ -78,6 +78,9 @@ Graphismes:\
     - Trésor : fleur\
     - Héros : abeille  
 
+## Vidéo de démonstration
+Lien dans doc/DEMONSTRATION.md
+ 
 ## Auteur : Les DALTons
  - Teresa FERNANDEZ DEL BUSTO JIMENEZ
  - Arthur HUTIN
