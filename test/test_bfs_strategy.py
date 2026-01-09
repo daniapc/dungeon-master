@@ -71,7 +71,7 @@ def test_deplacer_heros(preparer_grille):
     murs = [(0, 1)]
     grille = preparer_grille(end=(0,2), murs=murs)
     h = Heros(0,0, [])
-    ctr = Controleur(grille, 100)
+    ctr = Controleur(grille, 100,[])
     ctr.ajouter_heros(h)
     ctr.update_compteur()
 
