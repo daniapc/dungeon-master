@@ -260,6 +260,7 @@ class Jeu(MethodView, object):
             
             json_content = data['json']
             file_name = data['file_name']
+            from_menu = data['from_menu']
             
             chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
             
@@ -286,6 +287,9 @@ class Jeu(MethodView, object):
                     succes, msg = self.constructeur.load_donjon(file_name)
                     self.controleur.vague_jeu()
                     message = msg 
+                    
+            if from_menu:
+                self.state = State.JEU
                     
             return {"status": "success", "message": message}, 200 
             

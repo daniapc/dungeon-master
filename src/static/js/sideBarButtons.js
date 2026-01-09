@@ -154,8 +154,6 @@ async function sideBarButtons() {
                 "2": "A*"
             };
 
-            console.log(strategies[state]);
-
             const payload = { action: "strategie", 'strategie': strategies[state] };
     
             try {
@@ -286,7 +284,6 @@ async function sideBarButtons() {
                     body: JSON.stringify(payload)
                 }).then(response => response.blob()) 
                     .then(blob => {
-                        console.log(blob);
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
@@ -314,9 +311,6 @@ async function sideBarButtons() {
     fileInput.addEventListener('change', async () => {
         const file = fileInput.files[0];
 
-        console.log(file);
-
-
         if (!file) return;
 
         const reader = new FileReader();
@@ -326,7 +320,7 @@ async function sideBarButtons() {
                 const jsontext = event.target.result;
                 const data = JSON.parse(jsontext);
 
-                const payload = { action: "charger", 'json': data, file_name: 'charge'};
+                const payload = { action: "charger", 'json': data, file_name: 'charge', from_menu: false};
 
                 const response = await fetch('/', {
                     method: 'POST',
@@ -345,8 +339,6 @@ async function sideBarButtons() {
         };
 
         reader.readAsText(file);
-
-        
     });
 
 
