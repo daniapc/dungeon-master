@@ -124,7 +124,14 @@ class ConstructeurDonjon(MethodView):
     def save_donjon(self, file_name) :
         data_donjon = self.grille.to_dict()
         data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.budget
-        
+        data_monstre = []
+        for monstre in self.l_monstres :
+            data_monstre.append({
+                "x" : monstre.get_pos()[0],
+                "y" : monstre.get_pos()[1],
+                "pv" : monstre.get_pv()
+            })
+        data_donjon["monstres"] = data_monstre
         if not file_name :
             file_name = "donjon_defaut"
         GestionSauvegarde.sauvegarder_donjon(file_name, data_donjon)
@@ -136,6 +143,12 @@ class ConstructeurDonjon(MethodView):
             fabriques_piege = [self.fabrique_piege_1, self.fabrique_piege_2, self.fabrique_piege_3]
             self.grille.from_dict(data_donjon, self.fabrique_mur, fabriques_piege)
             self.budget = BUDGET_INITIAL - data_donjon["budget_dépensé"]
+            data_monstre = data_donjon["monstres"]
+            for i in range(len(data_monstre)) :
+                monstre = self.fabrique_monstre.fabrique_Monstre(data_monstre[i]["x"], data_monstre[i]["y"])
+                monstre.set_pv(data_monstre[i]["pv"])
+                self.l_monstres.append(monstre)
+                self.grille.get_case(monstre.get_pos()[0], monstre.get_pos()[1]).add_objet(monstre)
             return True, "Donjon chargé"
         return False, "Erreur chargement"
 
