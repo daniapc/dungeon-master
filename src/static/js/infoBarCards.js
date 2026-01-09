@@ -1,5 +1,24 @@
 async function infoBarCards () {
 
+
+    /* ===============================
+     BUDGET
+      ================================ */ 
+    const budget = document.querySelector(".budget");
+
+    try {
+        const response = await fetch(`/constrdonjon?attribute=budget`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.status === "success")
+            budget.querySelector(".value").innerText = data['budget'];
+    } catch (e) {
+        console.error("Error fetching budget:", e);
+    }
+
     /** =====================
      *  HEROS
      ==================*/

@@ -15,7 +15,7 @@ class GestionSauvegarde :
         GestionSauvegarde.verifier_dossier()
         if not nom_fichier.endswith('.json') :
             nom_fichier += '.json'
-        chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{nom_fichier}.json")
+        chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{nom_fichier}")
         try :
             with open(chemin, 'w') as f :
                 json.dump(donnees, f, indent=4)
@@ -29,7 +29,7 @@ class GestionSauvegarde :
     def charger_donjon(nom_fichier) :
         if not nom_fichier.endswith('.json') :
             nom_fichier += '.json'
-        chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{nom_fichier}.json")
+        chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{nom_fichier}")
         if not os.path.exists(chemin) :
             print("Fichier introuvable")
             return None

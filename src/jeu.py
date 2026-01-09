@@ -20,6 +20,7 @@ import threading
 import time
 import os
 import webbrowser
+import json
 from threading import Timer
 
 # (day_1)
@@ -97,7 +98,8 @@ class Jeu(MethodView, object):
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             elif user_input == 'S' :
-                msg = self.constructeur.save_donjon()
+                file_name = input("Nom de la sauvegarde : ")
+                msg = self.constructeur.save_donjon(file_name)
                 message = msg
             elif user_input == 'C' :
                 file_name = input("Nom du fichier à charger : ")
@@ -106,7 +108,7 @@ class Jeu(MethodView, object):
                     if "heros" in data_donjon :
                         print("Sauvegarde de partie en cours détectée, lancement...")
                         time.sleep(2)
-                        controleur = Controleur(self.grille, self.constructeur.get_budget())
+                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
                         succes, msg = controleur.load_game(file_name)
                         if succes :
                             lancer_vagues(controleur, sauvegarde=True)
@@ -149,6 +151,8 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
                         msg = "Commande inconnue"
+                        
+                    
                     message = msg
 
                 except ValueError :
@@ -252,6 +256,40 @@ class Jeu(MethodView, object):
                 self.set_state(State.MEN)
                 
                 return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
+        elif action == 'charger':
+            
+            json_content = data['json']
+            file_name = data['file_name']
+            
+            chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
+            
+            with open(chemin, 'w', encoding='utf-8') as f:
+                json.dump(json_content, f, indent=4, ensure_ascii=False)
+            
+            message = ""
+            data_donjon = GestionSauvegarde.charger_donjon(file_name)
+            if data_donjon :
+                if "heros" in data_donjon :
+                    # controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
+                    
+                    succes, msg = controleur.load_game(file_name)
+                    if succes :
+                        # lancer_vagues(controleur, sauvegarde=True)
+                        controleur.set_boucle(True)
+                        # self.controleur.vague_jeu()
+                        
+                        message = "Partie chargée"
+                        self.grille.vide()
+                        self.constructeur.set_budget(BUDGET_INITIAL)
+                    else :
+                        message = f"Erreur : {msg}"
+                else :
+                    succes, msg = self.constructeur.load_donjon(file_name)
+                    self.controleur.vague_jeu()
+                    message = msg 
+                    
+            return {"status": "success", "message": message}, 200 
             
         
         return {"status": "ignored", "message": "Nothing happened"}, 200

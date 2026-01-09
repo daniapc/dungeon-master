@@ -3,6 +3,8 @@ from src.params import *
 from src.case import Case
 
 from flask.views import MethodView
+from src.objet import Mur, Piege
+from src.monstre import Monstre
 
 class Grille(MethodView):
 
@@ -178,3 +180,16 @@ class Grille(MethodView):
             elif type_obj == "Piege_3" :
                 objet = fabrique_pieges[2].fabrique_Objet(x, y)
             self.terrain[x][y].add_objet(objet)
+            
+    def get_budget(self):
+        budget = BUDGET_INITIAL
+        
+        for row in self.terrain:
+            for case in row :
+                objets = case.get_objets()
+                if len(objets) > 0 :
+                    objet = objets[0]
+                    if isinstance(objet, (Mur, Piege, Monstre)):
+                        budget -= objet.get_cout()
+        
+        return budget
