@@ -12,6 +12,7 @@ from src.ia_strategy import *
 from src.fabrique_heros import *
 from src.sauvegarde import GestionSauvegarde
 from src.fabrique_objet import *
+from src.fabrique_monstres import *
 from src.monstre import *
 
 from flask.views import MethodView
@@ -503,8 +504,9 @@ class Controleur(MethodView):
                 #self.set_strategie(A())
             fabrique_Mur = Fabrique_Mur()
             fabriques_pieges = [Fabrique_Piege_1(), Fabrique_Piege_2(), Fabrique_Piege_3()]
+            fabrique_monstre = Fabrique_Monstre()
             if "grille" in data_game :
-                self.grille.from_dict(data_game["grille"], fabrique_Mur, fabriques_pieges)
+                self.grille.from_dict(data_game["grille"], fabrique_Mur, fabriques_pieges, fabrique_monstre)
             self.l_heros = []
             data_heros = data_game.get("heros", [])
             for data_hero in data_heros :

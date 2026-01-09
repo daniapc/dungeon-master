@@ -108,7 +108,7 @@ class Jeu(MethodView, object):
                     if "heros" in data_donjon :
                         print("Sauvegarde de partie en cours détectée, lancement...")
                         time.sleep(2)
-                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
+                        controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                         succes, msg = controleur.load_game(file_name)
                         if succes :
                             lancer_vagues(controleur, sauvegarde=True)
