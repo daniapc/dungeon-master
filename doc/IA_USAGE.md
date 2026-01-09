@@ -21,13 +21,12 @@ Fourniture d'une structure HTML améliorée, d'un fichier CSS complet avec thèm
 Tester le clacul de chemin avec BFS sans utiliser les classes grille ni case
 
 **Prompt :**
-(code de ia_strategy.py) Je. veux faire des tests indépendant de la classe grille
+(code de ia_strategy.py) Je veux faire des tests indépendant de la classe grille
 
 **Réponse :**
 L'IA propose une série de test qui utilise unittest
 
 **Décision :**
-
 - Garder: l'utilisation de mock
 - Modifier: simplifier les modules utilisés et adaptations en conséquence
 
@@ -39,7 +38,8 @@ Une correcttion du prompt est faite pour avoir une réponse qui utilise pytest-m
 **Contexte :**
 Refonte esthétique du tableau récapitulatif à l'aide de CSS et HTML, tout en préservant la logique métier.
 
-Prompt en portugais (original): "Altere esse html para que fique um visual agradável e MINIMALISTA. Mantenha a lógica como está. Mantenha em francês. Pode adicionar css, mas sem tantas classes para alterar. "
+**Prompt :**
+En portugais (original): "Altere esse html para que fique um visual agradável e MINIMALISTA. Mantenha a lógica como está. Mantenha em francês. Pode adicionar css, mas sem tantas classes para alterar. "
 
 Traduction: "Modifiez ce code HTML pour obtenir un aspect agréable et minimaliste. Conservez la logique actuelle. Restez en français. Vous pouvez ajouter du CSS, mais sans modifier trop de classes."
 
@@ -47,3 +47,20 @@ Code fourni : tableau `recap-board` dans `jeu.html`
 
 **Réponse IA :**
 Toutes les modifications suggérées par l'IA ont été intégrées dans le commit #TODO []() avec le message : "IA: Table visual improvement (Styling assisted by Gemini)"
+
+### Intéraction #4
+**Contexte :**
+Avoir un diagramme UML plus lisible
+
+**Prompt :**
+Voici un .puml , s'il y a des liens manquants ajoute les et fait en sorte que le diagramme lisible
+
+**Réponse IA :**
+Modifications du diagramme UML
+
+**Décision :**
+- Garder: 
+    liens fait et l'organisation du fichier
+    configuration lignes droites
+
+
