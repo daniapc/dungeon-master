@@ -143,7 +143,8 @@ class ConstructeurDonjon(MethodView):
             fabriques_piege = [self.fabrique_piege_1, self.fabrique_piege_2, self.fabrique_piege_3]
             self.grille.from_dict(data_donjon, self.fabrique_mur, fabriques_piege)
             self.budget = BUDGET_INITIAL - data_donjon["budget_dépensé"]
-            data_monstre = data_donjon["monstres"]
+            self.l_monstres = []
+            data_monstre = data_donjon.get("monstres", [])
             for i in range(len(data_monstre)) :
                 monstre = self.fabrique_monstre.fabrique_Monstre(data_monstre[i]["x"], data_monstre[i]["y"])
                 monstre.set_pv(data_monstre[i]["pv"])
