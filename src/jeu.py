@@ -61,7 +61,7 @@ class Jeu(MethodView, object):
 
         # Commented parce que le constructeur est deja initialisé a self.setup()
         # self.constructeur = ConstructeurDonjon(self.grille)
-        message = "Bienvenue Maitre du Donjon de la mort qui tue"
+        message = "Bienvenue Maitre du Donjon"
 
         chemin_possible = True
         while True:

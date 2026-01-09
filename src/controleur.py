@@ -700,7 +700,7 @@ def print_jeu(controleur,joue):
 
 def lancer_vagues(controleur, sauvegarde=False):
     controleur.set_boucle(True)
-    while(controleur.get_boucle() and controleur.get_vague() <= 3):
+    while(controleur.get_boucle() and controleur.get_vague() <= 5):
         if not sauvegarde :
             controleur.vague_jeu()
             controleur.init_monstre()
@@ -763,7 +763,9 @@ def recap(controleur):
     score = controleur.get_score_final()
     dico = controleur.get_recap()
     txt = ""
-    print(f"Vague {controleur.get_vague()} terminée")
+    if controleur.get_vague() == 5:
+        txt = " (vague finale)"
+    print(f"Vague {controleur.get_vague()} terminée", txt)
     txt = "Nombre de héros engagés : " + str(dico["nb_heros"]) + " ( " + str(dico["nb_heros_total"]) + " )"
     print(f"" + txt)
     txt = "Nombre de héros morts : " + str(dico["nb_heros_morts"]) + " ( " + str(dico["nb_heros_morts_total"]) + " )"
