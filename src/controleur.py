@@ -582,8 +582,6 @@ class Controleur(MethodView):
                 self.grille.get_case(k+i,l+j).add_objet(m)
                 boucle = False
                 
-
-
     def verifier_chem_possible(self):
         tester = BFS()
         chem_possible = tester.cherche_chemin(self.get_grille(), self.get_grille().get_entree(), self.get_grille().get_tresor())

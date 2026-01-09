@@ -1,301 +1,239 @@
 @startuml
-'https://plantuml.com/sequence-diagram
-skinparam linetype ortho
-skinparam shadowing false
+title Diagramme de Classes Donjon Manager
+skinparam packageStyle rectangle
 
-abstract class Objet{
-- pos
-+ get_pos()
+package "Entités" {
+    abstract class Objet {
+        - pos : Tuple
+        + get_pos()
+    }
+
+    class Mur {
+        + get_cout()
+        + affichage()
+    }
+
+    abstract class Piege {
+        - difficulte : int
+        - active : bool
+        + set_difficulte()
+        + get_difficulte()
+        + is_active()
+        + {abstract} degat()
+        + {abstract} get_cout()
+    }
+
+    class Piege_1 {
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Piege_2 {
+        - num_max_attaque : int
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Piege_3 {
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Monstre {
+        - pos : Tuple
+        - pv : int
+        - target : bool
+        + get_pv()
+        + get_pos()
+        + set_target(bool i)
+        + get_tresor()
+        + get_cout()
+        + deplacer(int i, int j)
+        + affichage()
+        + degat(int n)
+        + isdead()
+    }
+
+    class Heros {
+        - pos : Tuple
+        - pv : int
+        - obs : List<Observer>
+        - state : bool
+        + get_pv()
+        + get_pos()
+        + get_obs()
+        + get_state()
+        + set_pv()
+        + isdead()
+        + at_treasure(int x, int y)
+        + deplace(int i, int j)
+        + degat(int n)
+        + affichage()
+        + notifyDeathObserver()
+        + notifyTreasureObserver()
+    }
+
+    class Case {
+        - objets : List<Objet>
+        - entree : Bool
+        - tresor : Bool
+        + get_objets()
+        + add_objet(Objet obj)
+        + remove_objet(Objet obj)
+        + remove_heros(Heros heros)
+        + remove_monstre(Monstre m)
+        + set_entree()
+        + set_tresor()
+        + rm_entree()
+        + rm_tresor()
+        + is_entree()
+        + is_tresor()
+        + has_hero()
+        + has_mur()
+        + affichage()
+    }
+
+    class Grille {
+        - terrain : List<List<Case>>
+        - pos_entree : List<int>
+        - pos_tresor : List<int>
+        + reset()
+        + put_entree()
+        + put_tresor()
+        + vide()
+        + get_entree()
+        + get_tresor()
+        + get_grille()
+        + get_case(int i, int j)
+        + print_terrain()
+        + affichage()
+        + to_dict()
+        + from_dict()
+    }
 }
 
-class Mur{
-+ get_cout()
-+ affichage()
-}
+package "Factories" {
+    abstract class Fabrique_Objet {
+        + {abstract} fabrique_Objet(int i, int j)
+    }
 
-abstract Piege{
-- difficulte
-- active
-+ set_difficulte()
-+ get_difficulte()
-+ is_active()
-+ {abstract} degat()
-+ {abstract} get_cout()
-}
+    class Fabrique_Mur {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_1 {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_2 {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_3 {
+        + fabrique_Objet(int i, int j)
+    }
 
-class Piege_1{
-+ get_cout()
-+ degat()
-+ affichage()
+    class Fabrique_Heros {
+        + fabrique_heros(int x, int y, List<Observer> obs)
+    }
+    class Fabrique_Monstre {
+        + fabrique_Monstre(int i, int j)
+    }
 }
+    class Controleur {
+        - l_heros : List<Heros>
+        - grille : Grille
+        - vague : int
+        - score : int
+        - score_final : int
+        - tour : int
+        - partie : bool
+        - strategie : IA_Strategy
+        - compteur : int
+        - fab : Fabrique_Heros
+        - recap : Dict
+        - boucle : bool
+        - monstres : List<Monstre>
+        + get_liste()
+        + get_grille()
+        + set_strategie(IA_Strategy strategie)
+        + execute_strategie()
+        + peut_deplacer(int i, int j, int indice)
+        + vague_jeu()
+        + check_collisions()
+        + save_current_game()
+        + load_game(String file_name)
+    }
 
-class Piege_2{
-- int num_max_attaque
-+ get_cout()
-+ degat()
-+ affichage()
-}
+    class ConstructeurDonjon {
+        - grille : Grille
+        - budget : int
+        - l_monstres : List<Monstre>
+        + get_budget()
+        + set_budget(int bg)
+        + get_grille()
+        + get_l_monstres()
+        + reset_l_monstres(s)
+        + is_in_grid(in i, int j)
+        + is_empty(int i, int j)
+        + put_mur(int i, int j)
+        + put_piege(int i, int j, String type)
+        + put_monstre(int i, int j)
+        + rm_objet(int i, int j)
+        + clear_grille()
+        + save_donjon(String file_name)
+        + load_donjon(String file_name)
+    }
 
-class Piege_3{
-+ get_cout()
-+ degat()
-+ affichage()
-}
+    class Jeu {
+        - instance : Jeu
+        - mode : Enum
+        - state : Enum
+        - grille : Grille
+        - constructeurDonjon : ConstructeurDonjon
+        + {static} get_instance()
+        + terminal_loop()
+        + menu_principal()
+        + setup()
+    }
 
-class Case{
-- List objets
-- Bool entree
-- Bool tresor
-+ get_objets()
-+ add_objet(Objet obj)
-+ remove_objet(Objet obj)
-+ remove_heros(Heros heros)
-+ remove_monstre(Monstre m)
-+ set_entree()
-+ set_tresor()
-+ rm_entree()
-+ rm_tresor()
-+ is_entree()
-+ is_tresor()
-+ has_hero()
-+ has_mur()
-+ affichage()
-}
+    class GestionSauvegarde {
+        {static} verifier_dossier()
+        {static} sauvegarder_donjon()
+        {static} charger_donjon()
+    }
+package Stategy{
+    abstract class IA_Strategy {
+        + voisins(Tuple pos)
+        + cout_case(int i, int j, Grille grille)
+        + reconstruir_chemin()
+        + applique_strategie(Grille grille)
+    }
 
-Class Controleur{
-- List<Heros> l_heros
-- Grille grille
-- int vague
-- int score
-- int score_final
-- int tour
-- bool partie
-- IA_Strategy strategie
-- int compteur
-- Fabrique_Heros fab
-- Dict recap
-- bool boucle
-- List<Monstre> monstres
-+ get_liste()
-+ get_grille()
-+ get_fab()
-+ set_strategie(IA_Strategy strategie)
-+ update_compteur()
-+ execute_strategie()
-+ get_boucle()
-+ set_boucle()
-+ get_vague()
-+ get_score()
-+ get_tour()
-+ get_partie()
-+ set_partie(bool pt)
-+ get_score_final()
-+ get_recap()
-+ get_liste_monstres()
-+ set_recap(String key)
-+ peut_deplacer(int i, int j, int indice)
-+ ajouter_heros(Heros h)
-+ vague_jeu()
-+ set_score()
-+ reset_recap()
-+ check_collisions()
-+ set_score_final(int n)
-+ aug_vague()
-+ change_tour()
-+ execute_strategie_monstre()
-+ init_monstre()
-+ change_target(int j, Monstre monstre)
-+ verif_target_monstre(h)
-+ check_treso()
-+ enleve_heros()
-+ get()
-+ post()
-+ get_data_heros()
-+ save_current_game(String file_name)
-+ load_game(String file_name)
+    class BFS {
+        + cherche_chemin()
+    }
+    class Dijkstra {
+        + cherche_chemin()
+    }
+    class A {
+        + heuristique()
+        + cherche_chemin()
+    }
 }
-
-Class DmgVisitor{
-+ visit(Objet obj, int i)
-+ visit(Heros h, int i)
+abstract class Observer {
+    - value : int
+    + get_value()
 }
-
-Class Grille{
-- List<List<Case>> terrain
-- List<int> pos_entree
-- List<int> pos_tresor
-+ reset()
-+ put_entree()
-+ put_tresor()
-+ vide()
-+ get_entree()
-+ get_tresor()
-+ get_grille()
-+ get_budget()
-+ get_case(int i, int j)
-+ print_terrain()
-+ affichage()
-+ get()
-+ to_dict()
-+ from_dict(Dict data, Fabrique_Mur fm, List<Fabrique_Objet> fo)
+class DeathObserver {
+    + dead()
 }
-
-Class Heros{
-- Tuple pos
-- int pv
-- List<Observer> obs
-- bool state
-+ get_pv()
-+ get_pos()
-+ get_obs()
-+ get_state()
-+ get_sscore()
-+ set_pv()
-+ isdead()
-+ at_treasure(int x, int y)
-+ deplace(int i, int j)
-+ degat(int n)
-+ affichage()
-+ notifyDeathObserver()
-+ notifyTreasureObserver()
+class TreasureObserver {
+    + treasure()
 }
-
-Class Jeu{
-- Jeu instance
-- Enum mode
-- state
-- Grille grille
-- ConstructeurDonjon constructeurDonjon
-+ set_mode(Enum mode)
-+ get_mode()
-+ set_state(st)
-+ get_state()
-+ log(String msg)
-+ terminal_loop()
-+ menu_principal()
-+ setup()
-+ get()
-+ post()
-}
-
-Class Log{
-- log_stream
-+ set_log_stream(lg)
-+ get()
-}
-
-Class Monstre{
-- Tuple pos
-- int pv
-- bool target
-+ get_pv()
-+ get_pos()
-+ set_target(bool i)
-+ get_tresor()
-+ get_cout()
-+ deplacer(int i, int j)
-+ affichage()
-+ degat(int n)
-+ isdead()
-}
-
-Class ConstructeurDonjon{
-- Grille grille
-- int budget
-- List<Monstre> l_monstres
-- Fabrique_Mur fabrique_mur
-- Fabrique_Monstre fabrique_monstre
-- Fabrique_Piege_1 fabrique_piege_1
-- Fabrique_Piege_2 fabrique_piege_2
-- Fabrique_Piege_3 fabrique_piege_3
-+ get_budget()
-+ set_budget(bg)
-+ get_grille()
-+ get_l_monstres()
-+ is_in_grid(int i, int j)
-+ is_empty(int i, int j)
-+ put_mur(int i, int j)
-+ put_piege(int i, int j, String type_piege)
-+ put_monstre(int i, int j)
-+ rm_objet(ini i, int j)
-+ clear_grille()
-+ save_donjon(String file_name)
-+ load_donjon(String file_name) :
-+ post()
-+ get()
-+ delete()
-}
-
-Class Fabrique_Heros{
-+ fabrique_heros(int x, int y, List<Observer> obs)
-}
-
-Class Fabrique_Monstre{
-+ fabrique_Monstre(int i, int j)
-}
-
-abstract Fabrique_Objet{
-+ {abstract} fabrique_Objet(int i, int j)
-}
-
-Class Fabrique_Mur{
-+ fabrique_Objet(int i, int j)
-}
-
-Class Fabrique_Piege_1{
-+ fabrique_Objet(int i, int j)
-}
-
-Class Fabrique_Piege_2{
-+ fabrique_Objet(int i, int j)
-}
-
-Class Fabrique_Piege_3{
-+ fabrique_Objet(int i, int j)
-}
-
-Class IA_Strategy{
-+ voisins(Tuple pos)
-+ cout_case(int i, int j, Grille grille)
-+ reconstruir_chemin(Dict p, Tuple t)
-+ applique_strategie(Grille grille)
-}
-
-Class BFS{
-+ cherche_chemin(Grille grille, Tuple start, Tuple end)
-}
-
-Class Dijkstra{
-+ cherche_chemin(Grille grille, Tuple start, Tuple end)
-}
-
-Class A{
-+ heuristique(Tuple s, Tuple t)
-+ cherche_chemin(Grille grille, Tuple start, Tuple end)
-}
-
-Class Observer{
-- int value
-+ get_value
-}
-
-Class DeathObserver{
-+ dead()
-}
-
-Class TreasureObserver{
-+ treasure()
-}
-
-Class BudgetObserver{
-+ budget()
-}
-
-Class GestionSauvegarde{
-{static} verifier_dossier
-{static} sauvegarder_donjon(String nom_fichier, Dict donnees)
-{static} charger_donjon(String nom_fichier)
-}
+class BudgetObserver {
+    + budget()
+    }
 
 Objet <|-- Mur
 Objet <|-- Piege
@@ -316,35 +254,38 @@ Observer <|-- DeathObserver
 Observer <|-- TreasureObserver
 Observer <|-- BudgetObserver
 
-' Grille et Cases
 Grille *--> "1..*" Case : contient
 Case o--> "0..*" Objet : contient
 
-' Controleur
 Controleur --> "1..*" Heros : gère
 Controleur --> "0..*" Monstre : gère
 Controleur --> "1" Grille : utilise
-Controleur --> "1" Fabrique_Heros : utilise
 Controleur --> "1" IA_Strategy : utilise
-Controleur ..> GestionSauvegarde : utilise
+Controleur o--> "1" Fabrique_Heros : utilise
 
-' Constructeur
-ConstructeurDonjon --> "1" Grille : construit
-ConstructeurDonjon --> "1" Fabrique_Mur : utilise
-ConstructeurDonjon --> "1" Fabrique_Monstre : utilise
-ConstructeurDonjon --> "1" Fabrique_Piege_1 : utilise
-ConstructeurDonjon --> "1" Fabrique_Piege_2 : utilise
-ConstructeurDonjon --> "1" Fabrique_Piege_3 : utilise
+Heros o--> "1..*" Observer : notifie
+
+Jeu --> "1" Jeu : Singleton
+Jeu --> "1" Grille
+Jeu --> "1" ConstructeurDonjon
+Jeu --> "1" Controleur
+
+ConstructeurDonjon --> "1" Grille
+
+' ==========================================
+' RELATIONS (Création / Dépendance)
+' ==========================================
+' Les fabriques CRÉENT des objets, elles n héritent pas d eux.
+Fabrique_Mur ..> Mur : <<create>>
+Fabrique_Piege_1 ..> Piege_1 : <<create>>
+Fabrique_Piege_2 ..> Piege_2 : <<create>>
+Fabrique_Piege_3 ..> Piege_3 : <<create>>
+Fabrique_Heros ..> Heros : <<create>>
+Fabrique_Monstre ..> Monstre : <<create>>
+
+ConstructeurDonjon ..> Fabrique_Mur : utilise
+ConstructeurDonjon ..> Fabrique_Piege_1 : utilise
+ConstructeurDonjon ..> Fabrique_Monstre : utilise
 ConstructeurDonjon ..> GestionSauvegarde : utilise
 
-' Jeu (Singleton et Orchestration)
-Jeu --> Jeu : instance unique
-Jeu --> Grille
-Jeu --> ConstructeurDonjon
-Jeu --> Controleur
-
-' Observateurs et Visitors
-Heros --> "1..*" Observer : notifie
-DmgVisitor ..> Objet : visite
-DmgVisitor ..> Heros : visite
 @enduml
