@@ -218,7 +218,6 @@ class Jeu(MethodView, object):
                         if succes :
                             self.terminal_loop()
                 else :
-                    print("Fichier introuvable")
                     time.sleep(2)
             
         print(f"Fermeture du jeu.")
