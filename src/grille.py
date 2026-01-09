@@ -145,11 +145,11 @@ class Grille(MethodView):
                 if len(case.objets) > 0 :
                     objet_to_save = None 
                     for objet in case.objets :
-                        if type(objet).__name__ != "Heros" :
+                        if type(objet).__name__ != "Heros" and type(objet).__name__ != "Monstre":
                             objet_to_save = objet
                             break
                     if objet_to_save :
-                        type_obj = type(objet).__name__ 
+                        type_obj = type(objet_to_save).__name__ 
                         data_objet = {
                             "x" : i,
                             "y" : j,
@@ -162,7 +162,7 @@ class Grille(MethodView):
             "objets" : data_cases
         }
     
-    def from_dict(self, data, fabrique_mur, fabrique_pieges, fabrique_monstre) :
+    def from_dict(self, data, fabrique_mur, fabrique_pieges) :
         self.reset()
         self.pos_entree = data["entree"]
         self.pos_tresor = data["tresor"]
@@ -179,8 +179,6 @@ class Grille(MethodView):
                 objet = fabrique_pieges[1].fabrique_Objet(x, y)
             elif type_obj == "Piege_3" :
                 objet = fabrique_pieges[2].fabrique_Objet(x, y)
-            elif type_obj == "Monstre" :
-                objet = fabrique_monstre.fabrique_Monstre(x, y)
             self.terrain[x][y].add_objet(objet)
             
     def get_budget(self):

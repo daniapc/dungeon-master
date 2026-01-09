@@ -134,7 +134,7 @@ class ConstructeurDonjon(MethodView):
         data_donjon = GestionSauvegarde.charger_donjon(file_name)
         if data_donjon :
             fabriques_piege = [self.fabrique_piege_1, self.fabrique_piege_2, self.fabrique_piege_3]
-            self.grille.from_dict(data_donjon, self.fabrique_mur, fabriques_piege, self.fabrique_monstre)
+            self.grille.from_dict(data_donjon, self.fabrique_mur, fabriques_piege)
             self.budget = BUDGET_INITIAL - data_donjon["budget_dépensé"]
             return True, "Donjon chargé"
         return False, "Erreur chargement"

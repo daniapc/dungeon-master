@@ -15,6 +15,9 @@ class Monstre():
     def get_pos(self):
         return self.pos
     
+    def set_pv(self, pv) :
+        self.pv = pv
+    
     def set_target(self, i):
         self.target = i
 
