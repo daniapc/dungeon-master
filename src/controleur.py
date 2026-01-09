@@ -245,7 +245,7 @@ class Controleur(MethodView):
                         # print(L ,"on fait les dégâts et il recule")
                         if(m.isdead()):
                             if not j in indices_monstres:
-                                indices_monstres.append(j)
+                                indices_monstres.append(m)
                                 self.set_recap("nb_monstres_morts")
                         # print(L ,"si le monstre meurt")
                         if heros.isdead():
@@ -277,8 +277,12 @@ class Controleur(MethodView):
         n = 0
         for i in range(len(indices_monstres)):
             monstre = indices_monstres[i-n]
-            grille.get_case(x,y).remove_monstre(monstre)
-            self.monstres.pop(monstre)
+            (a,b) = monstre.get_pos()
+            grille.get_case(a,b).remove_monstre(monstre)
+            for i in range(len(self.monstres)):
+                if self.monstres[i] == monstre:
+                    k = i
+            self.monstres.pop(k)
             n += 1
 
     def set_score_final(self, n):
