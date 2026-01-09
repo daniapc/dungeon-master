@@ -73,7 +73,10 @@ Voici quelques commandes:
 Une fois lancée (http://127.0.0.1:5000/), utilisez la souris pour sélectionner un objet puis sur la grille pour lle placer.\
 Le jeu est aussi accessible sur le serveur: http://35.188.222.36:5000/
 
-    
+Graphismes:\
+    - Entrée : ruche\
+    - Trésor : fleur\
+    - Héros : abeille  
 
 ## Auteur : Les DALTons
  - Teresa FERNANDEZ DEL BUSTO JIMENEZ
