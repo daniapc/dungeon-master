@@ -136,10 +136,11 @@ class ConstructeurDonjon(MethodView):
         if (action == 'put'):
             if objet == 'mur':
                 self.put_mur(coord_y, coord_x)
-                
             elif 'piege' in objet:
                 piege = int(str(objet).split(' ')[1])
                 self.put_piege(coord_y, coord_x, piege)
+            elif 'monstre' in objet:
+                self.put_monstre(coord_y, coord_x)
                 
             return {"status": "success", "message": "Case mise a jour", "budget": self.get_budget()}, 200 
     
@@ -182,6 +183,9 @@ class ConstructeurDonjon(MethodView):
                         cout = Piege_2(0,0).get_cout()
                     case 3:
                         cout = Piege_3(0,0).get_cout()
+            
+            elif objet == 'monstre':
+                cout = Monstre(0,0).get_cout()
             
             return {"status": "success", "message": "Cout a ete returné", "cout": cout}, 200 
         

@@ -119,6 +119,10 @@ async function infoBarCards () {
             pPuissants.querySelector('.vague').innerText = result['nb_piege_puissant_active'];
             pPuissants.querySelector('.total').innerText = result['nb_piege_puissant_active_total'];
 
+            const monstres = recap.querySelector('.monstres');
+            monstres.querySelector('.vague').innerText = result['nb_monstres_morts'];
+            monstres.querySelector('.total').innerText = result['nb_monstres_morts_total'];
+
             const tresor = recap.querySelector('.tresor');
             tresor.querySelector('.trouve').innerText = result['tresor_trouve'] ? "OUI" : "NON";
         }
