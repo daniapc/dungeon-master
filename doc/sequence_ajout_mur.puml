@@ -1,0 +1,60 @@
+@startuml
+title Diagramme de Séquence : Ajout d'un Mur
+autonumber
+skinparam style strictuml
+skinparam responseMessageBelowArrow true
+
+' --- Participants ---
+actor "Utilisateur/Jeu" as User
+participant "ConstructeurDonjon" as Builder
+participant "Fabrique_Mur" as Factory
+participant "Grille" as Grid
+participant "Case" as Cell
+participant "m:Mur" as Wall
+
+' --- Scénario ---
+User -> Builder : put_mur(x, y)
+activate Builder
+
+    ' 1. Vérifications préalables
+    Builder -> Builder : is_in_grid(x, y)
+    Builder -> Builder : is_empty(x, y)
+
+    alt Emplacement Valide et Budget suffisant
+
+        ' 2. Création de l'objet via la Factory
+        Builder -> Factory : fabrique_Objet(x, y)
+        activate Factory
+
+            create Wall
+            Factory -->> Wall : << create >>
+            activate Wall
+            Wall --> Factory : m
+            deactivate Wall
+
+        Factory --> Builder : m (instance de Mur)
+        deactivate Factory
+
+        ' 3. Récupération de la case
+        Builder -> Grid : get_case(x, y)
+        activate Grid
+        Grid --> Builder : case_cible
+        deactivate Grid
+
+        ' 4. Ajout effectif dans la case
+        Builder -> Cell : add_objet(m)
+        activate Cell
+        Cell --> Builder : ok
+        deactivate Cell
+
+        ' 5. Mise à jour du budget
+        Builder -> Builder : budget -= PRIX_MUR
+
+        Builder --> User : Succès (True)
+
+    else Emplacement Invalide ou Budget Insuffisant
+        Builder --> User : Échec (False)
+    end
+
+deactivate Builder
+@enduml

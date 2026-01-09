@@ -1,0 +1,291 @@
+@startuml
+title Diagramme de Classes Donjon Manager
+skinparam packageStyle rectangle
+
+package "Entités" {
+    abstract class Objet {
+        - pos : Tuple
+        + get_pos()
+    }
+
+    class Mur {
+        + get_cout()
+        + affichage()
+    }
+
+    abstract class Piege {
+        - difficulte : int
+        - active : bool
+        + set_difficulte()
+        + get_difficulte()
+        + is_active()
+        + {abstract} degat()
+        + {abstract} get_cout()
+    }
+
+    class Piege_1 {
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Piege_2 {
+        - num_max_attaque : int
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Piege_3 {
+        + get_cout()
+        + degat()
+        + affichage()
+    }
+
+    class Monstre {
+        - pos : Tuple
+        - pv : int
+        - target : bool
+        + get_pv()
+        + get_pos()
+        + set_target(bool i)
+        + get_tresor()
+        + get_cout()
+        + deplacer(int i, int j)
+        + affichage()
+        + degat(int n)
+        + isdead()
+    }
+
+    class Heros {
+        - pos : Tuple
+        - pv : int
+        - obs : List<Observer>
+        - state : bool
+        + get_pv()
+        + get_pos()
+        + get_obs()
+        + get_state()
+        + set_pv()
+        + isdead()
+        + at_treasure(int x, int y)
+        + deplace(int i, int j)
+        + degat(int n)
+        + affichage()
+        + notifyDeathObserver()
+        + notifyTreasureObserver()
+    }
+
+    class Case {
+        - objets : List<Objet>
+        - entree : Bool
+        - tresor : Bool
+        + get_objets()
+        + add_objet(Objet obj)
+        + remove_objet(Objet obj)
+        + remove_heros(Heros heros)
+        + remove_monstre(Monstre m)
+        + set_entree()
+        + set_tresor()
+        + rm_entree()
+        + rm_tresor()
+        + is_entree()
+        + is_tresor()
+        + has_hero()
+        + has_mur()
+        + affichage()
+    }
+
+    class Grille {
+        - terrain : List<List<Case>>
+        - pos_entree : List<int>
+        - pos_tresor : List<int>
+        + reset()
+        + put_entree()
+        + put_tresor()
+        + vide()
+        + get_entree()
+        + get_tresor()
+        + get_grille()
+        + get_case(int i, int j)
+        + print_terrain()
+        + affichage()
+        + to_dict()
+        + from_dict()
+    }
+}
+
+package "Factories" {
+    abstract class Fabrique_Objet {
+        + {abstract} fabrique_Objet(int i, int j)
+    }
+
+    class Fabrique_Mur {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_1 {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_2 {
+        + fabrique_Objet(int i, int j)
+    }
+    class Fabrique_Piege_3 {
+        + fabrique_Objet(int i, int j)
+    }
+
+    class Fabrique_Heros {
+        + fabrique_heros(int x, int y, List<Observer> obs)
+    }
+    class Fabrique_Monstre {
+        + fabrique_Monstre(int i, int j)
+    }
+}
+    class Controleur {
+        - l_heros : List<Heros>
+        - grille : Grille
+        - vague : int
+        - score : int
+        - score_final : int
+        - tour : int
+        - partie : bool
+        - strategie : IA_Strategy
+        - compteur : int
+        - fab : Fabrique_Heros
+        - recap : Dict
+        - boucle : bool
+        - monstres : List<Monstre>
+        + get_liste()
+        + get_grille()
+        + set_strategie(IA_Strategy strategie)
+        + execute_strategie()
+        + peut_deplacer(int i, int j, int indice)
+        + vague_jeu()
+        + check_collisions()
+        + save_current_game()
+        + load_game(String file_name)
+    }
+
+    class ConstructeurDonjon {
+        - grille : Grille
+        - budget : int
+        - l_monstres : List<Monstre>
+        + get_budget()
+        + set_budget(int bg)
+        + get_grille()
+        + get_l_monstres()
+        + reset_l_monstres(s)
+        + is_in_grid(in i, int j)
+        + is_empty(int i, int j)
+        + put_mur(int i, int j)
+        + put_piege(int i, int j, String type)
+        + put_monstre(int i, int j)
+        + rm_objet(int i, int j)
+        + clear_grille()
+        + save_donjon(String file_name)
+        + load_donjon(String file_name)
+    }
+
+    class Jeu {
+        - instance : Jeu
+        - mode : Enum
+        - state : Enum
+        - grille : Grille
+        - constructeurDonjon : ConstructeurDonjon
+        + {static} get_instance()
+        + terminal_loop()
+        + menu_principal()
+        + setup()
+    }
+
+    class GestionSauvegarde {
+        {static} verifier_dossier()
+        {static} sauvegarder_donjon()
+        {static} charger_donjon()
+    }
+package Stategy{
+    abstract class IA_Strategy {
+        + voisins(Tuple pos)
+        + cout_case(int i, int j, Grille grille)
+        + reconstruir_chemin()
+        + applique_strategie(Grille grille)
+    }
+
+    class BFS {
+        + cherche_chemin()
+    }
+    class Dijkstra {
+        + cherche_chemin()
+    }
+    class A {
+        + heuristique()
+        + cherche_chemin()
+    }
+}
+abstract class Observer {
+    - value : int
+    + get_value()
+}
+class DeathObserver {
+    + dead()
+}
+class TreasureObserver {
+    + treasure()
+}
+class BudgetObserver {
+    + budget()
+    }
+
+Objet <|-- Mur
+Objet <|-- Piege
+Piege <|-- Piege_1
+Piege <|-- Piege_2
+Piege <|-- Piege_3
+
+Fabrique_Objet <|-- Fabrique_Mur
+Fabrique_Objet <|-- Fabrique_Piege_1
+Fabrique_Objet <|-- Fabrique_Piege_2
+Fabrique_Objet <|-- Fabrique_Piege_3
+
+IA_Strategy <|-- BFS
+IA_Strategy <|-- Dijkstra
+IA_Strategy <|-- A
+
+Observer <|-- DeathObserver
+Observer <|-- TreasureObserver
+Observer <|-- BudgetObserver
+
+Grille *--> "1..*" Case : contient
+Case o--> "0..*" Objet : contient
+
+Controleur --> "1..*" Heros : gère
+Controleur --> "0..*" Monstre : gère
+Controleur --> "1" Grille : utilise
+Controleur --> "1" IA_Strategy : utilise
+Controleur o--> "1" Fabrique_Heros : utilise
+
+Heros o--> "1..*" Observer : notifie
+
+Jeu --> "1" Jeu : Singleton
+Jeu --> "1" Grille
+Jeu --> "1" ConstructeurDonjon
+Jeu --> "1" Controleur
+
+ConstructeurDonjon --> "1" Grille
+
+' ==========================================
+' RELATIONS (Création / Dépendance)
+' ==========================================
+' Les fabriques CRÉENT des objets, elles n héritent pas d eux.
+Fabrique_Mur ..> Mur : <<create>>
+Fabrique_Piege_1 ..> Piege_1 : <<create>>
+Fabrique_Piege_2 ..> Piege_2 : <<create>>
+Fabrique_Piege_3 ..> Piege_3 : <<create>>
+Fabrique_Heros ..> Heros : <<create>>
+Fabrique_Monstre ..> Monstre : <<create>>
+
+ConstructeurDonjon ..> Fabrique_Mur : utilise
+ConstructeurDonjon ..> Fabrique_Piege_1 : utilise
+ConstructeurDonjon ..> Fabrique_Monstre : utilise
+ConstructeurDonjon ..> GestionSauvegarde : utilise
+
+@enduml

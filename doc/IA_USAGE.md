@@ -21,13 +21,12 @@ Fourniture d'une structure HTML améliorée, d'un fichier CSS complet avec thèm
 Tester le clacul de chemin avec BFS sans utiliser les classes grille ni case
 
 **Prompt :**
-(code de ia_strategy.py) Je. veux faire des tests indépendant de la classe grille
+(code de ia_strategy.py) Je veux faire des tests indépendant de la classe grille
 
 **Réponse :**
 L'IA propose une série de test qui utilise unittest
 
 **Décision :**
-
 - Garder: l'utilisation de mock
 - Modifier: simplifier les modules utilisés et adaptations en conséquence
 
@@ -39,7 +38,8 @@ Une correcttion du prompt est faite pour avoir une réponse qui utilise pytest-m
 **Contexte :**
 Refonte esthétique du tableau récapitulatif à l'aide de CSS et HTML, tout en préservant la logique métier.
 
-Prompt en portugais (original): "Altere esse html para que fique um visual agradável e MINIMALISTA. Mantenha a lógica como está. Mantenha em francês. Pode adicionar css, mas sem tantas classes para alterar. "
+**Prompt :**
+En portugais (original): "Altere esse html para que fique um visual agradável e MINIMALISTA. Mantenha a lógica como está. Mantenha em francês. Pode adicionar css, mas sem tantas classes para alterar. "
 
 Traduction: "Modifiez ce code HTML pour obtenir un aspect agréable et minimaliste. Conservez la logique actuelle. Restez en français. Vous pouvez ajouter du CSS, mais sans modifier trop de classes."
 
@@ -53,7 +53,8 @@ Toutes les modifications suggérées par l'IA ont été intégrées dans le comm
 **Contexte :**
 Création d'une interface de confirmation interactive par-dessus la grille de jeu lors de l'activation de la fonction "Effacer tout".
 
-Prompt en portugais (original): "Eu quero que o aviso de confirmação se sobreponha à `grid-board`, deixando ela opaca ao fundo e eu possa clicar em qualquer lugar dentro dos limites dessa grid-board para confirmar."
+**Prompt :**
+En portugais (original): "Eu quero que o aviso de confirmação se sobreponha à `grid-board`, deixando ela opaca ao fundo e eu possa clicar em qualquer lugar dentro dos limites dessa grid-board para confirmar."
 
 Traduction: "Je souhaite que l'alerte de confirmation se superpose au `grid-board`, en rendant celui-ci opaque en arrière-plan, et que je puisse cliquer n'importe où dans les limites de cette grille pour confirmer l'action."
 
@@ -61,3 +62,21 @@ Code fourni : `grid-board` component dans `jeu.html`
 
 **Réponse IA :**
 Toutes les modifications suggérées par l'IA ont été intégrées dans le commit [67eaa31f ](https://gibson.telecomnancy.univ-lorraine.fr/projets/2526/codingweek/grp09/-/commit/67eaa31f2fe1e409b30290e962228324c5c31230) avec le message : "IA: Confirmation pour effacer tout (Styling assisted by Gemini)"
+Toutes les modifications suggérées par l'IA ont été intégrées dans le commit #TODO: []() avec le message : "IA: Confirmation pour effacer tout (Styling assisted by Gemini)"
+
+### Intéraction #5
+**Contexte :**
+Avoir un diagramme UML plus lisible
+
+**Prompt :**
+Voici un .puml , s'il y a des liens manquants ajoute les et fait en sorte que le diagramme lisible
+
+**Réponse IA :**
+Modifications du diagramme UML
+
+**Décision :**
+- Garder: 
+    liens fait et l'organisation du fichier
+    configuration lignes droites
+
+
