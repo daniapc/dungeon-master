@@ -86,6 +86,11 @@ class ConstructeurDonjon(MethodView):
             return False, "Emplacement hors limites"
         if not self.is_empty(i, j) :
             return False, "Emplacement déjà occupé"
+        i_entree, j_entree = self.grille.get_entree()
+        ecart_ligne = abs(i - i_entree)
+        ecart_colonne = abs(j - j_entree)
+        if ecart_ligne + ecart_colonne < 4 :
+            return False, "Monstre trop prôche de l'entrée"
         monstre = self.fabrique_monstre.fabrique_Monstre(i, j)
         cout = monstre.get_cout()
         if self.budget >= cout :
