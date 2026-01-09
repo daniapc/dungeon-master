@@ -32,53 +32,35 @@ async function updateButtonsState(){
         console.error("Error fetching partie:", e);
     }
     
+    const budgetPanel = document.querySelector('.budget-panel');
     const toolsPanel = document.querySelector('.tools-panel');
+    const strategiePanel = document.querySelector('.strategiePanel');
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
-    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
-    
-    console.log(partie);
+    const chargerButton = document.querySelector('[data-type="charger"]');
 
+    const grille = document.querySelector('#grid-board');
+    const recap = document.querySelector('#recap-board');
+    
+    budgetPanel.style.display = !boucle ? '' : 'none';
     toolsPanel.style.display = !boucle ? '' : 'none';
+    strategiePanel.style.setProperty('display', boucle ? 'none' : 'grid', 'important');
     continuerButton.style.display = (boucle && partie)  ? '' : 'none';
     lancerButton.style.display = !boucle ? '' : 'none';
-    sauvegarderButton.style.display = !boucle ? 'none' : '';
+    chargerButton.style.display = boucle ? 'none' : '';
 
-    // if (boucle)
-    //     continuerButton.style.display = !partie  ? 'none' : '';
+    grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
+    recap.style.display = (boucle && partie) || (!boucle) ? 'none' : '';
 
-    // if (!boucle){
-    //     toolsPanel.style.display = '';
-    //     continuerButton.style.display = 'none';
-    //     lancerButton.style.display = '';
-    //     sauvegarderButton.style.display = 'none';
-    // } else {
-    //     toolsPanel.style.display = 'none';
-    //     continuerButton.style.display = '';
-    //     lancerButton.style.display = 'none';
-    //     sauvegarderButton.style.display = '';
-    // }
+}
+
+async function setStrategie(choix) {
+  
+
 }
 
 async function sideBarButtons() {
 
-    /* ===============================
-     BUDGET
-      ================================ */ 
-    const budget = document.querySelector(".budget");
-
-    try {
-        const response = await fetch(`/constrdonjon?attribute=budget`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        const data = await response.json();
-        if (data.status === "success")
-            budget.querySelector(".value").innerText = data['budget'];
-    } catch (e) {
-        console.error("Error fetching budget:", e);
-    }
 
     /* ===============================
      SELECTION BUTTONS
@@ -138,33 +120,34 @@ async function sideBarButtons() {
         }
     });
 
+    /** ===========================
+     * STRATEGIE
+     ==================== */
+    const checkSwitch = document.getElementById('switchCheckDefault');
 
-    /* ===============================
-     CONTROL BUTTONS
-      ================================ */ 
-    const quitterButton = document.querySelector('[data-type="quitter"]');
+    if (checkSwitch) {
+        
+        checkSwitch.addEventListener("change", async () => {
+            const state = checkSwitch.checked;
+        
+            const choix = !state ? 'C' : 'S';
 
-    if (quitterButton) {
-        quitterButton.addEventListener("click", async () => {
-            
-            const payload = { action: "quitter" };
-            
+            const switchLabel = document.querySelector('.form-switch .form-check-label');
+            if (switchLabel) 
+                switchLabel.innerText = !state
+                 ? 'Chemin le plus court'
+                 : 'Chemin le plus sûr';
+
+            const payload = { action: "strategie", strategie: choix };
+    
             try {
-                const response = await fetch(`/`, {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-    
-                if (response.ok) {
-                    updateButtonsState();
-                    renderGrille();
-                    infoBarCards();
-                    
-                    result = await response.json();
 
-                    if (result['reset'])
-                        window.location.reload();
+                if (response.ok) {
 
                 } else {
                     console.error("Server error:", response.status);
@@ -174,6 +157,12 @@ async function sideBarButtons() {
             }
         });
     }
+
+
+    /* ===============================
+     CONTROL BUTTONS
+      ================================ */ 
+
 
     const lancerButton = document.querySelector('[data-type="lancer"]');
     if (lancerButton){
@@ -227,6 +216,121 @@ async function sideBarButtons() {
                     await infoBarCards();
                     await updateButtonsState();
                     
+                } else {
+                    console.error("Server error:", response.status);
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
+    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
+    if (sauvegarderButton) {
+        sauvegarderButton.addEventListener("click", async () => {
+            
+            const file_name = 'donjon_defaut'
+            const payload = { action: "sauvegarder", file_name: file_name};
+            
+            try {
+                await fetch(`/controleur`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(response => response.blob()) 
+                    .then(blob => {
+                        console.log(blob);
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${file_name}.json`; 
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    });;
+    
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        });
+    }
+
+    
+    const fileInput = document.getElementById('jsonInput');
+    const chargerButton = document.querySelector('[data-type="charger"]');
+
+    if (chargerButton) {
+        chargerButton.addEventListener("click", async () => {
+
+            fileInput.click();
+
+        });
+    }
+
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+
+        console.log(file);
+
+
+        if (!file) return;
+
+        const reader = new FileReader();
+        
+        reader.onload = async (event) => {
+            try {
+                const jsontext = event.target.result;
+                const data = JSON.parse(jsontext);
+
+                const payload = { action: "charger", 'json': data, file_name: 'charge'};
+
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok){
+                    //  window.location.href = "/";
+                     renderGrille();
+                     updateButtonsState();
+                }
+            } catch (e) {
+                console.error("Network error:", e);
+            }
+        };
+
+        reader.readAsText(file);
+
+        
+    });
+
+
+    const quitterButton = document.querySelector('[data-type="quitter"]');
+
+    if (quitterButton) {
+        quitterButton.addEventListener("click", async () => {
+            
+            const payload = { action: "quitter" };
+            
+            try {
+                const response = await fetch(`/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+    
+                if (response.ok) {
+                    updateButtonsState();
+                    renderGrille();
+                    infoBarCards();
+                    
+                    result = await response.json();
+
+                    if (result['reset']){
+                        window.location.href = "/";
+                    }
+
                 } else {
                     console.error("Server error:", response.status);
                 }

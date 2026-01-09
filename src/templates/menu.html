@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block content %}
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/menu.css') }}"
+/>
+
+<div class="container-fluid menu-container mt-4">
+  <div class="row justify-content-center text-center title-section">
+    <div class="col-12">
+      <img
+        src="{{ url_for('static', filename='temp.png') }}"
+        alt="Game Logo"
+        class="img-fluid game-logo"
+      />
+    </div>
+  </div>
+
+  <div class="row main-layout">
+    <div class="panel menu-panel mb-3">
+      <div class="panel-header">Menu</div>
+
+      <button type="button" class="btn btn-action success" data-type="jouer">
+        <i class="fa-solid fa-play"></i> Jouer
+      </button>
+      <button type="button" class="btn btn-action charger" data-type="charger">
+        <i class="fa-solid fa-floppy-disk"></i> Charger une partie
+      </button>
+      <button type="button" class="btn btn-action danger" data-type="quitter">
+        <i class="fa-solid fa-door-open"></i> Quitter
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/menu.js') }}" defer></script>
+
+{% endblock %}

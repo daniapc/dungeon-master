@@ -2,9 +2,6 @@ from random import *
 from src.observer import *
 from src.params import *
 
-SIZE_GRILLE = 16
-
-
 class Monstre():
     def __init__(self, x,y):
         self.pos = (x,y)
@@ -43,7 +40,6 @@ class Monstre():
         else:
             self.pv -= n
     
-
     def isdead(self):
         if self.pv == 0:
             return True

@@ -5,6 +5,9 @@ from src.objet import *
 from src.params import *
 import time
 import os
+import json
+import io
+
 from src.ia_strategy import *
 from src.fabrique_heros import *
 from src.sauvegarde import GestionSauvegarde
@@ -13,7 +16,7 @@ from src.fabrique_monstres import *
 from src.monstre import *
 
 from flask.views import MethodView
-from flask import request
+from flask import request, send_file
 
 class Controleur(MethodView):
     def __init__(self, grille, budget, monstres, instance = None):
@@ -349,7 +352,8 @@ class Controleur(MethodView):
                     {
                         'index': i,
                         'x': liste[i].get_pos()[1],
-                        'y': liste[i].get_pos()[0]
+                        'y': liste[i].get_pos()[0],
+                        'pv': liste[i].get_pv()
                     }
                 )
             return {"status": "success", "message": "Heros list enviée", 'heros': heros}
@@ -359,11 +363,13 @@ class Controleur(MethodView):
             if not(self.get_partie()):
                 vague += " (terminée)"
             
-            return {"status": "success", "message": "2Vague value enviée", 'vague': vague}
+            return {"status": "success", "message": "Vague value enviée", 'vague': vague}
         elif attribute == 'boucle':
             return {"status": "success", "message": "Boucle value enviée", 'boucle': self.get_boucle()}
         elif attribute == 'partie':
             return {"status": "success", "message": "Partie value enviée", 'partie': self.get_partie()}
+        elif attribute == 'recap':
+            return {"status": "success", "message": "Partie value enviée", 'partie': self.get_recap()}
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -375,9 +381,17 @@ class Controleur(MethodView):
         
         action = data['action']
 
-        if action == 'lancer':
+        if action == 'strategie':
+            choix = data['strategie']
+            
+            self.set_strategie(BFS() if choix == 'C' else Dijkstra())
+            
+            return {"status": "success", "message": "La strategie a ete changée"}, 200 
+        elif action == 'lancer':
             self.set_boucle(True)
-            self.set_strategie(BFS())
+            
+            if self.strategie == None:
+                self.set_strategie(BFS())
             
             return {"status": "success", "message": "La vague a eté lancée"}, 200 
         elif action == 'continuer':
@@ -412,6 +426,33 @@ class Controleur(MethodView):
                     "score": self.score,
                     "fini": fini
                     }, 200 
+        elif action == 'sauvegarder':
+            file_name = data['file_name']
+            if not file_name :
+                file_name = "donjon_defaut"
+            
+            if not(self.boucle): # construction mode
+                data_donjon = self.grille.to_dict()
+                data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.grille.get_budget()
+                
+                GestionSauvegarde.sauvegarder_donjon(file_name, data_donjon)                
+            else:
+                file_name = self.save_current_game(file_name)
+                
+            chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
+            with open(chemin, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            string_json = json.dumps(data, indent=4, ensure_ascii=False)
+            
+            buffer = io.BytesIO()
+            buffer.write(string_json.encode('utf-8'))
+            buffer.seek(0)
+            
+            return send_file(buffer, as_attachment=True, download_name=file_name, mimetype='application/json') 
+               
+        elif action == 'charger':
+            pass
+                
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
@@ -425,7 +466,7 @@ class Controleur(MethodView):
             })
         return data
     
-    def save_current_game(self) :
+    def save_current_game(self, file_name) :
         current_grille = self.grille.to_dict()
         strategie = type(self.strategie).__name__ 
         data_game = {
@@ -438,7 +479,7 @@ class Controleur(MethodView):
             "strategie" : strategie,
             "recap" : self.recap
         }
-        file_name = input("Nom de la sauvegarde : ")
+        
         if not file_name :
             file_name = "name_defaut"
         GestionSauvegarde.sauvegarder_donjon(file_name, data_game)
@@ -546,7 +587,8 @@ def boucle_jeu(controleur):
                 controleur.enleve_heros()
                 return("Q")
         elif action == 'S':
-            file_name = controleur.save_current_game()
+            file_name = input("Nom de la sauvegarde : ")
+            file_name = controleur.save_current_game(file_name)
             print(f"Partie sauvegardée : {file_name}")
             time.sleep(2)
             controleur.enleve_heros()

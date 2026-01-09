@@ -1,7 +1,6 @@
 from random import *
 from src.observer import *
-
-SIZE_GRILLE = 16
+from src.params import SIZE_GRILLE
 
 
 class Heros():

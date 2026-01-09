@@ -129,6 +129,7 @@ body {
 }
 .btn-action.success { background-color: var(--accent-success); color: white; }
 .btn-action.sauvegarder { background-color: var(--accent-sauvegarder); color: white; }
+.btn-action.charger { background-color: var(--gold); color: white; }
 .btn-action.danger { background-color: var(--accent-danger); color: white; }
 .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
 
@@ -191,4 +192,60 @@ body {
 
 .icon-hero {
     color: var(--accent-primary)
+}
+.icon-life {
+    color: var(--accent-danger)
+}
+
+/* ===================================
+    RECAP
+ ==============================*/
+
+.recap-header, .recap-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr; 
+    align-items: center;
+    padding: 10px 0;
+}
+.recap-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    font-weight: 600;
+}
+
+.recap-header .value-head {
+    text-align: right;
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+}
+.label i {
+    color: #6c5ce7; 
+    width: 20px;
+    text-align: center;
+}
+
+.value {
+    text-align: right;
+    font-feature-settings: "tnum"; 
+    font-weight: 500;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 5px 0;
+}
+
+.value.full-width {
+    grid-column: span 2;
+    text-align: center;
 }

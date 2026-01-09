@@ -5,6 +5,7 @@ from flask.views import MethodView
 app = Flask(__name__)
 
 from src.enums.mode import Mode
+from src.enums.state import State
 
 from src.log import Log
 from src.grille import Grille
@@ -19,6 +20,7 @@ import threading
 import time
 import os
 import webbrowser
+import json
 from threading import Timer
 
 # (day_1)
@@ -45,6 +47,11 @@ class Jeu(MethodView, object):
         self.mode = mode
     def get_mode(self):
         return self.mode
+    
+    def set_state(self, st):
+        self.state = st
+    def get_state(self):
+        return self.state
     
     def log(self, message):
         logging.info(message)
@@ -81,7 +88,8 @@ class Jeu(MethodView, object):
             user_input = input("\nCommande >").strip().upper()
             if user_input == 'Q' :
                 print("Fermeture du jeu")
-                os._exit(0)
+                time.sleep(1)
+                break
             elif user_input == 'L' :
                 time.sleep(1)
                 controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
@@ -90,7 +98,8 @@ class Jeu(MethodView, object):
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 message = "Retour à la construction"
             elif user_input == 'S' :
-                msg = self.constructeur.save_donjon()
+                file_name = input("Nom de la sauvegarde : ")
+                msg = self.constructeur.save_donjon(file_name)
                 message = msg
             elif user_input == 'C' :
                 file_name = input("Nom du fichier à charger : ")
@@ -142,6 +151,8 @@ class Jeu(MethodView, object):
                         succes, msg = self.constructeur.rm_objet(i, j)
                     else :
                         msg = "Commande inconnue"
+                        
+                    
                     message = msg
 
                 except ValueError :
@@ -151,6 +162,29 @@ class Jeu(MethodView, object):
             
             # TODO: improvement with logs, si on a des temps
             # self.log("Action: " + action)
+            
+    def menu_principal(self):
+        time.sleep(1)  
+        
+        user_input = ""
+        while user_input != "Q":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            
+            print(f"Bienvenue dans Dungeon Manager !")
+            print()
+            print(f"[J] Jouer")
+            print(f"[C] Charger une partie")
+            print(f"[Q] Quitter")
+            print()
+            user_input = input("\nCommande >").strip().upper()
+            if user_input == "J":
+                self.terminal_loop()
+            elif user_input == "C":
+                #charger une partie
+                pass
+            
+        print(f"Fermeture du jeu.")
+        os._exit(0)
             
     def setup(self):
         grille = Grille()
@@ -170,11 +204,14 @@ class Jeu(MethodView, object):
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
             grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
         app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
-            grille=grille, instance=controleur, budget=self.constructeur.get_budget()))
+            grille=grille, instance=controleur, budget=self.constructeur.get_budget(), monstres=[]))
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
     def get(self):
+        if self.state == State.MEN:
+            return render_template('menu.html')
+        
         return render_template('jeu.html')
     
     def post(self):
@@ -183,7 +220,13 @@ class Jeu(MethodView, object):
         action = data['action']
         controleur = self.controleur
 
-        if action == 'quitter':
+        if action == 'jouer':
+            self.state = State.JEU
+            
+            return {"status": "success", "message": "Le joue a ete initialisé"}, 200 
+
+        # TODO: deplacer pour le controler
+        elif action == 'quitter':
             boucle = controleur.get_boucle()
             
             if boucle:
@@ -197,7 +240,7 @@ class Jeu(MethodView, object):
                     return {"status": "success", "message": "Quitée le partie"}, 200 
                 else:
                     # TODO: change it to be more joli
-                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
                     self.controleur.vague_jeu()
                     return {"status": "success", "message": "Quitée le boucle"}, 200 
             else:
@@ -207,10 +250,46 @@ class Jeu(MethodView, object):
                 
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 
-                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget())
+                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
                 self.controleur.vague_jeu()
                 
+                self.set_state(State.MEN)
+                
                 return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
+        elif action == 'charger':
+            
+            json_content = data['json']
+            file_name = data['file_name']
+            
+            chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
+            
+            with open(chemin, 'w', encoding='utf-8') as f:
+                json.dump(json_content, f, indent=4, ensure_ascii=False)
+            
+            message = ""
+            data_donjon = GestionSauvegarde.charger_donjon(file_name)
+            if data_donjon :
+                if "heros" in data_donjon :
+                    # controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
+                    
+                    succes, msg = controleur.load_game(file_name)
+                    if succes :
+                        # lancer_vagues(controleur, sauvegarde=True)
+                        controleur.set_boucle(True)
+                        # self.controleur.vague_jeu()
+                        
+                        message = "Partie chargée"
+                        self.grille.vide()
+                        self.constructeur.set_budget(BUDGET_INITIAL)
+                    else :
+                        message = f"Erreur : {msg}"
+                else :
+                    succes, msg = self.constructeur.load_donjon(file_name)
+                    self.controleur.vague_jeu()
+                    message = msg 
+                    
+            return {"status": "success", "message": message}, 200 
             
         
         return {"status": "ignored", "message": "Nothing happened"}, 200
@@ -223,40 +302,27 @@ if __name__ == "__main__":
     
     mode = Mode.WEB.value if is_prod else input(
         "Indiquez le mode de jeu: [1] Terminal [2] Interface Web \n")
-    user_input = ""
-    while user_input != "Q":
-        print(f"Bienvenue dans Dungeon Manager !")
-        print()
-        print(f"[J] Jouer")
-        print(f"[C] Charger une partie")
-        print(f"[Q] Quitter")
-        print()
-        user_input = input("\nCommande >").strip().upper()
-        if user_input == "J":
-            jeu = Jeu()
-            jeu.set_mode(Mode(int(mode)))
-            jeu.setup()
-            
-            # GEMINI { # (day_1)
-            thread_terminal = threading.Thread(
-                    target=jeu.terminal_loop, 
-                    daemon=True
-                )
-            # } GEMINI 
-            
-            if (jeu.mode == Mode.TER):    
-                thread_terminal.start()
-            elif not(is_prod):
-                Timer(1.5, jeu_web).start()
-            
-            app.run(
-                host='0.0.0.0', 
-                port=5000,
-                debug=not is_prod,  # prod
-                use_reloader=False)
-        elif user_input == "C":
-            #charger une partie
-            pass
-    print(f"Fermeture du jeu.")
-    exit()
+
+    jeu = Jeu()
+    jeu.set_mode(Mode(int(mode)))
+    jeu.set_state(State.MEN) # menu state
+    jeu.setup()
+    
+    # GEMINI { # (day_1)
+    thread_terminal = threading.Thread(
+            target=jeu.menu_principal, 
+            daemon=True
+        )
+    # } GEMINI 
+    
+    if (jeu.mode == Mode.TER):    
+        thread_terminal.start()
+    elif not(is_prod):
+        Timer(1.5, jeu_web).start()
+    
+    app.run(
+        host='0.0.0.0', 
+        port=5000 if jeu.mode == Mode.WEB else 5001,
+        debug=not is_prod,  # prod
+        use_reloader=False)
 

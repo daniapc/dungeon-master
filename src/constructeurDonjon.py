@@ -104,10 +104,10 @@ class ConstructeurDonjon(MethodView):
         self.grille.get_case(i ,j).remove_objet(objet_to_remove)
         return True, "Case vidée"
     
-    def save_donjon(self) :
+    def save_donjon(self, file_name) :
         data_donjon = self.grille.to_dict()
         data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.budget
-        file_name = input("Nom de la sauvegarde : ")
+        
         if not file_name :
             file_name = "donjon_defaut"
         GestionSauvegarde.sauvegarder_donjon(file_name, data_donjon)
