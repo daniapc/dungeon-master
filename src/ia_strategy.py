@@ -56,6 +56,19 @@ class IA_Strategy():
             l_depl.append(depl)
         
         return l_depl
+    
+    def applique_strategie_monstre(self, grille, h, x, y):
+        chemin = self.cherche_chemin(grille, h.get_pos(), (x,y))
+        if chemin is None:
+            return None
+        l_depl = list()
+        for i in range(1,len(chemin)):
+            a = chemin[i]
+            b = chemin[i-1]
+            depl = (a[0] - b[0], a[1] - b[1])
+            l_depl.append(depl)
+        
+        return l_depl
 
 class BFS(IA_Strategy):
     def cherche_chemin(self, grille, start, end):

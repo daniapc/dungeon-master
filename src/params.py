@@ -9,8 +9,8 @@ PRIX_P2 = 3
 PRIX_P3 = 4
 DEGATS_1 = 20
 DEGATS_2 = 40
-DEGATS_3 = 25 #dégats de monstre à héros
-DEGATS_4 = 100 #dégats de héros à monstre
+DEGATS_3 = 100 #dégats de monstre à héros
+DEGATS_4 = 20 #dégats de héros à monstre
 
 PRIX_MONSTRE = 5
 
@@ -19,6 +19,7 @@ RESET = "\033[0m"
 BOLD = "\033[1m"
 RED = "\033[91m"
 GREEN = "\033[92m"
+DARK_GREEN = "\033[38;5;22m"
 YELLOW = "\033[93m"
 BLUE = "\033[94m"
 MAGENTA = "\033[95m"

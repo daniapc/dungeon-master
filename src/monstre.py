@@ -17,11 +17,16 @@ class Monstre():
     def set_target(self, i):
         self.target = i
 
-    def get_tresor(self):
-        return self.target.get_pos()[0], self.target.get_pos()[0]
+    def get_pos_target(self):
+        if self.target == None:
+            return 0,0
+        return self.target.get_pos()[0], self.target.get_pos()[1]
     
-    def get_cout(self) :
+    def get_cout(self):
         return PRIX_MONSTRE
+    
+    def get_target(self):
+        return self.target
     
 
     def deplace(self, i, j):

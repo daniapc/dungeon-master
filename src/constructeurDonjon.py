@@ -24,11 +24,18 @@ class ConstructeurDonjon(MethodView):
     
     def get_budget(self) :
         return self.budget
+    
     def set_budget(self, bg):
         self.budget = bg
     
+    def get_grille(self):
+        return self.grille
+    
     def get_l_monstres(self) :
         return self.l_monstres
+    
+    def reset_l_monstres(self):
+        self.l_monstres = []
     
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :
@@ -79,6 +86,11 @@ class ConstructeurDonjon(MethodView):
             return False, "Emplacement hors limites"
         if not self.is_empty(i, j) :
             return False, "Emplacement déjà occupé"
+        i_entree, j_entree = self.grille.get_entree()
+        ecart_ligne = abs(i - i_entree)
+        ecart_colonne = abs(j - j_entree)
+        if ecart_ligne + ecart_colonne < 4 :
+            return False, "Monstre trop prôche de l'entrée"
         monstre = self.fabrique_monstre.fabrique_Monstre(i, j)
         cout = monstre.get_cout()
         if self.budget >= cout :
@@ -104,6 +116,11 @@ class ConstructeurDonjon(MethodView):
         self.grille.get_case(i ,j).remove_objet(objet_to_remove)
         return True, "Case vidée"
     
+    def clear_grille(self):
+        self.grille = self.get_grille().vide()
+        self.set_budget(BUDGET_INITIAL)
+        return "Donjon réinitialisé"
+
     def save_donjon(self, file_name) :
         data_donjon = self.grille.to_dict()
         data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.budget
