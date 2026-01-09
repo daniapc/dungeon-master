@@ -79,9 +79,9 @@ class Grille(MethodView):
                 color = RESET
                 match symbol :
                     case "H" :
-                        color = BOLD + GREEN
+                        color = BOLD + MAGENTA
                     case "#" :
-                        color = WHITE
+                        color = DARK_GREEN
                     case "T" :
                         color = BOLD + YELLOW
                     case "E" :

@@ -66,27 +66,30 @@ class Jeu(MethodView, object):
         while True:
             os.system('cls' if os.name == 'nt' else 'clear')
             
-            print("=== Crée ton Donjon ===")
-            print(f"{message}")
-            print(f"Budget : {self.constructeur.get_budget()}")
+            print(f"{RED}=== Crée ton Donjon ===")
+            print(f"{BOLD}{RESET}{message}")
+            print(f"{RESET}Budget : {self.constructeur.get_budget()}")
             print("")
 
             self.grille.affichage()
             
             print("\nCommandes :")
-            print(f"M x,y     :   Placer Mur ({PRIX_MUR} fleurs)")
-            print(f"P1 x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
-            print(f"P2 x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
-            print(f"P3 x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
-            print(f"O x,y     :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
+            print(f"{DARK_GREEN}M{RESET} x,y     :   Placer Mur ({PRIX_MUR} fleurs)")
+            print(f"{RED}P1{RESET} x,y    :   Placer Piège faible ({PRIX_P1} fleurs)")
+            print(f"{RED}P2{RESET} x,y    :   Placer Piège moyen ({PRIX_P2} fleurs)")
+            print(f"{RED}P3{RESET} x,y    :   Placer Piège puissant ({PRIX_P3} fleurs)")
+            print(f"{GREEN}O{RESET} x,y     :   Placer Monstre ({PRIX_MONSTRE} fleurs)")
             print(f"R x,y     :   Retirer l'objet")
+            print(f"clear     :   Supprimer tous les objets")
             print(f"L         :   Lancer la vague")
             print(f"S         :   Sauvegarder donjon") 
             print(f"C         :   Charger une sauvegarde")
             print(f"Q         :   Quitter")
 
             user_input = input("\nCommande >").strip().upper()
-            if user_input == 'Q' :
+            if user_input == 'CLEAR':
+                message = self.constructeur.clear_grille()
+            elif user_input == 'Q' :
                 print("Fermeture du jeu")
                 time.sleep(1)
                 break
