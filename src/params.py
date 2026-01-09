@@ -9,8 +9,8 @@ PRIX_P2 = 3
 PRIX_P3 = 4
 DEGATS_1 = 20
 DEGATS_2 = 40
-DEGATS_3 = 25 #dégats de monstre à héros
-DEGATS_4 = 100 #dégats de héros à monstre
+DEGATS_3 = 100 #dégats de monstre à héros
+DEGATS_4 = 20 #dégats de héros à monstre
 
 PRIX_MONSTRE = 5
 

@@ -34,6 +34,9 @@ class ConstructeurDonjon(MethodView):
     def get_l_monstres(self) :
         return self.l_monstres
     
+    def reset_l_monstres(self):
+        self.l_monstres = []
+    
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :
             return True 
