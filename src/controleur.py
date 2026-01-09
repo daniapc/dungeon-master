@@ -66,17 +66,18 @@ class Controleur(MethodView):
     def execute_strategie(self):
         if self.strategie is None:
             return
-        
-        for h in self.get_liste():
-            l_depl = self.strategie.applique_strategie(self.grille, h)
+        for i in range(len(self.get_liste())):
+            if i <= self.compteur:
+                h = self.get_liste()[i]
+                l_depl = self.strategie.applique_strategie(self.grille, h)
 
-            pos = h.get_pos()
-            self.grille.get_case(pos[0], pos[1]).remove_heros(h)
+                pos = h.get_pos()
+                self.grille.get_case(pos[0], pos[1]).remove_heros(h)
 
-            h.deplace(l_depl[0][0], l_depl[0][1])
-            
-            pos = h.get_pos()
-            self.grille.get_case(pos[0], pos[1]).add_objet(h)
+                h.deplace(l_depl[0][0], l_depl[0][1])
+                
+                pos = h.get_pos()
+                self.grille.get_case(pos[0], pos[1]).add_objet(h)
 
     def get_boucle(self):
         return self.boucle
@@ -117,10 +118,10 @@ class Controleur(MethodView):
             txt = key + "_total"
             self.recap[txt] += 1
     
-    def peut_deplacer(self, i, j, indice):
+    def peut_deplacer(self, i, j, k, l):
         global SIZE_GRILLE
-        k = self.l_heros[indice].pos[0]
-        l = self.l_heros[indice].pos[1]
+        # k = self.l_heros[indice].pos[0]
+        # l = self.l_heros[indice].pos[1]
         if((0 <= k+i < SIZE_GRILLE) and (0 <= l+j < SIZE_GRILLE)):
             case = self.grille.get_case(k+i, l+j).get_objets()
             for elt in case:
@@ -227,10 +228,14 @@ class Controleur(MethodView):
                             self.set_recap("nb_heros_morts")
                             indices_morts.append(i)
                 elif isinstance(L[j], Monstre):
-                    if heros == L[j].get_target():
+                    if heros == L[j].get_target() and not(L[j].get_tour()):
+                        m = L[j]
                         heros.degat(DEGATS_3)
-                        L[j].degat(DEGATS_4)
-                        if(L[j].isdead()):
+                        m.degat(DEGATS_4)
+                        m.update_tour()
+                        self.recule_monstre(m)
+                        self.recule_monstre(m)
+                        if(m.isdead()):
                             if not j in indices_monstres:
                                 indices_monstres.append(j)
                                 self.set_recap("nb_monstres_morts")
@@ -310,16 +315,17 @@ class Controleur(MethodView):
     def execute_strategie_monstre(self):
         for m in self.get_liste_monstres():
             pos = m.get_pos_target()
-            if m.get_pos() != pos:
+            if m.get_pos() != pos and m.get_pos_target() != self.grille.get_entree():
                 l_depl = BFS().applique_strategie_monstre(self.grille, m, pos[0], pos[1])
 
-                pos = m.get_pos()
-                self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
+                if l_depl != None:
+                    pos = m.get_pos()
+                    self.grille.get_case(pos[0], pos[1]).remove_monstre(m)
 
-                m.deplace(l_depl[0][0], l_depl[0][1])
-                
-                pos = m.get_pos()
-                self.grille.get_case(pos[0], pos[1]).add_objet(m)
+                    m.deplace(l_depl[0][0], l_depl[0][1])
+                    
+                    pos = m.get_pos()
+                    self.grille.get_case(pos[0], pos[1]).add_objet(m)
     
     def init_monstre(self):
         for i in range(len(self.monstres)):
@@ -552,6 +558,28 @@ class Controleur(MethodView):
             return False, f"Fichier de sauvegarde corrompu : {e}"
         except Exception as e :
             return False, f"Erreur lors du chargement : {e}"
+        
+
+    def reset_tour_monstres(self):
+        for m in self.monstres:
+            m.reset_tour()
+
+    def recule_monstre(self, m):
+        pos = m.get_pos()
+        boucle = True
+        while(boucle):
+            n = randint(0,3)
+            (i,j) = convertit_depl(n)
+            if self.peut_deplacer(i,j,pos[0],pos[1]):
+                k = pos[0]
+                l = pos[1]
+                self.grille.get_case(k,l).remove_monstre(m)
+                m.pos = (k+i, l+j)
+                self.grille.get_case(k+i,l+j).add_objet(m)
+                boucle = False
+                
+
+
 
 
 def convertit_depl(n):
@@ -596,6 +624,7 @@ def boucle_jeu(controleur):
                 controleur.check_collisions()
                 controleur.execute_strategie_monstre()
                 controleur.check_collisions()
+                controleur.reset_tour_monstres()
                 if controleur.get_liste() == []:
                     controleur.set_partie(False)
                 if controleur.check_treso():
