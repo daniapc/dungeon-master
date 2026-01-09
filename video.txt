@@ -1,0 +1,14 @@
+Commencer une partie dans le terminal
+ajouter des objets
+sauvegarder la partie
+jouer la partie puis voir le score final
+quitter
+charger une partie avec un terrain pré-fait
+la lancer jusqu'au bout
+
+on passe en web
+on ajoute, on sauvegarde
+on charge une partie préfaite (pour montrer le comportement des IA)
+les montrer sur les 3 IA
+
+puis on montre que les tests fonctionnent?
