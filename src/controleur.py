@@ -7,6 +7,7 @@ import time
 import os
 import json
 import io
+import copy
 
 from src.ia_strategy import *
 from src.fabrique_heros import *
@@ -150,6 +151,9 @@ class Controleur(MethodView):
     def ajouter_heros(self,heros):
         self.l_heros.append(heros)
 
+    def ajouter_monstre(self,monstre) :
+        self.monstres.append(monstre)
+
     def vague_jeu(self):
         entree = self.grille.get_entree()
         self.l_heros = []
@@ -201,11 +205,14 @@ class Controleur(MethodView):
         indices_morts = []
         indices_objets = []
         indices_monstres = []
+        indices_depl = []
         for i in range(len(l_heros)):
             heros = l_heros[i]
             (x,y) = heros.get_pos()
             L = grille.get_case(x,y).get_objets()
             for j in range(len(L)):
+                # print(len(L))
+                # print(L, j)
                 if isinstance(L[j], Piege):
                     L[j].degat()
                     if isinstance(L[j], Piege_1):
@@ -214,7 +221,7 @@ class Controleur(MethodView):
                         self.set_recap("nb_piege_moyen_active")
                     if isinstance(L[j], Piege_3):
                         self.set_recap("nb_piege_puissant_active")
-                    if(L[j].get_cout() != 4):
+                    if(L[j].get_cout() != PRIX_P3):
                         heros.degat(DEGATS_1)
                     else:
                         heros.degat(DEGATS_2)
@@ -228,30 +235,37 @@ class Controleur(MethodView):
                             self.set_recap("nb_heros_morts")
                             indices_morts.append(i)
                 elif isinstance(L[j], Monstre):
+                    # print(L ,"on entre dans le monstre")
                     if heros == L[j].get_target() and not(L[j].get_tour()):
                         m = L[j]
                         heros.degat(DEGATS_3)
                         m.degat(DEGATS_4)
                         m.update_tour()
-                        self.recule_monstre(m)
-                        self.recule_monstre(m)
+                        indices_depl.append(L[j])
+                        # print(L ,"on fait les dégâts et il recule")
                         if(m.isdead()):
                             if not j in indices_monstres:
                                 indices_monstres.append(j)
                                 self.set_recap("nb_monstres_morts")
+                        # print(L ,"si le monstre meurt")
                         if heros.isdead():
                             if i not in indices_morts:
                                 self.score_final += heros.get_score()
                                 self.set_recap("nb_heros_morts")
-                                indices_morts.append(i)   
+                                indices_morts.append(i)
+                        # print(L ,"si le héros meurt") 
+                # print(L)  
+                # print(" fin boucle ", i)
+            # time.sleep(2)
+            # C = L
             for k in range(len(indices_objets)):
                 grille.get_case(x,y).remove_objet(L[indices_objets[k]])
-            for k in range(len(indices_monstres)):
-                for j in range(len(self.monstres)):
-                    if self.monstres[j] == L[indices_monstres[k]]:
-                        indices_monstres[k] = j
-                grille.get_case(x,y).remove_monstre(L[indices_monstres[k]])
-            L = [] 
+            L = []
+        for k in range(len(indices_depl)):
+            for j in range(len(self.monstres)):
+                if self.monstres[j] == indices_depl[k]:
+                    self.recule_monstre(indices_depl[k])
+                    self.recule_monstre(indices_depl[k]) 
         n = 0
         for i in range(len(indices_morts)):
             heros = l_heros[indices_morts[i-n]]
@@ -262,7 +276,9 @@ class Controleur(MethodView):
             n+= 1
         n = 0
         for i in range(len(indices_monstres)):
-            self.monstres.pop(indices_monstres[i-n])
+            monstre = indices_monstres[i-n]
+            grille.get_case(x,y).remove_monstre(monstre)
+            self.monstres.pop(monstre)
             n += 1
 
     def set_score_final(self, n):
@@ -425,6 +441,7 @@ class Controleur(MethodView):
                 return {"status": "success", "message": "La vague n'a pas eté lancée", "possible": False}, 200 
             
             self.set_boucle(True)
+            self.init_monstre()
             
             if self.strategie == None:
                 self.set_strategie(BFS())
@@ -432,9 +449,11 @@ class Controleur(MethodView):
             return {"status": "success", "message": "La vague a eté lancée", "possible": True}, 200 
         elif action == 'continuer':
             fini = False
-            
             if self.get_tour() == 0:
                 self.check_collisions()
+                self.execute_strategie_monstre()
+                self.check_collisions()
+                self.reset_tour_monstres()
                 if self.get_liste() == []:
                     self.partie = False
                 if self.check_treso():
@@ -508,12 +527,28 @@ class Controleur(MethodView):
             })
         return data
     
+    def get_data_monstres(self) :
+        data = []
+        for monstre in self.monstres :
+            target = monstre.get_target()
+            for i in range(len(self.l_heros)) :
+                if target == self.l_heros[i] :
+                    target_ind = i
+            data.append({
+                "x" : monstre.pos[0],
+                "y" : monstre.pos[1],
+                "pv" : monstre.get_pv(),
+                "target_ind" : target_ind
+            })
+        return data
+    
     def save_current_game(self, file_name) :
         current_grille = self.grille.to_dict()
         strategie = type(self.strategie).__name__ 
         data_game = {
             "grille" : current_grille,
             "heros" : self.get_data_heros(),
+            "monstres" : self.get_data_monstres(),
             "vague" : self.vague,
             "score" : self.score_final,
             "tour" : self.tour,
@@ -548,14 +583,23 @@ class Controleur(MethodView):
             fabriques_pieges = [Fabrique_Piege_1(), Fabrique_Piege_2(), Fabrique_Piege_3()]
             fabrique_monstre = Fabrique_Monstre()
             if "grille" in data_game :
-                self.grille.from_dict(data_game["grille"], fabrique_Mur, fabriques_pieges, fabrique_monstre)
+                self.grille.from_dict(data_game["grille"], fabrique_Mur, fabriques_pieges)
             self.l_heros = []
             data_heros = data_game.get("heros", [])
+            data_monstres = data_game.get("monstres", [])
             for data_hero in data_heros :
                 heros = self.fab.fabrique_Heros(data_hero["x"], data_hero["y"], [DeathObserver(), TreasureObserver()])
                 heros.set_pv(data_hero["pv"])
                 self.ajouter_heros(heros)
                 self.grille.get_case(data_hero["x"], data_hero["y"]).add_objet(heros)
+            for data_monstre in data_monstres :
+                monstre = fabrique_monstre.fabrique_Monstre(data_monstre["x"], data_monstre["y"])
+                monstre.set_pv(data_monstre["pv"])
+                target = self.l_heros[data_monstre["target_ind"]]
+                monstre.set_target(target)
+                self.ajouter_monstre(monstre)
+                self.grille.get_case(data_monstre["x"], data_monstre["y"]).add_objet(monstre)
+
             return True, "Partie chargée"
 
         except KeyError as e :
@@ -612,44 +656,33 @@ def boucle_jeu(controleur):
     else:
         joue = "Héros"
     while(partie):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(f"         === Vague : {controleur.get_vague()} ===")
-        controleur.get_grille().affichage() 
-        controleur.set_score()
-        score = controleur.get_score() + controleur.get_score_final()
-        print(f"Tour de {joue}")
-        print(f"Score : {score}")
-        positions = ""
-        for i in range(len(controleur.get_liste())):
-            positions += "Position héros " + str(i+1) + " (PV = " + str(controleur.get_liste()[i].get_pv()) + " ) " + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
-        print(f""+positions)
-        print()
-        print("\nCommandes :")
-        print(f"C         :   Continuer la vague")
-        print(f"S         :   Sauvegarder")
-        print(f"Q         :   Quitter")
+        print_jeu(controleur,joue)
         action = input("\nCommande >").strip().upper()
         partie = controleur.get_partie()
         if action == 'C':
-            if controleur.get_tour() == 0:
-                controleur.check_collisions()
-                controleur.execute_strategie_monstre()
-                controleur.check_collisions()
-                controleur.reset_tour_monstres()
-                if controleur.get_liste() == []:
-                    controleur.set_partie(False)
-                if controleur.check_treso():
-                    controleur.set_partie(False)
-                    controleur.set_score()
-                    controleur.set_score_final(controleur.get_score())
-                    controleur.enleve_heros()
-                    return("Q")
-                controleur.update_compteur()
-                joue = "Héros"
-            else:
-                # controleur.depl_alea()
+            if joue == "Héros":
                 controleur.execute_strategie()
                 joue = "Donjon"
+                print_jeu(controleur,joue)
+                time.sleep(1)
+
+            controleur.check_collisions()
+            controleur.execute_strategie_monstre()
+            controleur.check_collisions()
+            controleur.reset_tour_monstres()
+            if controleur.get_liste() == []:
+                controleur.set_partie(False)
+            if controleur.check_treso():
+                controleur.set_partie(False)
+                controleur.set_score()
+                controleur.set_score_final(controleur.get_score())
+                controleur.enleve_heros()
+                return("Q")
+            controleur.update_compteur()
+            joue = "Héros"
+            
+            # controleur.depl_alea()
+        
             controleur.set_score()
             score = controleur.get_score() + controleur.get_score_final()
             controleur.change_tour()
@@ -674,9 +707,28 @@ def boucle_jeu(controleur):
     controleur.enleve_heros()
     return("F")
 
+
+def print_jeu(controleur,joue):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f"         === Vague : {controleur.get_vague()} ===")
+    controleur.get_grille().affichage() 
+    controleur.set_score()
+    score = controleur.get_score() + controleur.get_score_final()
+    print(f"Tour de {joue}")
+    print(f"Score : {score}")
+    positions = ""
+    for i in range(len(controleur.get_liste())):
+        positions += "Position héros " + str(i+1) + " (PV = " + str(controleur.get_liste()[i].get_pv()) + " ) " + " : " + str(controleur.get_liste()[i].get_pos()) + "     "
+    print(f""+positions)
+    print()
+    print("\nCommandes :")
+    print(f"C         :   Continuer la vague")
+    print(f"S         :   Sauvegarder")
+    print(f"Q         :   Quitter")
+
 def lancer_vagues(controleur, sauvegarde=False):
     controleur.set_boucle(True)
-    while(controleur.get_boucle() and controleur.get_vague() <= 3):
+    while(controleur.get_boucle() and controleur.get_vague() <= 5):
         if not sauvegarde :
             controleur.vague_jeu()
             controleur.init_monstre()
@@ -739,7 +791,9 @@ def recap(controleur):
     score = controleur.get_score_final()
     dico = controleur.get_recap()
     txt = ""
-    print(f"Vague {controleur.get_vague()} terminée")
+    if controleur.get_vague() == 5:
+        txt = " (vague finale)"
+    print(f"Vague {controleur.get_vague()} terminée", txt)
     txt = "Nombre de héros engagés : " + str(dico["nb_heros"]) + " ( " + str(dico["nb_heros_total"]) + " )"
     print(f"" + txt)
     txt = "Nombre de héros morts : " + str(dico["nb_heros_morts"]) + " ( " + str(dico["nb_heros_morts_total"]) + " )"

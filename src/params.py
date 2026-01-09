@@ -1,18 +1,18 @@
 DEGAT_PIEGE = 10
 SIZE_GRILLE = 16
 
-BUDGET_INITIAL = 500
+BUDGET_INITIAL = 1200
 
-PRIX_MUR = 1
-PRIX_P1 = 2 
-PRIX_P2 = 3
-PRIX_P3 = 4
-DEGATS_1 = 20
-DEGATS_2 = 40
-DEGATS_3 = 100 #dégats de monstre à héros
-DEGATS_4 = 20 #dégats de héros à monstre
+PRIX_MUR = 5
+PRIX_P1 = 20
+PRIX_P2 = 50
+PRIX_P3 = 100
+DEGATS_1 = 25
+DEGATS_2 = 50
+DEGATS_3 = 75 #dégats de monstre à héros
+DEGATS_4 = 50 #dégats de héros à monstre
 
-PRIX_MONSTRE = 5
+PRIX_MONSTRE = 200
 
 # Codes couleurs ANSI pour le terminal
 RESET = "\033[0m"

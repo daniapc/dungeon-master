@@ -61,7 +61,7 @@ class Jeu(MethodView, object):
 
         # Commented parce que le constructeur est deja initialisé a self.setup()
         # self.constructeur = ConstructeurDonjon(self.grille)
-        message = "Bienvenue Maitre du Donjon de la mort qui tue"
+        message = "Bienvenue Maitre du Donjon"
 
         chemin_possible = True
         while True:
@@ -244,7 +244,9 @@ class Jeu(MethodView, object):
         
         self.constructeur = ConstructeurDonjon(grille=grille)
         
-        controleur = Controleur(grille=grille, budget=self.constructeur.get_budget(), monstres=[])
+        controleur = Controleur(
+            grille=grille, budget=self.constructeur.get_budget(), 
+            monstres=self.constructeur.get_l_monstres())
         controleur.vague_jeu()
         self.controleur = controleur
                     
@@ -254,7 +256,7 @@ class Jeu(MethodView, object):
         app.add_url_rule("/constrdonjon", view_func=ConstructeurDonjon.as_view("constrdonjon", 
             grille=grille, instance=self.constructeur), methods=['GET', 'POST', 'DELETE'])
         app.add_url_rule("/controleur", view_func=Controleur.as_view("controleur", 
-            grille=grille, instance=controleur, budget=self.constructeur.get_budget(), monstres=[]))
+            grille=grille, instance=controleur, budget=self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres()))
     
     # N'EST PAS RETIRER OU REBAPTISER CE METHOD! C'EST IMPORTANT POUR LE FLASK!!!
     # flask method   
@@ -273,6 +275,11 @@ class Jeu(MethodView, object):
         if action == 'jouer':
             self.state = State.JEU
             
+            self.controleur.__init__(
+                grille=self.grille, budget=self.constructeur.get_budget(), 
+                monstres=self.constructeur.get_l_monstres())
+            self.controleur.vague_jeu()
+            
             return {"status": "success", "message": "Le joue a ete initialisé"}, 200 
 
         # TODO: deplacer pour le controler
@@ -290,9 +297,16 @@ class Jeu(MethodView, object):
                     return {"status": "success", "message": "Quitée le partie"}, 200 
                 else:
                     # TODO: change it to be more joli
-                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
+                    
+                    self.constructeur.reset_l_monstres()
+                    self.controleur.reset_monstres()
+                    self.grille.vide()
+                    
+                    self.constructeur.set_budget(BUDGET_INITIAL)
+                    
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                     self.controleur.vague_jeu()
-                    return {"status": "success", "message": "Quitée le boucle"}, 200 
+                    return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
             else:
                 self.grille.reset()
                 self.grille.put_entree()
@@ -300,12 +314,14 @@ class Jeu(MethodView, object):
                 
                 self.constructeur.set_budget(BUDGET_INITIAL)
                 
-                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
+                self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
+                self.constructeur.reset_l_monstres()
+                # self.controleur.reset_monstres()
                 self.controleur.vague_jeu()
                 
                 self.set_state(State.MEN)
                 
-                return {"status": "success", "message": "Quitée le boucle", "reset": True}, 200 
+                return {"status": "success", "message": "Quitée le constructeur", "reset": True}, 200 
         elif action == 'charger':
             
             json_content = data['json']
@@ -322,7 +338,7 @@ class Jeu(MethodView, object):
             if data_donjon :
                 if "heros" in data_donjon :
                     # controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=[])
-                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=[])
+                    self.controleur.__init__(grille=self.grille, budget=self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                     
                     succes, msg = self.controleur.load_game(file_name)
                     if succes :

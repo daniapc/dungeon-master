@@ -1,3 +1,6 @@
+from src.params import *
+
+
 class Observer:
     def __init__(self):
         self.value = 0    
@@ -16,7 +19,7 @@ class TreasureObserver(Observer):
         super().__init__()
 
     def treasure(self):
-        self.value -= 500
+        self.value -= BUDGET_INITIAL
 
 class BudgetObserver(Observer):
     def __init__(self):

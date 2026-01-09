@@ -40,9 +40,53 @@ async function renderGrille() {
                 const caseDiv = document.createElement("button");
                 caseDiv.className = "col caseDiv";
 
-                caseDiv.style.color = cellData.color;
-                caseDiv.style.fontWeight = cellData.weight;
-                caseDiv.innerText = cellData.symbol; 
+                if (cellData.symbol && cellData.symbol !== " ") {
+                    let imgSrc = "";
+
+                    switch (cellData.symbol) {
+                        case 'H':
+                            imgSrc = "static/images/heros.png";
+                            break;
+                        case '#':
+                            imgSrc = "static/images/mur.png";
+                            break;
+                        case '_':
+                            imgSrc = "static/images/piege1.png";
+                            break;
+                        case '^':
+                            imgSrc = "static/images/piege2.png";
+                            break;
+                        case '¤':
+                            imgSrc = "static/images/piege3.png";
+                            break;
+                        case 'M1':
+                            imgSrc = "static/images/monstre.png";
+                            break;
+                        case 'M2':
+                            imgSrc = "static/images/monstreV2.png";
+                            break;
+                        case 'T':
+                            imgSrc = "static/images/tresor.png";
+                            break;
+                        case 'E':
+                            imgSrc = "static/images/entree.png";
+                            break;
+                        default:
+                            // If aucune image
+                            caseDiv.innerText = cellData.symbol;
+                            caseDiv.style.color = cellData.color;
+                            caseDiv.style.fontWeight = cellData.weight;
+                    }
+
+                    if (imgSrc) {
+                        const img = document.createElement("img");
+                        img.src = imgSrc;
+                        img.style.width = "100%";  
+                        img.style.height = "100%";
+                        img.style.objectFit = "contain"; 
+                        caseDiv.appendChild(img);
+                    }
+                }
                 
                 const currentX = colIndex;
                 const currentY = rowIndex;
