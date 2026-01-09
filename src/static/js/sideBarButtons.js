@@ -88,8 +88,10 @@ async function sideBarButtons() {
     const selectionButtons = selectionSidebar.querySelectorAll(".btn"); 
 
     selectionButtons.forEach(async btn => {
+        const objet = btn.getAttribute("data-type");
+        if (objet === 'none')
+            return;
         
-        // 1. Click Event Logic
         btn.addEventListener("click", (e) => {
             // CRITICAL: Stop the click from reaching the window listener immediately
             e.stopPropagation();
@@ -101,13 +103,20 @@ async function sideBarButtons() {
         
             btn.classList.remove("palid");
             btn.classList.add("active");
-        });
 
-        // 2. Fetch Cost Logic (Initial Load)
-        const objet = btn.getAttribute("data-type");
+            if (objet && objet === 'effacer'){
+                const confirmOverlay = document.querySelector('#effacer-confirm');
+                confirmOverlay.style.display = 'flex'; 
+
+                confirmOverlay.onclick = (e) => {
+                    confirmOverlay.style.display = 'none';
+                };
+            }
+
+        });
         
         // Skip fetch for delete button or if no data-type
-        if (objet && objet !== 'supprimer') {
+        if (objet && objet !== 'supprimer' && objet !== 'effacer') {
             try {
                 const response = await fetch(`/constrdonjon?objet=${objet}&attribute=cout`, {
                     method: 'GET',
@@ -134,6 +143,7 @@ async function sideBarButtons() {
             selectionButtons.forEach(b => { 
                 b.classList.remove("palid");
                 b.classList.remove("active");
+                document.querySelector('#effacer-confirm').style.display = 'none';
             });
         }
     });

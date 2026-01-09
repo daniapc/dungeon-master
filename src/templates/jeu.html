@@ -32,26 +32,61 @@
             </div>
           </button>
 
-          <button type="button" class="btn btn-game" data-type="piege 1">
+          <button
+            type="button"
+            class="btn btn-game"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapsePieges"
+            aria-expanded="false"
+            aria-controls="collapsePieges"
+            data-type="none"
+          >
             <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-skull"></i> Piège _</span>
-              <span class="badge-cost"><span class="cout">--</span></span>
+              <span><i class="fa-solid fa-skull-crossbones"></i> Pièges</span>
+              <i class="fa-solid fa-chevron-down"></i>
             </div>
           </button>
 
-          <button type="button" class="btn btn-game" data-type="piege 2">
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-bolt"></i> Piège ^</span>
-              <span class="badge-cost"><span class="cout">--</span></span>
-            </div>
-          </button>
+          <div class="collapse" id="collapsePieges">
+            <div
+              class="d-grid gap-2 pt-2 pb-2 px-1"
+              style="background: rgba(0, 0, 0, 0.1); border-radius: 5px"
+            >
+              <button
+                type="button"
+                class="btn btn-game btn-sm"
+                data-type="piege 1"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span><i class="fa-solid fa-skull"></i> Faible</span>
+                  <span class="badge-cost"><span class="cout">--</span></span>
+                </div>
+              </button>
 
-          <button type="button" class="btn btn-game" data-type="piege 3">
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-bomb"></i> Piège ¤</span>
-              <span class="badge-cost"><span class="cout">--</span></span>
+              <button
+                type="button"
+                class="btn btn-game btn-sm"
+                data-type="piege 2"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span><i class="fa-solid fa-bolt"></i> Moyen</span>
+                  <span class="badge-cost"><span class="cout">--</span></span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-game btn-sm"
+                data-type="piege 3"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span><i class="fa-solid fa-bomb"></i> Puissant</span>
+                  <span class="badge-cost"><span class="cout">--</span></span>
+                </div>
+              </button>
             </div>
-          </button>
+          </div>
+
           <button type="button" class="btn btn-game" data-type="monstre">
             <div class="d-flex justify-content-between align-items-center">
               <span><i class="fa-solid fa-ghost"></i> Monstre </span>
@@ -65,8 +100,18 @@
             type="button"
             class="btn btn-game btn-delete"
             data-type="supprimer"
+            style="font-size: 0.9em"
           >
-            <span><i class="fa-solid fa-trash"></i> Supprimer</span>
+            <span
+              ><i class="fa-regular fa-square-minus"></i> Retirer l'objet</span
+            >
+          </button>
+          <button
+            type="button"
+            class="btn btn-game btn-delete"
+            data-type="effacer"
+          >
+            <span><i class="fa-solid fa-trash"></i> Effacer tout</span>
           </button>
         </div>
       </div>
@@ -154,7 +199,21 @@
     <div
       class="col-md-9 col-lg-8 d-flex justify-content-center align-items-start"
     >
-      <div id="grid-board" class="shadow-lg"></div>
+      <div
+        class="col-md-9 col-lg-8 d-flex justify-content-center align-items-start"
+      >
+        <div style="position: relative; display: inline-block">
+          <div id="grid-board" class="shadow-lg"></div>
+
+          <div
+            id="effacer-confirm"
+            class="overlay-confirm shadow-lg"
+            style="display: none"
+          >
+            Are you sure?
+          </div>
+        </div>
+      </div>
 
       <div id="recap-board" class="panel shadow-lg" style="display: none">
         <div class="recap-header">
