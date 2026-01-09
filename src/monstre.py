@@ -8,6 +8,7 @@ class Monstre():
         self.pv = 100
         self.target = None
         self.tour = False
+        self.skin = randint(0, 1)
         
     def get_pv(self):
         return self.pv
@@ -31,6 +32,9 @@ class Monstre():
     
     def get_tour(self):
         return self.tour
+    
+    def get_skin(self):
+        return self.skin
     
     def update_tour(self):
         self.tour = True
