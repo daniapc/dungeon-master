@@ -117,7 +117,7 @@ class ConstructeurDonjon(MethodView):
         return True, "Case vidée"
     
     def clear_grille(self):
-        self.grille = self.get_grille().vide()
+        self.get_grille().vide()
         self.set_budget(BUDGET_INITIAL)
         return "Donjon réinitialisé"
 
@@ -172,7 +172,12 @@ class ConstructeurDonjon(MethodView):
         coord_x = int(data['x'])
         coord_y = int(data['y'])
         
-        success, message = self.rm_objet(coord_y, coord_x)
+        remove_tout = coord_x == -1
+        
+        success, message = (
+            (True, self.clear_grille()) if remove_tout 
+            else self.rm_objet(coord_y, coord_x)
+        )
         
         if success:
             return {"status": "success", "message": message, "budget": self.get_budget()}, 200 

@@ -108,8 +108,30 @@ async function sideBarButtons() {
                 const confirmOverlay = document.querySelector('#effacer-confirm');
                 confirmOverlay.style.display = 'flex'; 
 
-                confirmOverlay.onclick = (e) => {
+                confirmOverlay.onclick = async (e) => {
                     confirmOverlay.style.display = 'none';
+                    payload = {
+                        'x': '-1',
+                        'y': '-1'
+                    }
+
+                    const response = await fetch(`/constrdonjon`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        document.querySelector(".budget .value").innerText = result['budget'];
+                        
+                        await renderGrille();
+                        
+                    } else {
+                        console.error("Server error:", response.status);
+                    }
                 };
             }
 
