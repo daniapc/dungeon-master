@@ -12,7 +12,10 @@ class DeathObserver(Observer):
         super().__init__()
 
     def dead(self):
-        self.value += 500
+        self.value += 100
+
+class TreasureObserver(Observer):
+    def __init__(self):
         super().__init__()
 
     def treasure(self):
