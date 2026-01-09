@@ -68,5 +68,5 @@ def test_lancer_vagues_pas_de_chemin(preparer_grille_ponderee):
     grille = preparer_grille_ponderee(start=(0,0), end=(1,1), murs=murs, pieges=[])
     c = Controleur(grille, 100)
 
-    assert verifier_chem_possible(c)==False
+    assert c.verifier_chem_possible()==False
     

@@ -61,7 +61,7 @@ async function updateButtonsState(){
     const chargerButton = document.querySelector('[data-type="charger"]');
     const prochainButton = document.querySelector('[data-type="prochain"]');
 
-    const grille = document.querySelector('#grid-board');
+    const grille = document.querySelector('#grid-overlay');
     const recap = document.querySelector('#recap-board');
     
     budgetPanel.style.display = !boucle ? '' : 'none';
@@ -72,7 +72,8 @@ async function updateButtonsState(){
     lancerButton.style.display = !boucle ? '' : 'none';
     chargerButton.style.display = boucle ? 'none' : '';
 
-    grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
+    grille.style.setProperty('display', (boucle && partie) || (!boucle) ? '' : 'none', 'important');
+    // grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
     recap.style.display = (boucle && partie) || (!boucle) ? 'none' : '';
 
 }
@@ -105,10 +106,16 @@ async function sideBarButtons() {
             btn.classList.add("active");
 
             if (objet && objet === 'effacer'){
-                const confirmOverlay = document.querySelector('#effacer-confirm');
+                const confirmOverlay = document.querySelector('#overlay-confirm');
                 confirmOverlay.style.display = 'flex'; 
+                confirmOverlay.innerText = "En êtes-vous sûr ?";
+                
+                confirmOverlay.setAttribute("data-type", "effacer");
 
                 confirmOverlay.onclick = async (e) => {
+                    if (!(confirmOverlay.getAttribute("data-type") === "effacer"))
+                        return;
+
                     confirmOverlay.style.display = 'none';
                     payload = {
                         'x': '-1',
@@ -124,11 +131,7 @@ async function sideBarButtons() {
                     })
 
                     if (response.ok) {
-                        const result = await response.json();
-                        document.querySelector(".budget .value").innerText = result['budget'];
-                        
-                        await renderGrille();
-                        
+                        renderGrille();
                     } else {
                         console.error("Server error:", response.status);
                     }
@@ -165,7 +168,7 @@ async function sideBarButtons() {
             selectionButtons.forEach(b => { 
                 b.classList.remove("palid");
                 b.classList.remove("active");
-                document.querySelector('#effacer-confirm').style.display = 'none';
+                document.querySelector('#overlay-confirm').style.display = 'none';
             });
         }
     });
@@ -226,7 +229,18 @@ async function sideBarButtons() {
                 });
     
                 if (response.ok) {
-                    updateButtonsState();                 
+                    result = await response.json();
+
+                    if(!result['possible']){
+                        const confirmOverlay = document.querySelector('#overlay-confirm');
+                        confirmOverlay.style.display = 'flex'; 
+                        confirmOverlay.innerText = "Pas de chemin laissé de l'entrée au trésor.";
+                        confirmOverlay.setAttribute("data-type", "impossible");
+
+                    } else {
+                        updateButtonsState();                 
+                    }
+
                 } else {
                     console.error("Server error:", response.status);
                 }

@@ -63,7 +63,9 @@ class Jeu(MethodView, object):
         # self.constructeur = ConstructeurDonjon(self.grille)
         message = "Bienvenue Maitre du Donjon de la mort qui tue"
 
+        chemin_possible = True
         while True:
+            
             os.system('cls' if os.name == 'nt' else 'clear')
             
             print(f"{RED}=== Crée ton Donjon ===")
@@ -86,7 +88,10 @@ class Jeu(MethodView, object):
             print(f"C         :   Charger une sauvegarde")
             print(f"Q         :   Quitter")
 
+            if not(chemin_possible):
+                print(f"\n{RED}Pas de chemin laissé de l'entrée au trésor.{RESET}")
             user_input = input("\nCommande >").strip().upper()
+            
             if user_input == 'CLEAR':
                 message = self.constructeur.clear_grille()
             elif user_input == 'Q' :
@@ -96,6 +101,10 @@ class Jeu(MethodView, object):
             elif user_input == 'L' :
                 time.sleep(1)
                 controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
+                chemin_possible = controleur.verifier_chem_possible()
+                if not(chemin_possible):
+                    continue
+                
                 lancer_vagues(controleur)
                 self.grille.vide()
                 self.controleur.reset_monstres()
@@ -122,6 +131,7 @@ class Jeu(MethodView, object):
                         controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                         succes, msg = controleur.load_game(file_name)
                         if succes :
+                            ## continuer
                             lancer_vagues(controleur, sauvegarde=True)
                             message = "Partie chargée"
                             self.grille.vide()
@@ -204,6 +214,7 @@ class Jeu(MethodView, object):
                         controleur = Controleur(self.grille, self.constructeur.get_budget(), monstres=self.constructeur.get_l_monstres())
                         succes, msg = controleur.load_game(file_name)
                         if succes :
+                            # continuer
                             lancer_vagues(controleur, sauvegarde=True)
                             self.grille.vide()
                             self.constructeur.set_budget(BUDGET_INITIAL)
@@ -315,7 +326,6 @@ class Jeu(MethodView, object):
                     
                     succes, msg = self.controleur.load_game(file_name)
                     if succes :
-                        # lancer_vagues(controleur, sauvegarde=True)
                         controleur.set_boucle(True)
                         # self.controleur.vague_jeu()
                         

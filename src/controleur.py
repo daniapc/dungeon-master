@@ -414,12 +414,16 @@ class Controleur(MethodView):
             
             return {"status": "success", "message": "La strategie a ete changée"}, 200 
         elif action == 'lancer':
+            possible = self.verifier_chem_possible()
+            if not(possible):
+                return {"status": "success", "message": "La vague n'a pas eté lancée", "possible": False}, 200 
+            
             self.set_boucle(True)
             
             if self.strategie == None:
                 self.set_strategie(BFS())
             
-            return {"status": "success", "message": "La vague a eté lancée"}, 200 
+            return {"status": "success", "message": "La vague a eté lancée", "possible": True}, 200 
         elif action == 'continuer':
             fini = False
             
@@ -552,6 +556,16 @@ class Controleur(MethodView):
             return False, f"Fichier de sauvegarde corrompu : {e}"
         except Exception as e :
             return False, f"Erreur lors du chargement : {e}"
+        
+    def verifier_chem_possible(self):
+        tester = BFS()
+        chem_possible = tester.cherche_chemin(self.get_grille(), self.get_grille().get_entree(), self.get_grille().get_tresor())
+        if chem_possible is not None:
+            boucle = True
+        else:
+            boucle = False
+        
+        return boucle
 
 
 def convertit_depl(n):
@@ -634,21 +648,8 @@ def boucle_jeu(controleur):
     controleur.enleve_heros()
     return("F")
 
-def verifier_chem_possible(controleur):
-    tester = BFS()
-    chem_possible = tester.cherche_chemin(controleur.get_grille(), controleur.get_grille().get_entree(), controleur.get_grille().get_tresor())
-    if chem_possible is not None:
-        boucle = True
-    else:
-        boucle = False
-        print(f"Pas de chemin laissé de l'entrée au trésor.")
-        time.sleep(3)
-    
-    return boucle
-
 def lancer_vagues(controleur, sauvegarde=False):
-    boucle = verifier_chem_possible(controleur)
-    controleur.set_boucle(boucle)
+    controleur.set_boucle(True)
     while(controleur.get_boucle() and controleur.get_vague() <= 3):
         if not sauvegarde :
             controleur.vague_jeu()
