@@ -37,7 +37,7 @@ async function updateButtonsState(){
     const strategiePanel = document.querySelector('.strategiePanel');
     const continuerButton = document.querySelector('[data-type="continuer"]');
     const lancerButton = document.querySelector('[data-type="lancer"]');
-    const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
+    const chargerButton = document.querySelector('[data-type="charger"]');
 
     const grille = document.querySelector('#grid-board');
     const recap = document.querySelector('#recap-board');
@@ -47,7 +47,7 @@ async function updateButtonsState(){
     strategiePanel.style.setProperty('display', boucle ? 'none' : 'grid', 'important');
     continuerButton.style.display = (boucle && partie)  ? '' : 'none';
     lancerButton.style.display = !boucle ? '' : 'none';
-    // sauvegarderButton.style.display = !boucle ? 'none' : '';
+    chargerButton.style.display = boucle ? 'none' : '';
 
     grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
     recap.style.display = (boucle && partie) || (!boucle) ? 'none' : '';
@@ -264,55 +264,45 @@ async function sideBarButtons() {
 
             fileInput.click();
 
-            
-            const payload = { action: "charger", file_name: file_name};
-            
+        });
+    }
+
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+
+        console.log(file);
+
+
+        if (!file) return;
+
+        const reader = new FileReader();
+        
+        reader.onload = async (event) => {
             try {
-                await fetch(`/controleur`, {
+                const jsontext = event.target.result;
+                const data = JSON.parse(jsontext);
+
+                const payload = { action: "charger", 'json': data, file_name: 'charge'};
+
+                const response = await fetch('/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                }).then(response => response.blob()) 
-                    .then(blob => {
-                        console.log(blob);
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${file_name}.json`; 
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    });;
-    
+                });
+
+                if (response.ok){
+                    //  window.location.href = "/";
+                     renderGrille();
+                     updateButtonsState();
+                }
             } catch (e) {
                 console.error("Network error:", e);
             }
-        });
-    }
-    fileInput.addEventListener('change', async () => {
-        const arquivo = inputEscondido.files[0];
-        if (!arquivo) return;
-
-        const leitor = new FileReader();
-        
-        leitor.onload = async (event) => {
-            try {
-                const textoDoJSON = event.target.result;
-                const dados = JSON.parse(textoDoJSON);
-
-                const response = await fetch('/seu-endpoint', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-
-                if (response.ok) alert("Arquivo enviado!");
-            } catch (e) {
-                alert("Erro no formato do arquivo JSON.");
-            }
         };
 
-        leitor.readAsText(arquivo);
+        reader.readAsText(file);
+
+        
     });
 
 

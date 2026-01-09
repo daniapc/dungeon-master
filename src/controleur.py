@@ -427,26 +427,32 @@ class Controleur(MethodView):
                     }, 200 
         elif action == 'sauvegarder':
             file_name = data['file_name']
+            if not file_name :
+                file_name = "donjon_defaut"
             
             if not(self.boucle): # construction mode
                 data_donjon = self.grille.to_dict()
                 data_donjon["budget_dépensé"] = BUDGET_INITIAL - self.grille.get_budget()
                 
-                if not file_name :
-                    file_name = "donjon_defaut"
                 GestionSauvegarde.sauvegarder_donjon(file_name, data_donjon)                
+            else:
+                file_name = self.save_current_game(file_name)
                 
-                chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
-                with open(chemin, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                string_json = json.dumps(data, indent=4, ensure_ascii=False)
+            chemin = os.path.join(GestionSauvegarde.DOSSIER_SAUVEGARDE, f"{file_name}.json")
+            with open(chemin, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            string_json = json.dumps(data, indent=4, ensure_ascii=False)
+            
+            buffer = io.BytesIO()
+            buffer.write(string_json.encode('utf-8'))
+            buffer.seek(0)
+            
+            return send_file(buffer, as_attachment=True, download_name=file_name, mimetype='application/json') 
+               
+        elif action == 'charger':
+            pass
                 
-                buffer = io.BytesIO()
-                buffer.write(string_json.encode('utf-8'))
-                buffer.seek(0)
-                
-                return send_file(buffer, as_attachment=True, download_name=file_name, mimetype='application/json')    
-                
+        
         return {"status": "ignored", "message": "Nothing happened"}, 200
     
     def get_data_heros(self) :
