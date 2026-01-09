@@ -105,6 +105,10 @@ class Grille(MethodView):
             
             for case in row:
                 symbol = case.affichage()
+                if symbol == 'M':
+                    symbol = ('M1' 
+                        if case.get_objets()[0].get_skin() == 1 
+                        else 'M2')
                 
                 color = 'black'
                 weight = 'normal'                
