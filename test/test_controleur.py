@@ -6,17 +6,18 @@ def test_deplacement():
     grille = Grille()
     mur = Mur(0,1)
     grille.get_grille()[0][1].add_objet(mur)
-    controleur = Controleur(grille, 100)
+    controleur = Controleur(grille, 100,[])
     controleur.ajouter_heros(heros)
     
     depl = convertit_depl(0)
-    assert(controleur.peut_deplacer(depl[0], depl[1],0) == False)
+    h = controleur.get_liste()[0].get_pos()
+    assert(controleur.peut_deplacer(depl[0], depl[1],h[0],h[1]) == False)
     depl = convertit_depl(1)
-    assert(controleur.peut_deplacer(depl[0], depl[1],0) == True)
+    assert(controleur.peut_deplacer(depl[0], depl[1],h[0],h[1]) == True)
     depl = convertit_depl(2)
-    assert(controleur.peut_deplacer(depl[0], depl[1],0) == False)
+    assert(controleur.peut_deplacer(depl[0], depl[1],h[0],h[1]) == False)
     depl = convertit_depl(3)
-    assert(controleur.peut_deplacer(depl[0], depl[1],0) == False)
+    assert(controleur.peut_deplacer(depl[0], depl[1],h[0],h[1]) == False)
 
 @pytest.fixture
 def preparer_grille_ponderee(mocker):
@@ -66,7 +67,7 @@ def test_lancer_vagues_pas_de_chemin(preparer_grille_ponderee):
     murs = [(0,1),(1,0),(1,2),(2,1)]
 
     grille = preparer_grille_ponderee(start=(0,0), end=(1,1), murs=murs, pieges=[])
-    c = Controleur(grille, 100)
+    c = Controleur(grille, 100,[])
 
-    assert verifier_chem_possible(c)==False
+    assert c.verifier_chem_possible()==False
     

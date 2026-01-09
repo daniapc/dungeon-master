@@ -34,6 +34,9 @@ class ConstructeurDonjon(MethodView):
     def get_l_monstres(self) :
         return self.l_monstres
     
+    def reset_l_monstres(self):
+        self.l_monstres = []
+    
     def is_in_grid(self, i, j) :
         if (0 <= i < SIZE_GRILLE and 0 <= j < SIZE_GRILLE) :
             return True 
@@ -83,6 +86,11 @@ class ConstructeurDonjon(MethodView):
             return False, "Emplacement hors limites"
         if not self.is_empty(i, j) :
             return False, "Emplacement déjà occupé"
+        i_entree, j_entree = self.grille.get_entree()
+        ecart_ligne = abs(i - i_entree)
+        ecart_colonne = abs(j - j_entree)
+        if ecart_ligne + ecart_colonne < 4 :
+            return False, "Monstre trop prôche de l'entrée"
         monstre = self.fabrique_monstre.fabrique_Monstre(i, j)
         cout = monstre.get_cout()
         if self.budget >= cout :
@@ -109,7 +117,7 @@ class ConstructeurDonjon(MethodView):
         return True, "Case vidée"
     
     def clear_grille(self):
-        self.grille = self.get_grille().vide()
+        self.get_grille().vide()
         self.set_budget(BUDGET_INITIAL)
         return "Donjon réinitialisé"
 
@@ -164,7 +172,12 @@ class ConstructeurDonjon(MethodView):
         coord_x = int(data['x'])
         coord_y = int(data['y'])
         
-        success, message = self.rm_objet(coord_y, coord_x)
+        remove_tout = coord_x == -1
+        
+        success, message = (
+            (True, self.clear_grille()) if remove_tout 
+            else self.rm_objet(coord_y, coord_x)
+        )
         
         if success:
             return {"status": "success", "message": message, "budget": self.get_budget()}, 200 

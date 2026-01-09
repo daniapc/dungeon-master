@@ -61,7 +61,7 @@ async function updateButtonsState(){
     const chargerButton = document.querySelector('[data-type="charger"]');
     const prochainButton = document.querySelector('[data-type="prochain"]');
 
-    const grille = document.querySelector('#grid-board');
+    const grille = document.querySelector('#grid-overlay');
     const recap = document.querySelector('#recap-board');
     
     budgetPanel.style.display = !boucle ? '' : 'none';
@@ -72,7 +72,8 @@ async function updateButtonsState(){
     lancerButton.style.display = !boucle ? '' : 'none';
     chargerButton.style.display = boucle ? 'none' : '';
 
-    grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
+    grille.style.setProperty('display', (boucle && partie) || (!boucle) ? '' : 'none', 'important');
+    // grille.style.display = (boucle && partie) || (!boucle) ? '' : 'none';
     recap.style.display = (boucle && partie) || (!boucle) ? 'none' : '';
 
 }
@@ -88,8 +89,10 @@ async function sideBarButtons() {
     const selectionButtons = selectionSidebar.querySelectorAll(".btn"); 
 
     selectionButtons.forEach(async btn => {
+        const objet = btn.getAttribute("data-type");
+        if (objet === 'none')
+            return;
         
-        // 1. Click Event Logic
         btn.addEventListener("click", (e) => {
             // CRITICAL: Stop the click from reaching the window listener immediately
             e.stopPropagation();
@@ -101,13 +104,44 @@ async function sideBarButtons() {
         
             btn.classList.remove("palid");
             btn.classList.add("active");
-        });
 
-        // 2. Fetch Cost Logic (Initial Load)
-        const objet = btn.getAttribute("data-type");
+            if (objet && objet === 'effacer'){
+                const confirmOverlay = document.querySelector('#overlay-confirm');
+                confirmOverlay.style.display = 'flex'; 
+                confirmOverlay.innerText = "En êtes-vous sûr ?";
+                
+                confirmOverlay.setAttribute("data-type", "effacer");
+
+                confirmOverlay.onclick = async (e) => {
+                    if (!(confirmOverlay.getAttribute("data-type") === "effacer"))
+                        return;
+
+                    confirmOverlay.style.display = 'none';
+                    payload = {
+                        'x': '-1',
+                        'y': '-1'
+                    }
+
+                    const response = await fetch(`/constrdonjon`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+
+                    if (response.ok) {
+                        renderGrille();
+                    } else {
+                        console.error("Server error:", response.status);
+                    }
+                };
+            }
+
+        });
         
         // Skip fetch for delete button or if no data-type
-        if (objet && objet !== 'supprimer') {
+        if (objet && objet !== 'supprimer' && objet !== 'effacer') {
             try {
                 const response = await fetch(`/constrdonjon?objet=${objet}&attribute=cout`, {
                     method: 'GET',
@@ -134,6 +168,7 @@ async function sideBarButtons() {
             selectionButtons.forEach(b => { 
                 b.classList.remove("palid");
                 b.classList.remove("active");
+                document.querySelector('#overlay-confirm').style.display = 'none';
             });
         }
     });
@@ -194,7 +229,18 @@ async function sideBarButtons() {
                 });
     
                 if (response.ok) {
-                    updateButtonsState();                 
+                    result = await response.json();
+
+                    if(!result['possible']){
+                        const confirmOverlay = document.querySelector('#overlay-confirm');
+                        confirmOverlay.style.display = 'flex'; 
+                        confirmOverlay.innerText = "Pas de chemin laissé de l'entrée au trésor.";
+                        confirmOverlay.setAttribute("data-type", "impossible");
+
+                    } else {
+                        updateButtonsState();                 
+                    }
+
                 } else {
                     console.error("Server error:", response.status);
                 }
@@ -273,26 +319,30 @@ async function sideBarButtons() {
     const sauvegarderButton = document.querySelector('[data-type="sauvegarder"]');
     if (sauvegarderButton) {
         sauvegarderButton.addEventListener("click", async () => {
+            const customName = prompt("Nom de la sauvegarde :", "donjon_defaut");
             
-            const file_name = 'donjon_defaut'
-            const payload = { action: "sauvegarder", file_name: file_name};
+            if (!customName) return;
+
+            const payload = { action: "sauvegarder", file_name: customName };
             
             try {
-                await fetch(`/controleur`, {
+                const response = await fetch(`/controleur`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                }).then(response => response.blob()) 
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${file_name}.json`; 
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    });;
-    
+                });
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                a.download = customName.endsWith('.json') ? customName : `${customName}.json`;
+                
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
             } catch (e) {
                 console.error("Network error:", e);
             }

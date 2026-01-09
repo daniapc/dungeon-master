@@ -7,6 +7,7 @@ class Monstre():
         self.pos = (x,y)
         self.pv = 100
         self.target = None
+        self.tour = False
         
     def get_pv(self):
         return self.pv
@@ -17,11 +18,25 @@ class Monstre():
     def set_target(self, i):
         self.target = i
 
-    def get_tresor(self):
-        return self.target.get_pos()[0], self.target.get_pos()[0]
+    def get_pos_target(self):
+        if self.target == None:
+            return 0,0
+        return self.target.get_pos()[0], self.target.get_pos()[1]
     
-    def get_cout(self) :
+    def get_cout(self):
         return PRIX_MONSTRE
+    
+    def get_target(self):
+        return self.target
+    
+    def get_tour(self):
+        return self.tour
+    
+    def update_tour(self):
+        self.tour = True
+
+    def reset_tour(self):
+        self.tour = False
     
 
     def deplace(self, i, j):
