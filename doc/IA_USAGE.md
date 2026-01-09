@@ -46,7 +46,7 @@ Traduction: "Modifiez ce code HTML pour obtenir un aspect agréable et minimalis
 Code fourni : tableau `recap-board` dans `jeu.html`
 
 **Réponse IA :**
-Toutes les modifications suggérées par l'IA ont été intégrées dans le commit #TODO: []() avec le message : "IA: Table visual improvement (Styling assisted by Gemini)"
+Toutes les modifications suggérées par l'IA ont été intégrées dans le commit [5c34a4a9](https://gibson.telecomnancy.univ-lorraine.fr/projets/2526/codingweek/grp09/-/commit/5c34a4a96c049eb70a2e6ef99d717a79c6f86b1b) avec le message : "IA: Table visual improvement (Styling assisted by Gemini)"
 
 ### Intéraction #4
 
@@ -60,4 +60,4 @@ Traduction: "Je souhaite que l'alerte de confirmation se superpose au `grid-boar
 Code fourni : `grid-board` component dans `jeu.html`
 
 **Réponse IA :**
-Toutes les modifications suggérées par l'IA ont été intégrées dans le commit #TODO: []() avec le message : "IA: Confirmation pour effacer tout (Styling assisted by Gemini)"
+Toutes les modifications suggérées par l'IA ont été intégrées dans le commit [67eaa31f ](https://gibson.telecomnancy.univ-lorraine.fr/projets/2526/codingweek/grp09/-/commit/67eaa31f2fe1e409b30290e962228324c5c31230) avec le message : "IA: Confirmation pour effacer tout (Styling assisted by Gemini)"
