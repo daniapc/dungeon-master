@@ -97,7 +97,7 @@ def test_deplacer_heros(preparer_grille_ponderee):
     murs = [(0, 1)]
     grille = preparer_grille_ponderee(start=(0,0), end=(0,2), murs=murs, pieges=[])
     h = Heros(0,0, [])
-    ctr = Controleur(grille, 100)
+    ctr = Controleur(grille, 100,[])
     ctr.ajouter_heros(h)
     ctr.update_compteur()
 

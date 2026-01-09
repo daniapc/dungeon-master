@@ -7,6 +7,7 @@ class Monstre():
         self.pos = (x,y)
         self.pv = 100
         self.target = None
+        self.tour = False
         
     def get_pv(self):
         return self.pv
@@ -27,6 +28,15 @@ class Monstre():
     
     def get_target(self):
         return self.target
+    
+    def get_tour(self):
+        return self.tour
+    
+    def update_tour(self):
+        self.tour = True
+
+    def reset_tour(self):
+        self.tour = False
     
 
     def deplace(self, i, j):
