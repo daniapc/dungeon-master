@@ -419,6 +419,7 @@ class Controleur(MethodView):
                 return {"status": "success", "message": "La vague n'a pas eté lancée", "possible": False}, 200 
             
             self.set_boucle(True)
+            self.init_monstre()
             
             if self.strategie == None:
                 self.set_strategie(BFS())
@@ -426,9 +427,11 @@ class Controleur(MethodView):
             return {"status": "success", "message": "La vague a eté lancée", "possible": True}, 200 
         elif action == 'continuer':
             fini = False
-            
             if self.get_tour() == 0:
                 self.check_collisions()
+                self.execute_strategie_monstre()
+                self.check_collisions()
+                self.reset_tour_monstres()
                 if self.get_liste() == []:
                     self.partie = False
                 if self.check_treso():
