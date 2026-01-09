@@ -46,11 +46,11 @@ Joueur qui veut concevoir, tester et optimiser un donjon contre des vagues de h�
 | 18 | Intégration de menus de contrôle sur interfaces | Moyenne | DONE |
 | 19 | Faire un menu de lancement | Moyenne | DONE |
 | 20 | Avoir un récapitulatif en fin de partie | Moyenne | DONE |
-| 21 | Faire des tests unitaires sur le code | Moyenne | DOING |
-| 22 | Avoir un README complet| Haute | DOING |
-| 23 | Implémenter des monstres | Faible | DOING |
+| 21 | Faire des tests unitaires sur le code | Moyenne | DONE |
+| 22 | Avoir un README complet| Haute | DONE |
+| 23 | Implémenter des monstres | Faible | DONE |
 | 24 | Amélioration de l'UX | Faible | TODO |
-| 25 | Préparer la vidéo de démonstration | Haute | TODO |
+| 25 | Préparer la vidéo de démonstration | Haute | DONE |
 | 26 | Tourner la vidéo de démonstration | Haute  | TODO |
 | 27 | Monter la vidéo de démonstration |  Moyenne | TODO |
 
@@ -103,7 +103,17 @@ Objectif : Finalisation des fonctionnalités, Expérience Utilisateur (UX) et Ne
 
     - (Bonus) Implémentation initiale des Monstres.
 ### Sprint DAY_5 – [09/01/2026]
-- ...
+Objectif : Finalisation, Équilibrage et Documentation.
+
+    - Finalisation de l'interface Web et amélioration des graphismes.
+
+    -  Debugging complet du projet et correction des bugs liés aux Monstres (logique et sauvegarde).
+
+    - Équilibrage du gameplay (ajustement des coûts de placement et des dégâts des pièges).
+
+    - Réalisation des diagrammes techniques finaux : Diagramme de classes complet et Diagrammes de séquence (Placement de mur, Chargement).
+
+    -  Préparation et validation du scénario de démonstration finale.
 
 ## 5. Dette technique et améliorations futures
 - [ ] Améliorer l’ergonomie de l’IHM (raccourcis, couleurs, etc.).
